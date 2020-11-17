@@ -58,6 +58,7 @@ awm <- function(cands=NA, cm=NA,iters = 8){
     cands <- cands[mm,]
     
     # create contributor ideal point repo
+    contrib_matrix <- cm
     contrib.ips.rval <- rep(NA,nrow(contrib_matrix))
 
     ##SETTING INITIAL PARAMTERS AT -1 FOR LEFT AND 1 FOR RIGHT

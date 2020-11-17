@@ -36,13 +36,27 @@ contrib_matrix <- contrib_matrix[rowSums(MM) >= 2,]
 top_5_percentile <- rowSums(contrib_matrix) %>%
   quantile(0.95)
 
-contrib_matrix <- contrib_matrix[rowSums(contrib_matrix) <= top_5_percentile,]
+top_10_percentile <- rowSums(contrib_matrix) %>%
+  quantile(0.9)
+
+
+contrib_matrix_5_percentile <- contrib_matrix[rowSums(contrib_matrix) <= top_5_percentile,]
+contrib_matrix_10_percentile <- contrib_matrix[rowSums(contrib_matrix) <= top_10_percentile,]
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
-cands.in <- cands %>% 
+cands.in_5_percentile <- cands %>% 
   filter(
-    cpf_candidate %in% colnames(contrib_matrix)
+    cpf_candidate %in% colnames(contrib_matrix_5_percentile)
+  ) %>% 
+  distinct(
+    cpf_candidate,
+    .keep_all = T
+  )
+
+cands.in_10_percentile <- cands %>% 
+  filter(
+    cpf_candidate %in% colnames(contrib_matrix_10_percentile)
   ) %>% 
   distinct(
     cpf_candidate,
@@ -50,30 +64,39 @@ cands.in <- cands %>%
   )
 
 # cfscore estimation
-cfscore_fed_state <- awm(
-  cands = cands.in,
-  cm = contrib_matrix,
-  iters = 8
+cfscore_fed_state <- map2(
+  list(cands.in_5_percentile, cands.in_10_percentile),
+  list(contrib_matrix_5_percentile, contrib_matrix_10_percentile),
+  ~awm(cands = .x, cm = .y, iters = 8)
 )
 
-summary(cfscore_fed_state$cands)
-
 # write-out ---------------------------------------------------------------
-cfscore_fed_state$cands %>% 
-  transmute(
-    cpf_candidate,
-    candidate_name,
-    birthyear = election_year - age,
-    edu,
-    edu_desc,
-    gender,
-    mun_birth_name,
-    occupation,
-    occupation_code,
-    cfscore
-  ) %>% 
-  fwrite(
-    here("data/ideology/candidate_ideology_fed_state_robustness.csv")
+cfscore_fed_state_cands <- cfscore_fed_state %>% 
+  map(pluck, "cands") %>%
+  modify(
+    ~transmute(
+      .,
+      cpf_candidate,
+      candidate_name,
+      birthyear = election_year - age,
+      edu,
+      edu_desc,
+      gender,
+      mun_birth_name,
+      occupation,
+      occupation_code,
+      cfscore
+      ) 
+    )
+
+file_output <- sprintf(
+  here("data/ideology/candidate_ideology_fed_state_%s_percentile.csv"),
+  c("5", "10")
+)
+
+pwalk(
+    list(cfscore_fed_state_cands, file_output),
+    fwrite
   )
 
 save(cfscore_fed_state, file = here("data/ideology/cfscore_fed_state_robustness.RData"))

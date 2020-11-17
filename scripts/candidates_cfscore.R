@@ -6,8 +6,7 @@ lapply(
     "Matrix",
     "here",
     "R.utils",
-    "sqldf",
-    "fastLink"
+    "sqldf"
   ),
   require, character.only = T
 )
@@ -93,6 +92,8 @@ cfscore_local <- awm(
 summary(cfscore_local$cands)
 
 # write-out ---------------------------------------------------------------
+fed_level_positions <- c("presidente|senador|federal|distrital")
+
 cfscore_fed_state$cands %>% 
   transmute(
     cpf_candidate,

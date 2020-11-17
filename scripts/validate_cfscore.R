@@ -3,7 +3,6 @@
 library(tidyverse)
 library(data.table)
 
-
 gg_summary <- function(data, x, y, fun = 'mean', size = 2, geom = 'point', color = "steelblue3", smooth = T, ...){
   plot <- data %>% 
     ggplot(
