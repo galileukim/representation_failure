@@ -395,6 +395,7 @@ foreach(i = seq(1, 2))%do%{
     map_dfr(
       . %>% 
         fread(
+          colClasses =  "character",
           integer64 = "character",
           nThread = parallel::detectCores() - 1
         )
@@ -447,7 +448,8 @@ foreach(i = seq(1, 2))%do%{
     )
   
   # construct total donation by candidate
-  # filter out projected
+  # filter out projected and company donations:
+  # individual donors have only 11 digit cpf_cnpj_donor ids
   contribution <- contributors %>% 
     filter(
       is_projected != 1

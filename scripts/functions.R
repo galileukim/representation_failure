@@ -75,7 +75,7 @@ awm <- function(cands=NA, cm=NA,iters = 8){
     # cands[ko,'cfscore'] <- mean(as.numeric(cands[-ko,'cfscore']), na.rm = T)
     
     # candidate ideal points
-    cand.ips <- as.numeric(cands[,'cfscore'])
+    cand.ips <- as.numeric(cands[['cfscore']])
 
     for(iter in 1:iters){
         cat('Iteration ',iter,'\n')

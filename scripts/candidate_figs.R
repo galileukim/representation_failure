@@ -79,7 +79,7 @@ candidate <- candidate %>%
   )
 
 candidate_blp <- fread(
-  here("estimation/stacking.csv")
+  here("../estimation/stacking.csv")
 )
 
 # cfscore validation
@@ -95,6 +95,7 @@ ideology_fed_state <- fread(
 
 candidate_local <- list.files(
   here("data/candidate/local"),
+  pattern = "^candidate",
   full.names = T
 ) %>% 
   map_dfr(
@@ -108,6 +109,7 @@ candidate_local <- list.files(
 
 candidate_fed_state <- list.files(
   here("data/candidate/fed_state"),
+  pattern = "^candidate",
   full.names = T
 ) %>% 
   map_dfr(
@@ -210,7 +212,7 @@ latinobar <- latinobar %>%
   )
 
 states <- fread(
-  here("files/state_names.csv")
+  here("data/identifiers/state_names.csv")
 )
 
 # obtain legislative ideal points from Zucco and Lauderdale (2011)
@@ -273,7 +275,7 @@ cands_elected <- list.files(
   )
 
 # link data
-link_deputado <- fastLink(
+link_deputado <- fastLink::fastLink(
   cands_elected,
   deputado,
   varnames = c("candidate_name", "mun_birth_name", "birthyear"),
@@ -298,7 +300,7 @@ cands_elected <- bind_cols(
 )
 
 # join with legislative ideal points data
-link_ideal <- fastLink(
+link_ideal <- fastLink::fastLink(
   cands_elected,
   legislative,
   varnames = c("name", "state", "party", "election_year"),
@@ -322,6 +324,7 @@ cands_ideal <- bind_cols(
       ideology
     )
 )
+
 # mapping demographics ----------------------------------------------------
 map_br <- map_br %>% 
   left_join(
@@ -753,7 +756,7 @@ candidate_vote <- election %>%
   )
 
 # ideology
-party_ideology <- candidate %>%
+party_ideology_candidate <- candidate %>%
   filter(
     election_year > 2002
   ) %>% 
@@ -782,7 +785,7 @@ party_ideology <- candidate %>%
     party_share = sum(vote, na.rm = T)/unique(total_vote)
   )
 
-party_ideology %>% 
+party_ideology_candidate %>% 
   filter(election_year == 2014) %>%
   ggplot() +
   geom_hline(
@@ -830,10 +833,10 @@ party_ideology %>%
     axis.title.y = element_blank(),
     axis.text.y = element_blank(),
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/party_ideology_pelotas.pdf")
-  )
+  ) 
+  # ggsave(
+  #   here("Presentation/figs/ideology/party_ideology_pelotas.pdf")
+  # )
 
 # party_ideology %>% 
 #   filter(election_year == 2014) %>%
@@ -1124,10 +1127,10 @@ party_ideology %>%
   ) +
   facet_grid(
     election_year ~ .
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/party_ideology_deputy_mayor.png")
-  )
+  ) 
+  # ggsave(
+  #   here("Presentation/figs/ideology/party_ideology_deputy_mayor.png")
+  # )
 
 party_ideology %>% 
   ggplot(
@@ -1166,9 +1169,13 @@ party_ideology %>%
   xlab("Local ideology") +
   ggtitle(
     "Linear regression: federal ideology scores vs. "
+  ) +
+  coord_cartesian(
+    xlim = c(-1, 1),
+    ylim = c(-1, 1)
   )
   ggsave(
-    here("Presentation/figs/ideology/reg_ideology.png")
+    here("../Presentation/figs/ideology/reg_ideology.png")
   )
 
 # latinobarometer

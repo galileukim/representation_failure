@@ -28,9 +28,9 @@ cands <- cm$candidate %>%
   )
 contributors <- cm$contribution
 
-# remove single entries
-MM <- ceiling(contrib_matrix/1e12)
-contrib_matrix <- contrib_matrix[rowSums(MM) >= 2,]
+# restrict to individual donors
+# note that only individual donors have 11 digits in their id
+contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
@@ -66,9 +66,9 @@ cands <- cm$candidate %>%
   )
 contributors <- cm$contribution
 
-# remove single entries
-MM <- ceiling(contrib_matrix/1e12)
-contrib_matrix <- contrib_matrix[rowSums(MM) >= 2,]
+# restrict to individual donors
+# note that only individual donors have 11 digits in their id
+contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
