@@ -84,5 +84,7 @@ cfscore_fed_validation %>%
   theme_minimal() +
   facet_wrap(percentile ~ .) +
   ggsave(
-    here::here("figs/robustness/cfscore_robustness.png")
+    here::here("../Presentation/figs/ideology/cfscore_robustness.pdf"),
+    height = 4,
+    width = 6
   )
