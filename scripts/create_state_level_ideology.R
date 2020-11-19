@@ -21,6 +21,31 @@ candidate_state_level <- candidate %>%
             !str_detect(position, fed_level_positions)
     )
 
+candidate_state_level <- candidate_state_level %>%
+  mutate(
+    occupation = case_when(
+      occupation == "empresario" | occupation == "comerciante" ~ "business",
+      str_detect(occupation, "servidor publico") ~ "government",
+      str_detect(occupation, "vereador|prefeito|deputado|senador|governador|membros do poder|presidente") ~ "politician",
+      str_detect(occupation, "economista|engenheiro|^tecnico") ~ "technician",
+      str_detect(occupation, "advogado|admin") ~ "white-collar",
+      str_detect(occupation, "professor") ~ "teacher",
+      T ~ "other"
+    )
+  )
+
+# coarsen education
+candidate_state_level <- candidate_state_level %>%
+  mutate(
+    edu = case_when(
+      between(edu, 1, 3) ~ "lower school",
+      between(edu, 4, 5) ~ "middle school",
+      between(edu, 6, 7) ~ "high school",
+      edu >= 8 ~ "higher education",
+      T ~ NA_character_
+    )
+  )
+
 # join with ideology scores
 candidate_state_level <- candidate_state_level %>%
     left_join(
@@ -28,6 +53,7 @@ candidate_state_level <- candidate_state_level %>%
         by = c("cpf_candidate")
     ) %>%
     transmute(
+        state,
         cpf_candidate,
         election_year,
         candidate_name,
@@ -35,6 +61,7 @@ candidate_state_level <- candidate_state_level %>%
         edu,
         edu_desc,
         gender,
+        incumbent,
         mun_birth_name,
         occupation,
         occupation_code,
