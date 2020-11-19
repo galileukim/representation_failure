@@ -1112,8 +1112,8 @@ party_ideology %>%
   ) +
   theme_minimal() +
   coord_cartesian(
-    xlim = c(-1, 1),
-    ylim = c(-1, 1)
+    xlim = c(-1, 0.5),
+    ylim = c(-1, 0.5)
   ) +
   xlab("Ideology (local)") +
   ylab("Ideology (federal)") +
@@ -1127,10 +1127,10 @@ party_ideology %>%
   ) +
   facet_grid(
     election_year ~ .
-  ) 
-  # ggsave(
-  #   here("Presentation/figs/ideology/party_ideology_deputy_mayor.png")
-  # )
+  ) +
+  ggsave(
+    here("../Presentation/figs/ideology/party_ideology_deputy_mayor.png")
+  )
 
 party_ideology %>% 
   ggplot(
@@ -1173,7 +1173,7 @@ party_ideology %>%
   coord_cartesian(
     xlim = c(-1, 1),
     ylim = c(-1, 1)
-  )
+  ) +
   ggsave(
     here("../Presentation/figs/ideology/reg_ideology.png")
   )
@@ -1285,7 +1285,7 @@ cands_ideal %>%
     "Ideology vs. CF-score: Legislative Parties (2003-2010)"
   ) +
   ggsave(
-    here("Presentation/figs/ideology/ideology_cfscore.png")
+    here("../Presentation/figs/ideology/ideology_cfscore.png")
   )
 
 # valence -----------------------------------------------------------------
