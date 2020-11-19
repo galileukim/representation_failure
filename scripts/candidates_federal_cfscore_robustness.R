@@ -28,10 +28,6 @@ cands <- cm$candidate %>%
   )
 contributors <- cm$contribution
 
-# remove single entries
-MM <- ceiling(contrib_matrix/1e12)
-contrib_matrix <- contrib_matrix[rowSums(MM) >= 2,]
-
 # filter out top 5 percent contributors
 top_5_percentile <- rowSums(contrib_matrix) %>%
   quantile(0.95)
@@ -39,6 +35,9 @@ top_5_percentile <- rowSums(contrib_matrix) %>%
 top_10_percentile <- rowSums(contrib_matrix) %>%
   quantile(0.9)
 
+# restrict to individual donors
+# note that only individual donors have 11 digits in their id
+contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 
 contrib_matrix_5_percentile <- contrib_matrix[rowSums(contrib_matrix) <= top_5_percentile,]
 contrib_matrix_10_percentile <- contrib_matrix[rowSums(contrib_matrix) <= top_10_percentile,]
