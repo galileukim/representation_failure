@@ -51,6 +51,7 @@ cfscore_fed_state <- awm(
 )
 
 summary(cfscore_fed_state$cands)
+cfscore_fed_state$cands$cfscore %>% hist() 
 
 # local estimation --------------------------------------------------------
 # contribution matrix (local)

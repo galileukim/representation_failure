@@ -57,7 +57,12 @@ candidate_state_level <- candidate_state_level %>%
         cpf_candidate,
         election_year,
         candidate_name,
-        birthyear = election_year - age,
+        party,
+        age = ifelse(
+            age == -1 | age >= 110,
+            election_year - as.numeric(birthyear),
+            age
+        ),
         edu,
         edu_desc,
         gender,

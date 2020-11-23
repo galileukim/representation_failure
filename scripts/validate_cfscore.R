@@ -33,7 +33,19 @@ gg_summary <- function(data, x, y, fun = "mean", size = 2, geom = "point", color
 
 # ---------------------------------------------------------------------------- #
 # federal candidates
-cfscore_fed <- fread("data/ideology/candidate_ideology_fed_state.csv") %>%
+cfscore_fed <- fread(
+  "data/ideology/candidate_ideology_fed_state.csv",
+  integer64 = "character"
+) %>%
+  select(
+    cpf_candidate,
+    cfscore_original = cfscore
+  )
+
+cfscore_fed_original <- fread(
+  "data/ideology/deprecated/candidate_ideology_fed_state.csv",
+  integer64 = "character"
+) %>%
   select(
     cpf_candidate,
     cfscore_original = cfscore
@@ -88,3 +100,68 @@ cfscore_fed_validation %>%
     height = 4,
     width = 6
   )
+
+# ---------------------------------------------------------------------------- #
+# demonstrate intuition of the cfscores
+candidate_cpf <- list.files(
+  here("data/candidate/fed_state"),
+  pattern = "^candidate",
+  full.names = TRUE
+) %>%
+  map_dfr(
+    fread,
+    integer64 = "character"
+  )
+
+# join with ideology scores
+candidate_cfscore <- candidate_cpf %>%
+  left_join(
+    cfscore_fed,
+    by = c("cpf_candidate")
+  )
+
+candidate_cfscore %>% 
+  mutate(
+    highlight = if_else(
+      party %in% c("pt", "pmdb", "psdb"), T, F
+    )
+  ) %>%
+  ggplot() +
+  geom_hline(
+    yintercept = 0,
+    col = "grey35",
+    linetype = "dashed"
+  ) +
+  geom_point(
+    data = . %>% 
+      filter(!highlight),
+    aes(
+      cfscore_original,
+      0
+    ),
+    col = "darkorange",
+    alpha = 0.4,
+    position = position_jitter(width = 0, height = 0.005)
+  ) +
+  # geom_text(
+  #   data = . %>% 
+  #     filter(highlight),
+  #   aes(
+  #     ideology,
+  #     0,
+  #     label = party,
+  #     size = party_share
+  #   ),
+  #   col = "brown3",
+  #   alpha = 0.9,
+  #   position = position_jitter(width = 0, height = 0.005)
+  # ) +
+  scale_size(
+    range = c(1, 12)
+  ) +
+  facet_grid(election_year ~ elected) +
+  coord_cartesian(
+    ylim = c(-0.025, 0.025),
+    xlim = c(-0.5, 0.2)
+  ) +
+  theme_minimal()
