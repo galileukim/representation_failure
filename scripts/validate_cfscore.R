@@ -216,9 +216,9 @@ party_ideology_candidate <- candidate_cfscore %>%
       party %in% c("pt", "pmdb", "psdb"), T, F
     )
   ) %>% 
-  group_by(
-    election_year
-  ) %>% 
+  # group_by(
+  #   election_year
+  # ) %>% 
   mutate(
     total_vote = sum(vote, na.rm = T)
   ) %>% 
