@@ -4,6 +4,7 @@ library(here)
 
 corruption_files <- list.files(
     here("data/corruption"),
+    pattern = "^motivo_cassacao",
     full.names = TRUE
 )
 
@@ -62,7 +63,7 @@ corrupt_candidate <- corrupt_candidate %>%
         )
     )
 
-corrupt_candidates %>%
+corrupt_candidate %>%
     fwrite(
         here("data/corruption/corrupt_candidate_2018.csv")
     )
