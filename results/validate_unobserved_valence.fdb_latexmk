@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1611343831 "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.tex" "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf" "validate_unobserved_valence" 1611343835
+["pdflatex"] 1611348097 "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.tex" "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf" "validate_unobserved_valence" 1611348097
   "/etc/texmf/web2c/texmf.cnf" 1585227716 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.aux" 1611343831 172 0bb6e1dcbf5c8d3240bf416e78d7e369 ""
-  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.tex" 1611343833 1194 0fe3dece7a60d6cb68e2a761c8cc52fd ""
+  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.aux" 1611348097 172 0bb6e1dcbf5c8d3240bf416e78d7e369 ""
+  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.tex" 1611348096 1095 e5b19d3affefe2f02d2016c75c96eae6 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm" 1480098701 1480 aa8e34af0eb6a2941b776984cf1dfdc4 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1480098733 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
@@ -16,11 +16,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1585227723 127853 b41f58aff49fe1af38af8d065f49d51c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1593121643 859410 7e9db4a2b17af51ef47308844b7ed2cf ""
-  "validate_unobserved_valence.aux" 1611343831 172 0bb6e1dcbf5c8d3240bf416e78d7e369 ""
-  "validate_unobserved_valence.tex" 1611343833 1194 0fe3dece7a60d6cb68e2a761c8cc52fd ""
+  "validate_unobserved_valence.aux" 1611348097 172 0bb6e1dcbf5c8d3240bf416e78d7e369 ""
+  "validate_unobserved_valence.tex" 1611348096 1095 e5b19d3affefe2f02d2016c75c96eae6 ""
   (generated)
-  "validate_unobserved_valence.log"
+  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf"
   "validate_unobserved_valence.pdf"
   "validate_unobserved_valence.aux"
-  "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf"
   "/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.log"
+  "validate_unobserved_valence.log"
