@@ -66,13 +66,24 @@ awm <- function(cands=NA, cm=NA,iters = 8){
     cands <- cands %>% 
       mutate(
         cfscore = case_when(
-          party == "pc do b" ~ as.integer(-1),
-          party == "dem" ~ as.integer(1),
-          T ~ NA_integer_
+          party == "psol" ~ -1.08,
+          party == "pc do b" ~ -0.945,
+          party == "pt" ~ -0.69,
+          party == "psb" ~ - 0.503,
+          party == "pv" ~ -0.453,
+          party == "pdb" ~ -0.388,
+          party == "pps" ~ -0.254,
+          party == "pmdb" ~ 0.0531,
+          party == "psdb" ~ 0.109,
+          party == "ptb" ~ 0.243,
+          party == "pp" ~ 0.409,
+          party == "pr" ~ 0.592,
+          party == "dem" ~ 0.665,
+          T ~ NA_real_
         )
       )
-    # ko <- which(is.na(cands[,'cfscore']))
-    # cands[ko,'cfscore'] <- mean(as.numeric(cands[-ko,'cfscore']), na.rm = T)
+    ko <- which(is.na(cands[,'cfscore']))
+    cands[ko,'cfscore'] <- mean(as.numeric(cands[-ko,'cfscore']), na.rm = T)
     
     # candidate ideal points
     cand.ips <- as.numeric(cands[['cfscore']])
