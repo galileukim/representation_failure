@@ -467,6 +467,10 @@ foreach(i = seq(1, 2)) %do% {
     filter(
       is_projected != 1
     ) %>%
+    arrange(
+      cpf_cnpj_donor,
+      cpf_candidate
+    ) %>%
     group_by(
       cpf_cnpj_donor,
       cpf_candidate
@@ -493,10 +497,12 @@ foreach(i = seq(1, 2)) %do% {
   #     )
   #   )
 
+  contributor_ids <- unique(contribution$cpf_cnpj_donor)
+  candidate_ids <- unique(contribution$cpf_candidate)
   # create contribution matrix
   contrib_matrix <- sparseMatrix(
-    i = contribution$cpf_cnpj_donor %>% as.factor() %>% as.numeric(),
-    j = contribution$cpf_candidate %>% as.factor() %>% as.numeric(),
+    i = contribution$cpf_cnpj_donor %>% factor(contributor_ids) %>% as.numeric(),
+    j = contribution$cpf_candidate %>% factor(levels = candidate_ids) %>% as.numeric(),
     x = contribution$total_contrib,
     dimnames = list(
       unique(contribution$cpf_cnpj_donor),
@@ -515,7 +521,7 @@ foreach(i = seq(1, 2)) %do% {
   save(
     cm,
     file = paste0(
-      here("data/ideology/contrib_matrix_"), c("fed_state", "local")[i], ".RData"
+      here("data/ideology/contrib_matrix_"), c("fed_state", "local")[i], "_new.RData"
     )
   )
 }

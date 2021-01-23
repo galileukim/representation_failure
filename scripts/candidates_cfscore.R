@@ -1,5 +1,4 @@
 # to-do
-# 1) can we come up with reasonable priors for smaller parties
 # 2) subset to only federal level candidates
 # 3) try pooling local candidates as well
 # 4) make sure that the raw data and code are a-ok, verify contrib matrix
@@ -7,8 +6,6 @@
 # versa
 # 6) power and zucco (legislative surveys): can we get more ideology points
 # for all parties, or even voter surveys, anything we can use to anchor
-# 7) attribute to the smaller parties in coalitions: for the parties
-# we don't have information. use the initial coalition they participated in
 
 # set-up ------------------------------------------------------------------
 lapply(
@@ -25,23 +22,33 @@ lapply(
 
 source(here("scripts/functions.R"))
 set.seed(1789)
+theme_set(theme_bw())
 
 # read-in -----------------------------------------------------------------
 # contribution matrix (federal)
 load(
-  here("data/ideology/contrib_matrix_fed_state.RData")
+  here("data/ideology/contrib_matrix_fed_state_new.RData")
 )
 
-ideology_rowcall <- fread(
-  here("data/ideology/legislative_ideology.csv")
+ideology_survey <- fread(
+  here("data/ideology/legislative_survey_ideology_party.csv")
 )
 
 # setting priors for ideology scores of parties
-ideology_party <- ideology_rowcall %>%
-  filter(election_year == 2006) %>%
+# using power and rodrigues silveira survey of brazilian legislators (2018)
+party_ideology_survey <- ideology_survey %>%
+  janitor::clean_names() %>%
+  mutate(
+    party = str_to_lower(sigla_partido),
+    election_year = bls_year,
+    ideology = coalesce(ideology, ideo_imputed)
+  ) %>%
+  filter(
+    between(election_year, 2002, 2014) # retain election years
+  ) %>%
   group_by(party) %>%
   summarise(
-    ideology = mean(ideology, na.rm = TRUE),
+    cfscore = mean(ideology, na.rm = TRUE),
     .groups = "drop"
   )
 
@@ -60,8 +67,9 @@ contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 # one possible solution to the sparsity issue:
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
-MM <- ceiling(contrib_matrix/1e12)
-contrib_matrix <- contrib_matrix[rowSums(MM) >= 2, colSums(MM) >= 2]
+MM <- ceiling(contrib_matrix/1e15)
+contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
+contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
@@ -78,30 +86,49 @@ cands.in <- cands %>%
 cfscore_fed_state <- awm(
   cands = cands.in,
   cm = contrib_matrix,
-  iters = 12
+  iters = 12,
+  party_ideology = party_ideology_survey
 )
 
 summary(cfscore_fed_state$cands)
-hist(cfscore_fed_state$cands$cfscore, breaks = 100)
+cfscore_fed_state %>%
+  pluck("cands") %>%
+  ggplot() +
+  geom_histogram(
+    aes(cfscore),
+    fill = "white",
+    col = "black"
+  ) +
+  ggsave(
+    here("figs/histogram_fed_state_cfscore.png")
+  )
 
 cfscore <- cfscore_fed_state$cands %>%
   group_by(party) %>% 
   summarise(
-    cfscore = mean(cfscore, na.rm = TRUE),
+    cfscore_bonica = mean(cfscore, na.rm = TRUE),
     .groups = "drop"
   )
 
 cfscore %>%
-  inner_join(ideology_party, by = "party") %>%
+  inner_join(party_ideology_survey, by = "party") %>%
   ggplot() +
   geom_point(
-    aes(cfscore, ideology)
+    aes(cfscore_bonica, cfscore)
+  ) +
+  ggsave(
+    here("figs/cfscore_campaign_vs_survey.png")
   )
 
 cfscore_fed_state$cands %>%
   ggplot() +
   geom_boxplot(
-    aes(as.factor(party), cfscore)
+    aes(forcats::fct_rev(party), cfscore)
+  ) +
+  coord_flip() +
+  labs(x = "party") +
+  ggsave(
+    here("figs/cfscore_fed_state_by_party.png")
   )
 
 # local estimation --------------------------------------------------------

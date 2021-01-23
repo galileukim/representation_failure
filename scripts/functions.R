@@ -48,7 +48,7 @@ normalize.cols <- function(x,y){
   return(list(x=x,scale.param=scale.param))
 }
 
-awm <- function(cands=NA, cm=NA,iters = 8){
+awm <- function(cands=NA, cm=NA,iters = 8, party_ideology){
     cat('\n Correspondence Analysis: \n')
     print(table(cands[,'party']))
     
@@ -62,26 +62,13 @@ awm <- function(cands=NA, cm=NA,iters = 8){
     contrib.ips.rval <- rep(NA,nrow(contrib_matrix))
 
     ##SETTING INITIAL PARAMTERS AT -1 FOR LEFT AND 1 FOR RIGHT
-    # anchor left and right based on Power and Zucco (2009)
+    # anchor left and right based on Power and rodrigues silveira (2018)
     cands <- cands %>% 
-      mutate(
-        cfscore = case_when(
-          party == "psol" ~ -1.08,
-          party == "pc do b" ~ -0.945,
-          party == "pt" ~ -0.69,
-          party == "psb" ~ - 0.503,
-          party == "pv" ~ -0.453,
-          party == "pdb" ~ -0.388,
-          party == "pps" ~ -0.254,
-          party == "pmdb" ~ 0.0531,
-          party == "psdb" ~ 0.109,
-          party == "ptb" ~ 0.243,
-          party == "pp" ~ 0.409,
-          party == "pr" ~ 0.592,
-          party == "dem" ~ 0.665,
-          T ~ NA_real_
-        )
+      left_join(
+        party_ideology, 
+        by = "party"
       )
+
     ko <- which(is.na(cands[,'cfscore']))
     cands[ko,'cfscore'] <- mean(as.numeric(cands[-ko,'cfscore']), na.rm = T)
     
