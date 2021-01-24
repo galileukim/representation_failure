@@ -1,9 +1,11 @@
 # ==============================================================================
 # validate contribution matrix for fed-state level
+# rerun diagnostics later for pooled
 # ==============================================================================
 library(tidyverse)
 library(Matrix)
 library(here)
+library(data.table)
 
 # ---------------------------------------------------------------------------- #
 load(
@@ -16,6 +18,7 @@ candidate <- fread(
 
 contrib_matrix <- cm$contrib_matrix
 contribution <- cm$contribution
+
 # restrict to individual donors
 # note that only individual donors have 11 digits in their id
 n_individual <- nrow(contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ])
@@ -29,7 +32,6 @@ message(
     " corporate donors in the federal-state level dataset."
 )
 
-# restricting to individual
 contributor_digits <- str_count(rownames(contrib_matrix))
 
 contrib_matrix_individual <- contrib_matrix[contributor_digits == 11, ]
@@ -57,6 +59,7 @@ contrib_entries_individual <- ceiling(contrib_matrix_individual/1e15)
 contrib_entries_corporate <- ceiling(contrib_matrix_corporate/1e15)
 
 # number of donations per contributor (individual)
+# take a closer look at federal candidates later
 rowSums(contrib_entries_individual) %>%
     as_tibble() %>%
     count(value, sort = TRUE)

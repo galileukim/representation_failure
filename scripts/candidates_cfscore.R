@@ -3,7 +3,7 @@
 # 3) try pooling local candidates as well (DONE)
 # 4) make sure that the raw data and code are a-ok, verify contrib matrix (DONE)
 # 5) get a sense of the distribution of no. of donors per candidate and vice
-# versa
+# versa (DONE)
 # 6) power and zucco (legislative surveys): can we get more ideology points
 # for all parties, or even voter surveys, anything we can use to anchor (DONE)
 # NOTE: only 55 percent of candidates receive campaign contributions if we
@@ -36,6 +36,14 @@ load(
 ideology_survey <- fread(
   here("data/ideology/legislative_survey_ideology_party.csv")
 )
+
+candidate <- fread(
+    here("data/candidate/cfscore_estimation/candidate_federal_state.csv"),
+    integer64 = "character"
+) %>%
+  filter(
+    between(election_year, 2006, 2014)
+  )
 
 # setting priors for ideology scores of parties
 # using power and rodrigues silveira survey of brazilian legislators (2018)
@@ -71,7 +79,7 @@ contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
 MM <- ceiling(contrib_matrix/1e15)
-# contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
+contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 
 # filter candidates present in restricted contrib. matrix
@@ -124,6 +132,7 @@ cfscore %>%
   )
 
 cfscore_fed_state$cands %>%
+  filter(position == "deputado federal") %>%
   ggplot() +
   geom_boxplot(
     aes(forcats::fct_rev(party), cfscore)
@@ -132,6 +141,16 @@ cfscore_fed_state$cands %>%
   labs(x = "party") +
   ggsave(
     here("figs/cfscore_fed_state_by_party.png")
+  )
+
+candidate %>%
+  filter(position == "deputado federal") %>%
+  left_join(
+    cfscore_fed_state$cands,
+    by = c("cpf_candidate")
+  ) %>%
+  summarise(
+    coverage = mean(!is.na(cfscore))
   )
 
 # local estimation --------------------------------------------------------
