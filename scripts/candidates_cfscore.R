@@ -71,7 +71,7 @@ contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
 MM <- ceiling(contrib_matrix/1e15)
-contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
+# contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 
 # filter candidates present in restricted contrib. matrix
