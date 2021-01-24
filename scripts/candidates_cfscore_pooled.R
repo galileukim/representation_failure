@@ -19,7 +19,7 @@ theme_set(theme_bw())
 # read-in -----------------------------------------------------------------
 # contribution matrix (federal)
 load(
-  here("data/ideology/contrib_matrix_fed_state_pooled.RData")
+  here("data/ideology/contrib_matrix_pooled.RData")
 )
 
 ideology_survey <- fread(

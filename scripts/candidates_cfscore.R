@@ -6,6 +6,9 @@
 # versa
 # 6) power and zucco (legislative surveys): can we get more ideology points
 # for all parties, or even voter surveys, anything we can use to anchor (DONE)
+# NOTE: only 55 percent of candidates receive campaign contributions if we
+# exclude donations from other candidates, other parties, and self-finance
+# compared to 70 percent if we include those
 
 # set-up ------------------------------------------------------------------
 lapply(

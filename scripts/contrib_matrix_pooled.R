@@ -52,6 +52,9 @@ contributors <- list.files(
             integer64 = "character",
             nThread = parallel::detectCores() - 1
         )
+    ) %>%
+    filter(
+        election_year > 2002
     )
 
 # candidate id's
@@ -66,23 +69,30 @@ contributors <- contributors %>%
     mutate(
         is_projected = if_else(
             type_resource == "recursos de outros candidatos/comites" | 
-            type_resource == "recursos de partido politico"
+            type_resource == "recursos de partido politico" |
+            type_resource == "recursos proprios",
             1, 0
         )
     )
 
 # filter out candidates in contributor data
 # note that 35% of politicians receive no donations
-candidate_id <- candidate_id[candidate_id %in% unique(contributors$cpf_candidate)]
+candidate_in_contributor <- candidate_id[candidate_id %in% unique(contributors$cpf_candidate)]
+
+message(
+    "there are ",
+    100*round(length(candidate_in_contributor)/length(candidate_id), 3),
+    " percent of candidates with contribution data."
+  )
 
 contributors <- contributors %>%
     filter(
-        cpf_candidate %in% candidate_id
+      cpf_candidate %in% candidate_id
     )
 
-candidate <- candidate %>%
+  candidate <- candidate %>%
     filter(
-        cpf_candidate %in% candidate_id
+      cpf_candidate %in% candidate_in_contributor
     )
 
 # construct total donation by candidate

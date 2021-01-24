@@ -103,7 +103,7 @@ candidate <- candidate %>%
 
 # write-out all federal candidates
 candidate %>%
-  filter(election_year %in% seq(2002, 2014, 4)) %>%
+  filter(election_year %in% seq(2006, 2014, 4)) %>%
   fwrite(
     here(
       paste0(
@@ -428,6 +428,9 @@ foreach(i = seq(1, 2)) %do% {
     fread(
       integer64 = "character",
       nThread = parallel::detectCores() - 1
+    ) %>%
+    filter(
+      election_year > 2002
     )
 
   # candidate id's
@@ -441,16 +444,31 @@ foreach(i = seq(1, 2)) %do% {
   contributors <- contributors %>%
     mutate(
       is_projected = if_else(
-        type_resource == "recursos de outros candidatos/comites" | type_resource == "recursos de partido politico",
+        type_resource == "recursos de outros candidatos/comites" | 
+        type_resource == "recursos de partido politico" |
+        type_resource == "recursos proprios",
         1, 0
       )
     )
 
   # note that 69% of politicians receive donations
   candidate_in_contributor <- candidate_id[candidate_id %in% unique(contributors$cpf_candidate)]
-  print(
-    length(candidate_in_contributor)/length(candidate_id)
+  
+  message(
+    "there are ",
+    length(candidate_in_contributor)/length(candidate_id),
+    " percent of candidates with contribution data."
   )
+
+  contributors <- contributors %>%
+    filter(
+      cpf_candidate %in% candidate_id
+    )
+
+  candidate <- candidate %>%
+    filter(
+      cpf_candidate %in% candidate_in_contributor
+    )
 
   # construct total donation by candidate
   # filter out projected and company donations:
