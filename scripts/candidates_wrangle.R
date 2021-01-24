@@ -30,7 +30,7 @@ candidate <- list.files(
     nThread = parallel::detectCores() - 1
   ) %>%
   filter(
-    election_year > 2002 & election_year <= 2014
+    election_year >= 2002 & election_year <= 2014
   )
 
 candidate_deprecated <- list.files(
@@ -103,7 +103,7 @@ candidate <- candidate %>%
 
 # write-out all federal candidates
 candidate %>%
-  filter(election_year %in% seq(2006, 2014, 4)) %>%
+  filter(election_year %in% seq(2002, 2014, 4)) %>%
   fwrite(
     here(
       paste0(
@@ -113,6 +113,11 @@ candidate %>%
   )
 
 # write-out candidates
+candidate <- candidate %>%
+  filter(
+    election_year >= 2004
+  )
+
 for (i in unique(candidate$election_year)) {
   if (i %in% seq(2002, 2014, 4)) {
     # only deputados
@@ -428,15 +433,20 @@ foreach(i = seq(1, 2)) %do% {
     fread(
       integer64 = "character",
       nThread = parallel::detectCores() - 1
-    ) %>%
-    filter(
-      election_year > 2002
     )
 
   # candidate id's
   candidate_id <- candidate %>%
     distinct(cpf_candidate) %>%
     pull(cpf_candidate)
+
+  # remove defective cpf_cnpj_donor entries
+  contributors <- contributors %>% 
+    filter(
+      !(cpf_cnpj_donor %in% c(
+        "00000000000000", "99999999999999", "---", "0", "0000000000000"
+        ))
+    )
 
   # create projected col (following Bonica 2014)
   # projected if a donation by candidates/committees
@@ -456,7 +466,7 @@ foreach(i = seq(1, 2)) %do% {
   
   message(
     "there are ",
-    length(candidate_in_contributor)/length(candidate_id),
+    100*round(length(candidate_in_contributor)/length(candidate_id), 3),
     " percent of candidates with contribution data."
   )
 
@@ -473,6 +483,7 @@ foreach(i = seq(1, 2)) %do% {
   # construct total donation by candidate
   # filter out projected and company donations:
   # individual donors have only 11 digit cpf_cnpj_donor ids
+  # note that around 58 percent of the donations are individual donations
   contribution <- contributors %>%
     filter(
       is_projected != 1

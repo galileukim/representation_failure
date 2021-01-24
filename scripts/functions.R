@@ -70,7 +70,7 @@ awm <- function(cands=NA, cm=NA,iters = 8, party_ideology){
       )
 
     ko <- which(is.na(cands[,'cfscore']))
-    cands[ko,'cfscore'] <- mean(as.numeric(cands[-ko,'cfscore']), na.rm = T)
+    cands[ko,'cfscore'] <- mean(as.numeric(cands$cfscore[-ko], na.rm = T))
     
     # candidate ideal points
     cand.ips <- as.numeric(cands[['cfscore']])

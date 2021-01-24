@@ -59,6 +59,9 @@ contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 # one possible solution to the sparsity issue:
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
+# note that 494 thousand politicians receive personal donations
+# but only 280 thousand politicians receive personal donations
+# from donors who donate to multiple candidates
 MM <- ceiling(contrib_matrix/1e15)
 contrib_matrix <- contrib_matrix[rowSums(MM) > 1,]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]

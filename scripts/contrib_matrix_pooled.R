@@ -52,9 +52,6 @@ contributors <- list.files(
             integer64 = "character",
             nThread = parallel::detectCores() - 1
         )
-    ) %>%
-    filter(
-        election_year > 2002
     )
 
 # candidate id's
