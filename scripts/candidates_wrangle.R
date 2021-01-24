@@ -446,19 +446,11 @@ foreach(i = seq(1, 2)) %do% {
       )
     )
 
-  # filter out candidates in contributor data
-  # note that 35% of politicians receive no donations
-  candidate_id <- candidate_id[candidate_id %in% unique(contributors$cpf_candidate)]
-
-  contributors <- contributors %>%
-    filter(
-      cpf_candidate %in% candidate_id
-    )
-
-  candidate <- candidate %>%
-    filter(
-      cpf_candidate %in% candidate_id
-    )
+  # note that 69% of politicians receive donations
+  candidate_in_contributor <- candidate_id[candidate_id %in% unique(contributors$cpf_candidate)]
+  print(
+    length(candidate_in_contributor)/length(candidate_id)
+  )
 
   # construct total donation by candidate
   # filter out projected and company donations:
@@ -521,7 +513,7 @@ foreach(i = seq(1, 2)) %do% {
   save(
     cm,
     file = paste0(
-      here("data/ideology/contrib_matrix_"), c("fed_state", "local")[i], "_new.RData"
+      here("data/ideology/contrib_matrix_"), c("fed_state", "local")[i], ".RData"
     )
   )
 }
