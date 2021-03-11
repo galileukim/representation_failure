@@ -114,6 +114,7 @@ contribution <- contributors %>%
 
 contributor_ids <- unique(contribution$cpf_cnpj_donor)
 candidate_ids <- unique(contribution$cpf_candidate)
+
 # create contribution matrix
 contrib_matrix <- sparseMatrix(
     i = contribution$cpf_cnpj_donor %>% factor(contributor_ids) %>% as.numeric(),

@@ -75,7 +75,6 @@ contributors <- cm$contribution
 # note that only individual donors have 11 digits in their id
 contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
 
-# one possible solution to the sparsity issue:
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
 MM <- ceiling(contrib_matrix/1e15)

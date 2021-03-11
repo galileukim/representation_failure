@@ -174,7 +174,9 @@ candidate_local_cfscore <- candidate_local_cpf %>%
 
 list(
   x = list(candidate_fed_state_cfscore, candidate_local_cfscore),
-  file = sprintf(here("data/ideology/candidate_ideology_pooled_%s.csv"), c("fed_state", "local"))
+  file = sprintf(
+    here("data/ideology/candidate_ideology_pooled_%s.csv"), c("fed_state", "local")
+  )
 ) %>%
   pwalk(fwrite)
 

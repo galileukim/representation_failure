@@ -8,7 +8,7 @@ library(here)
 candidate <- fread("/home/gali/gdrive/princeton/R/data/tse/data/wrangle/candidate.csv.gz")
 
 cfscore <- fread(
-    here("data/ideology/candidate_ideology_fed_state.csv"),
+    here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
     integer64 = "character"
 ) %>%
     select(cpf_candidate, cfscore)
