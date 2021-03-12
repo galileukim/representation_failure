@@ -6,8 +6,7 @@ lapply(
     "data.table",
     "Matrix",
     "here",
-    "R.utils",
-    "sqldf"
+    "R.utils"
   ),
   require,
   character.only = T
