@@ -63,7 +63,7 @@ censo_state <- fread(
 )
 
 ideology <- fread(
-  here("data/ideology/candidate_ideology_fed_state.csv"),
+  here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
   integer64 = "character"
 )
 
@@ -84,12 +84,12 @@ candidate_blp <- fread(
 
 # cfscore validation
 ideology_local <- fread(
-  here("data/ideology/candidate_ideology_local.csv"),
+  here("data/ideology/candidate_ideology_pooled_local.csv"),
   integer64 = "character"
 )
 
 ideology_fed_state <- fread(
-  here("data/ideology/candidate_ideology_fed_state.csv"),
+  here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
   integer64 = "character"
 )
 
@@ -924,7 +924,7 @@ candidate %>%
     formula = formula(y ~ x + I(x^2)),
     col = "steelblue3"
   ) +
-  geom_point(
+  geom_point( 
     alpha = 0.5,
     col = "steelblue3"
   ) +
@@ -933,7 +933,7 @@ candidate %>%
     ylim = c(-1, 0.5)
   ) +
   ggsave(
-    here("Presentation/figs/ideology/party_ideology_median_wage.pdf")
+    here("../Presentation/figs/ideology/party_ideology_median_wage.pdf")
   )
 
 # party ideology vs. district rural
@@ -977,7 +977,7 @@ candidate %>%
     ylim = c(-1, 0.5)
   ) +
   ggsave(
-    here("Presentation/figs/ideology/party_ideology_rural.pdf")
+    here("../Presentation/figs/ideology/party_ideology_rural.pdf")
   )
 
 # party ideology vs. district education
@@ -1112,8 +1112,8 @@ party_ideology %>%
   ) +
   theme_minimal() +
   coord_cartesian(
-    xlim = c(-1, 0.5),
-    ylim = c(-1, 0.5)
+    xlim = c(-2, 2),
+    ylim = c(-2, 2)
   ) +
   xlab("Ideology (local)") +
   ylab("Ideology (federal)") +
@@ -1167,12 +1167,9 @@ party_ideology %>%
   ) +
   ylab("Federal ideology") +
   xlab("Local ideology") +
-  ggtitle(
-    "Linear regression: federal ideology scores vs. "
-  ) +
   coord_cartesian(
-    xlim = c(-1, 1),
-    ylim = c(-1, 1)
+    xlim = c(-2, 2),
+    ylim = c(-2, 2)
   ) +
   ggsave(
     here("../Presentation/figs/ideology/reg_ideology.png")
