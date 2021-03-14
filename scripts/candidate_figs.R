@@ -1115,8 +1115,8 @@ party_ideology %>%
     xlim = c(-2, 2),
     ylim = c(-2, 2)
   ) +
-  xlab("Ideology (local)") +
-  ylab("Ideology (federal)") +
+  xlab("Policy position (local)") +
+  ylab("Policy position (federal)") +
   theme(
     panel.grid = element_blank(),
     legend.title = element_blank(),
@@ -1202,7 +1202,7 @@ latinobar %>%
   xlab("Year") +
   ylab("Ideology") +
   ggtitle(
-    "Mean ideological score for Latinobarometer respondents"
+    "Mean policy position for Latinobarometer respondents"
   ) +
   ggsave(
     here("Presentation/figs/ideology/reg_electorate_ideology.png")
@@ -1278,8 +1278,10 @@ cands_ideal %>%
   theme(
     legend.position = "bottom"
   ) +
+  xlab("Campaign Contribution Policy Position") +
+  ylab("Row-call Policy Position")
   ggtitle(
-    "Ideology vs. CF-score: Legislative Parties (2003-2010)"
+    "Legislative Policy Positions: Row-Call vs. Campaign Contribution Estimation"
   ) +
   ggsave(
     here("../Presentation/figs/ideology/ideology_cfscore.png")

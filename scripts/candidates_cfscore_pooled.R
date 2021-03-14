@@ -143,14 +143,14 @@ cfscore_pooled$cands %>%
   filter(
     position == "deputado federal"
   ) %>%
-  mutate(
-    party = if_else(
-      party %in% c("pt", "pmdb", "psdb", "psol", "dem", "prb"),
-      party,
-      "minor parties"
-    ) %>%
-      fct_relevel(., "minor parties", after = Inf)
-  ) %>%
+  # mutate(
+  #   party = if_else(
+  #     party %in% c("pt", "pmdb", "psdb", "psol", "dem", "prb"),
+  #     party,
+  #     "minor parties"
+  #   ) %>%
+  #     fct_relevel(., "minor parties", after = Inf)
+  # ) %>%
   ggplot() +
   geom_boxplot(
     aes(
@@ -158,7 +158,7 @@ cfscore_pooled$cands %>%
     )
   ) +
   coord_flip() +
-  labs(x = "", y = "Policy Possition") +
+  labs(x = "", y = "Policy Position") +
   ggsave(
     here("figs/cfscore_pooled_by_party.pdf")
   )

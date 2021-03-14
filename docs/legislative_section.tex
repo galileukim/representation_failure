@@ -72,13 +72,12 @@ For 10,025 of these candidates, we are also able to estimate a measure of their 
 
 Figure \ref{fig:selectiononvalence} provides summary statistics of candidates' observable non-policy  characteristics.\note{following standard practice, we refer to these non-policy attributes as valence.} Overall, we find that incumbents constitute only a fraction of all candidates,but are disproportionately represented among candidates who secure a seat in the chamber. While only about half of the candidates have higher education, this figure increases to about 75\% for elected candidates; women compose only about a quarter of total candidates, but an even far lower percentage of elected candidates; candidates with business or government (bureaucratic) experience  make about 10\% of the pool of candidates, and they represent a significantly lower proportion of elected candidates. %Figure \ref{desccorrels} further highlights these differences for incumbency, education, gender, and age in terms of candidates' vote shares.  
 
-\emph{NEED TO INCLUDE}
-% \begin{figure}[h]
-%    \centering
-%    \includegraphics [height=12cm] {\lyxdot /Presentation/figs/candidate/valence_elected_nonelected.pdf}
-%    \caption{Candidates Observable Non-Policy (Valence) Characteristics.}
-%    \label{fig:selectiononvalence}
-% \end{figure}
+\begin{figure}[h]
+   \centering
+   \includegraphics [height=12cm] {\lyxdot /Presentation/figs/candidate/valence_elected_nonelected.pdf}
+   \caption{Candidates Observable Non-Policy (Valence) Characteristics.}
+   \label{fig:selectiononvalence}
+\end{figure}
 
 %\begin{figure}[h]
 %\begin{center}$
@@ -95,7 +94,7 @@ Figure \ref{fig:selectiononvalence} provides summary statistics of candidates' o
 %\label{desccorrels}
 %\end{figure}
 
-Education, professional experience, gender, and other valence attributes of candidates are clearly important to voters. Psolicy positions candidates adopt matter as well. This has been documented in the U.S.\ and elsewhere.\note{\normalsize See, e.g, \citeasnoun{Canes-Wrone-etal2002}, \citeasnoun{AnsolabehereJones2010}, and \citeasnoun{Iaryczoweretal2018}.} In Brazil, there is growing evidence of the strengthening of programmatic parties and policy position \citeasnoun{Hagopian2009}. These defined policy positions can alter voting behavior, but defining the extent to which voters respond to these changes has been fraught by a set of challenges which we address in this exercise.
+Education, professional experience, gender, and other valence attributes of candidates are clearly important to voters. Policy positions candidates adopt matter as well. This has been documented in the U.S.\ and elsewhere.\note{\normalsize See, e.g, \citeasnoun{Canes-Wrone-etal2002}, \citeasnoun{AnsolabehereJones2010}, and \citeasnoun{Iaryczoweretal2018}.} In Brazil, there is growing evidence of the strengthening of programmatic parties and policy position \citeasnoun{Hagopian2009}. These defined policy positions can alter voting behavior, but defining the extent to which voters respond to these changes has been fraught by a set of challenges which we address in this exercise.
 
 Estimating how voters' preferences for candidates vary with the policies endorsed by legislative candidatess requires a measure of both elected and non-elected candidates' policy positions. Unfortunately, there are currently no available measures of both incumbents' and challengers' policy positions for Brazilian legislative elections.\note{\normalsize \citeasnoun{Zucco2009} and \citeasnoun{ZuccoLauderdale2011} estimate \emph{incumbents}' ideal points using surveys that ask them to place themselves and all the main political parties represented in the legislature on a left-right, ten-point scale. As these scholars note, estimation of incumbents' ideal points via DW-Nominate is challenging due to widespread ``vote-buying'' of legislators through pork-barrel spending and cabinet allocations.} %\note{\normalsize \citeasnoun{Zucco2009}, \citeasnoun{ZuccoLauderdale2011}, and \citeasnoun{PowerZucco2012} estimate \emph{incumbents}' ideal points using surveys that ask them to place themselves and all the main political parties represented in the legislature on a left-right 10-point scale (see \citeasnoun{Power2010}). As these papers suggest, estimation of incumbents' ideal points via DW-Nominate is problematic due to widespread ``vote-buying'' of legislators through pork-barrel spending and cabinet allocations.} 
 To address this gap, we adopt the estimation approach of \citeasnoun{Bonica2014} and produce novel estimates of candidates' policy choices, using micro-level data on campaign contributions for 2004-2014.\note{\normalsize In U.S.\ data, Bonica's estimates closely match ideal point estimates obtained using row call data.} The key assumption is that a contributor's marginal benefit of giving to a candidate is decreasing in the distance between the contributor's ideal policy and the candidate's choice. Through an augmented correspondence analysis, we use these campaign contributions to estimate individual policy positions across candidates, pooling available data for the entire period.\note{Details of the estimation and robustness checks can be found in Appendix \ref{cfcore_appendix}.} The intuition is that candidates who receive campaign donations from the same contributors -- and similar amounts -- should be close with respect to their policy positions.\note{\normalsize While Bonica interprets these estimates as politicians' preferred policies, we  only make the assumption that these are the candidates' policy choices, which could or not correspond to their true preferences.} Conversely, if patterns of contributions are dissimilar, these differences translate into a greater distance in their policy positions.
@@ -123,8 +122,8 @@ Figure \ref{cfscore_hist} presents the candidate-level policy positions estimate
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height=6cm,width=6cm]{\lyxdot ./figs/histogram_pooled_cfscore.pdf}
-  \includegraphics[height=6cm,width=6cm]{\lyxdot ./figs/cfscore_pooled_by_party.pdf}
+  \includegraphics[height=6cm,width=6cm]{\lyxdot /Presentation/figs/ideology/histogram_pooled_cfscore.pdf}
+  \includegraphics[height=6cm,width=6cm]{\lyxdot /Presentation/figs/ideology/cfscore_pooled_by_party.pdf}
   \caption{Distribution of policy positions. Histogram of all individual-level policy possitions (left) and by party (right), highlighting major parties such as PT, PMDB and DEM.}
   \label{fig:cfscore_hist}
 \end{figure} 
@@ -133,77 +132,14 @@ We perform a battery of sanity checks of the external and internal validity of o
 
 In the next section, we use this information on candidates' valence characteristics and policy choices, along with election results, to estimate voters' preferences. Voters can in principle give their vote to any candidate in the district but choose someone with particular attributes. Another alternative that is de facto available to voters is to abstain or to cast a void vote. This ``outside option'' is thus effectively competing with all the candidates for votes. As Figure  \ref{fig:abstention} illustrates, this, in itself, is a formidable alternative. The 29\% average abstention rate and 8.6\% average blank vote rate in what is formally a compulsory voting system provide suggestive evidence that voters are not enthusiastic about the candidates they face.
 
-\emph{NEED TO INCLUDE}
-% \begin{figure}[h]
-%    \centering
-%    \includegraphics [width=12cm] {\lyxdot /Presentation/figs/matifigs/abstention_and_blank_h.jpg}
-%    \caption{Distribution of Abstention and Blank Vote Shares (among registered voters) in Each Municipality, by State (2014).}
-%    \label{fig:abstention}
-% \end{figure}
+\begin{figure}[h]
+   \centering
+   \includegraphics [width=12cm] {\lyxdot /Presentation/figs/matifigs/abstention_and_blank_h.jpg}
+   \caption{Distribution of Abstention and Blank Vote Shares (among registered voters) in Each Municipality, by State (2014).}
+   \label{fig:abstention}
+\end{figure}
 
 \newpage
-
-\begin{table}[H]
-  \centering\begingroup\fontsize{8}{10}\selectfont
-  
-  \begin{tabular}{lrrrrrrrrr}
-  \toprule
-  \multicolumn{1}{c}{ } & \multicolumn{3}{c}{2006} & \multicolumn{3}{c}{2010} & \multicolumn{3}{c}{2014} \\
-  \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
-  State & Full & Sample & Percent & Full & Sample & Percent & Full & Sample & Percent\\
-  \midrule
-  Acre & 50 & 24 & 48.00 & 37 & 20 & 54.05 & 62 & 35 & 56.45\\
-  Alagoas & 82 & 41 & 50.00 & 63 & 33 & 52.38 & 99 & 61 & 61.62\\
-  Amazonas & 78 & 33 & 42.31 & 51 & 30 & 58.82 & 76 & 54 & 71.05\\
-  Amapa & 63 & 31 & 49.21 & 62 & 42 & 67.74 & 102 & 78 & 76.47\\
-  Amapa & 63 & 31 & 49.21 & 62 & 42 & 67.74 & 102 & 78 & 76.47\\
-  \addlinespace
-  Bahia & 216 & 117 & 54.17 & 243 & 144 & 59.26 & 287 & 183 & 63.76\\
-  Ceara & 145 & 70 & 48.28 & 114 & 57 & 50.00 & 190 & 130 & 68.42\\
-  Ceara & 145 & 70 & 48.28 & 114 & 57 & 50.00 & 190 & 130 & 68.42\\
-  Distrito Federal & 106 & 47 & 44.34 & 94 & 39 & 41.49 & 125 & 78 & 62.40\\
-  Espirito Santo & 83 & 57 & 68.67 & 72 & 51 & 70.83 & 147 & 95 & 64.63\\
-  \addlinespace
-  Espirito Santo & 83 & 57 & 68.67 & 72 & 51 & 70.83 & 147 & 95 & 64.63\\
-  Goias & 109 & 64 & 58.72 & 116 & 67 & 57.76 & 93 & 58 & 62.37\\
-  Goias & 109 & 64 & 58.72 & 116 & 67 & 57.76 & 93 & 58 & 62.37\\
-  Maranhao & 153 & 64 & 41.83 & 151 & 84 & 55.63 & 222 & 131 & 59.01\\
-  Maranhao & 153 & 64 & 41.83 & 151 & 84 & 55.63 & 222 & 131 & 59.01\\
-  \addlinespace
-  Minas Gerais & 528 & 284 & 53.79 & 523 & 288 & 55.07 & 595 & 373 & 62.69\\
-  Mato Grosso Do Sul & 70 & 42 & 60.00 & 67 & 44 & 65.67 & 114 & 71 & 62.28\\
-  Mato Grosso & 92 & 59 & 64.13 & 68 & 43 & 63.24 & 86 & 63 & 73.26\\
-  Para & 137 & 69 & 50.36 & 118 & 75 & 63.56 & 170 & 126 & 74.12\\
-  Para & 137 & 69 & 50.36 & 118 & 75 & 63.56 & 170 & 126 & 74.12\\
-  \addlinespace
-  Paraiba & 87 & 53 & 60.92 & 77 & 60 & 77.92 & 90 & 70 & 77.78\\
-  Paraiba & 87 & 53 & 60.92 & 77 & 60 & 77.92 & 90 & 70 & 77.78\\
-  Pernambuco & 198 & 75 & 37.88 & 176 & 66 & 37.50 & 152 & 94 & 61.84\\
-  Piaui & 83 & 44 & 53.01 & 87 & 52 & 59.77 & 85 & 71 & 83.53\\
-  Piaui & 83 & 44 & 53.01 & 87 & 52 & 59.77 & 85 & 71 & 83.53\\
-  \addlinespace
-  Parana & 258 & 134 & 51.94 & 265 & 145 & 54.72 & 287 & 197 & 68.64\\
-  Parana & 258 & 134 & 51.94 & 265 & 145 & 54.72 & 287 & 197 & 68.64\\
-  Rio De Janeiro & 707 & 300 & 42.43 & 751 & 319 & 42.48 & 862 & 530 & 61.48\\
-  Rio Grande Do Norte & 68 & 32 & 47.06 & 60 & 40 & 66.67 & 80 & 56 & 70.00\\
-  Rondonia & 69 & 41 & 59.42 & 71 & 44 & 61.97 & 81 & 60 & 74.07\\
-  \addlinespace
-  Rondonia & 69 & 41 & 59.42 & 71 & 44 & 61.97 & 81 & 60 & 74.07\\
-  Roraima & 81 & 34 & 41.98 & 61 & 34 & 55.74 & 77 & 57 & 74.03\\
-  Rio Grande Do Sul & 279 & 194 & 69.53 & 271 & 154 & 56.83 & 305 & 218 & 71.48\\
-  Santa Catarina & 131 & 84 & 64.12 & 147 & 88 & 59.86 & 124 & 75 & 60.48\\
-  Sergipe & 48 & 29 & 60.42 & 54 & 26 & 48.15 & 72 & 56 & 77.78\\
-  \addlinespace
-  Sao Paulo & 952 & 517 & 54.31 & 1030 & 538 & 52.23 & 1239 & 713 & 57.55\\
-  Sao Paulo & 952 & 517 & 54.31 & 1030 & 538 & 52.23 & 1239 & 713 & 57.55\\
-  Tocantins & 70 & 34 & 48.57 & 40 & 32 & 80.00 & 46 & 35 & 76.09\\
-  NA & 4943 & 2573 & 52.05 & 4869 & 2615 & 53.71 & 5868 & 3768 & 64.21\\
-  \bottomrule
-  \end{tabular}
-  \endgroup{}
-  \caption{sProportion of Candidates with No Missing Data on Covariates (in sample), by State and Electoral Cycle.}
-\label{coverage}
-  \end{table}
 
 {\linespread{1} \small  \bibliographystyle{econometrica}
 \bibliography{\lyxdot choicesetbib}}
