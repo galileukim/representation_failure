@@ -68,7 +68,7 @@ Brazilian elections tend to be candidate-centric rather than party-centric, with
 Understanding the drivers of voters' choices, therefore, requires that we analyze them at the candidate level. %, as opposed to the party-level.
 To that end, we bring together data on candidates running for a seat in the C\^{a}mara dos Deputados in the 2006, 2010, and 2014 elections. In total, across these three elections and all 27 legislative districts, there were 15,698 candidate-years: 4,944 in 2006, 4,887 in 2010, and 5,867 in 2014.  For each candidate running for office, we observe the number of votes obtained by the candidate in each municipality, along with a % \red{(from source)}. For the vast majority of these candidates, we observe a 
  rich set of individual characteristics including their previous professional and political experience, level of education, and gender.\note{\normalsize This information is available from the \emph{Tribunal Superior Eleitoral} (TSE).} %\note{\normalsize \red{For details on coding, and additiional descriptive statistics, see Appendix XXX}} %For more than two thirds of all candidates (10752 across the three elections), we are also able to obtain a measure of their policy position using individual contributions, following the methodology outlined in \citeasnoun{Bonica2014}. We describe this in detail below. 
-For 10,021 candidate-years, we are also able to obtain a measure of their policy positions using individual campaign contributions and the methodology outlined in \citeasnoun{Bonica2014}. We describe this in detail below. 
+For 10,025 of these candidates, we are also able to estimate a measure of their policy positions using individual campaign contributions.
 
 
 
@@ -107,21 +107,37 @@ Figure \ref{fig:selectiononvalence} provides summary statistics of candidates' o
 Education, professional experience, gender, and other valence attributes of candidates are clearly important to voters. Psolicy positions candidates adopt matter as well. This has been documented in the U.S.\ and elsewhere.\note{\normalsize See, e.g, \citeasnoun{Canes-Wrone-etal2002}, \citeasnoun{AnsolabehereJones2010}, and \citeasnoun{Iaryczoweretal2018}.} In Brazil, there is growing evidence of the strengthening of programmatic parties and policy position \citeasnoun{Hagopian2009}. These defined policy positions can alter voting behavior, but defining the extent to which voters respond to these changes has been fraught by a set of challenges which we address in this exercise.
 
 Estimating how voters' preferences for candidates vary with the policies endorsed by legeislative candidatess requires a measure of both elected and non-elected candidates' policy positions. Unfortunately, there are currently no available measures of both incumbents' and challengers' policy positions for Brazilian legislative elections.\note{\normalsize \citeasnoun{Zucco2009} and \citeasnoun{ZuccoLauderdale2011} estimate \emph{incumbents}' ideal points using surveys that ask them to place themselves and all the main political parties represented in the legislature on a left-right, ten-point scale. As these scholars note, estimation of incumbents' ideal points via DW-Nominate is challenging due to widespread ``vote-buying'' of legislators through pork-barrel spending and cabinet allocations.} %\note{\normalsize \citeasnoun{Zucco2009}, \citeasnoun{ZuccoLauderdale2011}, and \citeasnoun{PowerZucco2012} estimate \emph{incumbents}' ideal points using surveys that ask them to place themselves and all the main political parties represented in the legislature on a left-right 10-point scale (see \citeasnoun{Power2010}). As these papers suggest, estimation of incumbents' ideal points via DW-Nominate is problematic due to widespread ``vote-buying'' of legislators through pork-barrel spending and cabinet allocations.} 
-To address this gap, we adopt the estimation approach of \citeasnoun{Bonica2014} and produce our own estimates of candidates' policy choices, using micro-level data on campaign contributions for 2004-2014.\footnote{\normalsize In U.S.\ data, Bonica's estimates closely match ideal point estimates obtained using row call data.} The key assumption is that a contributor's marginal benefit of giving to a particular candidate is decreasing in the distance between the contributor's ideal policy and the candidate's choice. Contributors weakly allocate more money to candidates that are closer to their ideal point, which in turn allows us to rank candidates' positions in the policy space. \note{While Bonica interprets these estimates as politicians' preferred policies, we  only make the assumption that these are the candidates' policy choices, which could or not correspond to their true preferences.} 
+To address this gap, we adopt the estimation approach of \citeasnoun{Bonica2014} and produce novel estimates of candidates' policy choices, using micro-level data on campaign contributions for 2004-2014.\note{\normalsize In U.S.\ data, Bonica's estimates closely match ideal point estimates obtained using row call data.} The key assumption is that a contributor's marginal benefit of giving to a candidate is decreasing in the distance between the contributor's ideal policy and the candidate's choice. Through an augmented correspondence analysis, we use these campaign contributions to estimate individual policy positions across candidates, pooling available data for the entire period.\note{Details of the estimation can be found in Appendix X.} The basic intuition is that candidates who receive campaign donations from the same contributors should be close with respect to their policy positions.\note{\normalsize While Bonica interprets these estimates as politicians' preferred policies, we  only make the assumption that these are the candidates' policy choices, which could or not correspond to their true preferences.} Conversely, if patterns of contributions are dissimilar, these differences translate into a greater distance in their policy positions.
     
-The intuition for estimation is as follows. For each candidate $j$, she receives a vector of campaign donation from a subset of voters. Intuitively, if two political candidates receive donations from the same ssubset of voters, in the same amount, we presume them to be close to each other deologically. Correspondance analysis allowss us to rduce thees multidimensional patterns of campaign contributionss into a one-dimensional Estimation is carried out with an augmented correspondence analysis with a two-way frequency matrix, where rows correspond to unique contributors and columns to candidates.\note{Correspondance analysis is a statistical method that decompoess multidimensional contingency matrices into a set of eigenvectors, usualy } Each element in the matrix is the total amount of contributions made by contributor $i$ to candidate $j$, for the time span of our data. We then perform a singular value decomposition to retrieve ideal points for contributors and recipients.
+% The intuition for estimation is as follows. For each candidate $j$, she receives a vector of campaign donation from a subset of voters. Intuitively, if two political candidates receive donations from the same ssubset of voters, in the same amount, we presume them to be close to each other deologically. Correspondance analysis allowss us to rduce thees multidimensional patterns of campaign contributionss into a one-dimensional Estimation is carried out with an augmented correspondence analysis with a two-way frequency matrix, where rows correspond to unique contributors and columns to candidates.\note{Correspondance analysis is a statistical method that decompoess multidimensional contingency matrices into a set of eigenvectors, usualy } Each element in the matrix is the total amount of contributions made by contributor $i$ to candidate $j$, for the time span of our data. We then perform a singular value decomposition to retrieve ideal points for contributors and recipients.
     
     
 %The intuition for how campaign contributions can be used to estimate politicians' policy positions is similar in spirit to that behind DW-Nominate. % In the latter, $K$ legislators face a sequence of decisions between two alternatives, which are unobservable for the econometrician. If legislators' ideal points were known, we can think of the estimation problem as finding separating hyperplanes (or midpoints in one dimension) that minimize incorrect classification of predicted yay and nay votes. If instead all separating hyperplanes were known, ideal points for each legislator are again found by minimizing classification errors across roll calls. We can think of an algorithm behind DW-Nominate as alternating between one and the other step, until convergence. With campaign contribution data, each contributor takes the role of a roll call, and their contributions of the separating hyperplanes (extended, of course, from a binary choice to a continuum). 
 % The key assumption is that the contributor's marginal benefit of giving to a particular candidate is decreasing in the distance between the contributor's ideal policy and the candidate's choice. This implies that contributors give (weakly) more money to candidates that are closer to their ideal point, which in turn allows us to rank candidates' positions in the policy space. Bonica interprets these estimates as politicians' policy preferences. We only make the assumption that these are the candidates' policy choices, which could or not correspond to their true preferences. %\note{\normalsize Estimation is carried out by a modified correspondence analysis with a two-way frequency matrix, where rows correspond to unique contributors and columns to candidates. Each element in the matrix is the total amount of contributions made by contributor $i$ to candidate $j$, for the time span of our data. We then perform a singular value decomposition to retrieve ideal points for contributors and recipients.}  
 
-To implement this approach, we use data on micro-level dyadic contributions, which include both individual and corporate donations.\note{\normalsize The campaign contribution data is available since the 2002 election, when the TSE mandated the disclosure of electoral campaign contributions to candidates at all levels of government.% Importantly, the dataset uniquely identifies both contributors and recipients.
-}  Since corporations may donate to candidates strategically to secure access, we exclude them from our data and focus on private contributions by non-partisans and non-politicians. In total, we leverage over 650 thousand unique contributions at the federal level, and 3.8 million unique contributions at the local level.%\note{\normalsize We estimate scores separately for local and federal candidates, pooling across electoral cycles.} %\note{\normalsize Federal and state-level elections occur in Brazil every four years, at a two-year interval from municipal elections.}  
-\note{\normalsize Under-the-table donations---\emph{caixa dois}---are common, but previous research using the same data shows that officially-declared donations capture the majority of campaign contributions \cite{BoasHidalgoRichardson2014}.} Because many non-viable candidates tend to receive a small number of contributions, we are forced to drop a sizable number of candidates from the database. Nevertheless, our final sample includes % we are able to provide policy position estimates for more than two thirds of all candidates running for office, totaling
-10,752 candidates across the three elections.\note{\normalsize The candidates for whom we are able to recover policy positions make an overwhelming fraction of all candidates seriously contending for a seat in the  C\^{a}mara dos Deputados---see Figure \ref{fig:smallpeople} in the Appendix. In fact, only 0.02\% of candidates for whom we don't have policy data were ultimately elected. Table \ref{coverage} in the Appendix summarizes coverage of the final dataset by state and electoral cycle.} 
- 
-We perform a battery of sanity checks of the external and internal validity of our candidate policy estimates.  The left panel of figure \ref{fig:sanitycheck1} in the Appendix shows that there is a strong correlation between policy positions within the same party at both the local and federal level. The right panel of the same figure shows that our policy estimates are correlated with the ideology scores estimated by \citeasnoun{Zucco2009}  at the party level. Figure \ref{fig:sanitycheck2}, on the other hand, shows that our estimates capture the leftward ideological shift of voters and parties in the 2000s found in Latinobarometer surveys. %, % \cite{ZuccoLauderdale2011}.  % This is consistent with the findings of \citeasnoun{Bonica2014} for the U.S.
-\red{and here add the new robustness checks gali made for the referee.}
+To implement this approach, we rely on rich micro-level data on dyadic contributions, which include both individual and corporate donations and to which politician they have donated.\note{\normalsize The campaign contribution data is available since the 2000 election, when the TSE mandated the disclosure of electoral campaign contributions to candidates at all levels of government.% Importantly, the dataset uniquely identifies both contributors and recipients.
+}  Since corporations may donate to candidates strategically to secure access, we exclude them from our data and focus on private contributions by non-partisans and non-politicians. In total, we leverage data from over 650 thousand unique contributions at the federal level, and 3.8 million unique contributions at the local level, pooling across electoral cycles.%\note{\normalsize We estimate scores separately for local and federal candidates, pooling across electoral cycles.} %\note{\normalsize Federal and state-level elections occur in Brazil every four years, at a two-year interval from municipal elections.}  
+\note{\normalsize Under-the-table donations---\emph{caixa dois}---are common, but previous research using the same data shows that officially declared donations capture the majority of campaign contributions \cite{BoasHidalgoRichardson2014}.} Because many non-viable candidates tend to receive no individual-level contributions, we are forced to drop a sizable number of candidates from the database. Nevertheless, our final sample includes % we are able to provide policy position estimates for more than two thirds of all candidates running for office, totaling
+10,025 candidates across the three elections.\note{\normalsize The candidates for whom we are able to recover policy positions make an overwhelming fraction of all candidates seriously contending for a seat in the  C\^{a}mara dos Deputados---see Figure \ref{fig:smallpeople} in the Appendix. In fact, only 0.2\% of candidates for whom we don't have policy data were ultimately elected. Table \ref{coverage} in the Appendix summarizes coverage of the final dataset by state and electoral cycle.}
+
+Figure \ref{cfscore_hist}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=8cm,width=12cm]{\lyxdot ./figs/histogram_pooled_cfscore.pdf}
+  \caption{Distribution of policy positions across politicians. Sample includes federal, state and local-level candidates (2000-2014).}
+  \label{fig:cfscore_hist}
+\end{figure}
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=12cm,width=12cm]{\lyxdot ./figs/cfscore_pooled_by_party.pdf}
+  \caption{Distribution of policy positions across parties. Includes major parties such as PT, PMDB and DEM, as well as policy positions for all other parties.}
+  \label{fig:cfscore_hist}
+\end{figure} 
+
+We perform a battery of sanity checks of the external and internal validity of our candidate policy estimates.  The left panel of figure \ref{fig:sanitycheck1} in the Appendix shows that there is a strong correlation between policy positions within the same party at both the local and federal level. The right panel of the same figure shows that our policy estimates are correlated with the ideology scores estimated by \citeasnoun{Zucco2009}  at the party level. Figure \ref{fig:sanitycheck2}, on the other hand, shows that our estimates capture the leftward ideological shift of voters and parties in the 2000s found in Latinobarometer surveys. Figure \ref{fig:cfscore_percentile} shows that our stimates are robust to excluding top 5 and 10 percentile donors. Lastly, figure \ref{fig:campaign_contract} shows that individual level contracts do not correlate with total earmarks by federal deputy.%, % \cite{ZuccoLauderdale2011}.  % This is consistent with the findings of \citeasnoun{Bonica2014} for the U.S.
 
 In the next section, we use this information on candidates' valence characteristics and policy choices, along with election results, to estimate voters' preferences.  The key for doing this, of course, is that voters can in principle give their vote to any candidate in the district but choose someone with particular attributes. Another alternative that is de facto available to voters is to abstain or to cast a void vote. This ``outside option'' is thus effectively competing with all the candidates for votes. As Figure  \ref{fig:abstention} illustrates, this, in itself, is a formidable alternative. The 29\% average abstention rate and 8.6\% average blank vote rate in what is formally a compulsory voting system provide suggestive evidence that voters are not enthusiastic about the candidates they face.
 
@@ -132,6 +148,70 @@ In the next section, we use this information on candidates' valence characterist
 %    \caption{Distribution of Abstention and Blank Vote Shares (among registered voters) in Each Municipality, by State (2014).}
 %    \label{fig:abstention}
 % \end{figure}
+
+\newpage
+
+\begin{table}[H]
+  \centering\begingroup\fontsize{8}{10}\selectfont
+  
+  \begin{tabular}{lrrrrrrrrr}
+  \toprule
+  \multicolumn{1}{c}{ } & \multicolumn{3}{c}{2006} & \multicolumn{3}{c}{2010} & \multicolumn{3}{c}{2014} \\
+  \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  State & Full & Sample & Percent & Full & Sample & Percent & Full & Sample & Percent\\
+  \midrule
+  Acre & 50 & 24 & 48.00 & 37 & 20 & 54.05 & 62 & 35 & 56.45\\
+  Alagoas & 82 & 41 & 50.00 & 63 & 33 & 52.38 & 99 & 61 & 61.62\\
+  Amazonas & 78 & 33 & 42.31 & 51 & 30 & 58.82 & 76 & 54 & 71.05\\
+  Amapa & 63 & 31 & 49.21 & 62 & 42 & 67.74 & 102 & 78 & 76.47\\
+  Amapa & 63 & 31 & 49.21 & 62 & 42 & 67.74 & 102 & 78 & 76.47\\
+  \addlinespace
+  Bahia & 216 & 117 & 54.17 & 243 & 144 & 59.26 & 287 & 183 & 63.76\\
+  Ceara & 145 & 70 & 48.28 & 114 & 57 & 50.00 & 190 & 130 & 68.42\\
+  Ceara & 145 & 70 & 48.28 & 114 & 57 & 50.00 & 190 & 130 & 68.42\\
+  Distrito Federal & 106 & 47 & 44.34 & 94 & 39 & 41.49 & 125 & 78 & 62.40\\
+  Espirito Santo & 83 & 57 & 68.67 & 72 & 51 & 70.83 & 147 & 95 & 64.63\\
+  \addlinespace
+  Espirito Santo & 83 & 57 & 68.67 & 72 & 51 & 70.83 & 147 & 95 & 64.63\\
+  Goias & 109 & 64 & 58.72 & 116 & 67 & 57.76 & 93 & 58 & 62.37\\
+  Goias & 109 & 64 & 58.72 & 116 & 67 & 57.76 & 93 & 58 & 62.37\\
+  Maranhao & 153 & 64 & 41.83 & 151 & 84 & 55.63 & 222 & 131 & 59.01\\
+  Maranhao & 153 & 64 & 41.83 & 151 & 84 & 55.63 & 222 & 131 & 59.01\\
+  \addlinespace
+  Minas Gerais & 528 & 284 & 53.79 & 523 & 288 & 55.07 & 595 & 373 & 62.69\\
+  Mato Grosso Do Sul & 70 & 42 & 60.00 & 67 & 44 & 65.67 & 114 & 71 & 62.28\\
+  Mato Grosso & 92 & 59 & 64.13 & 68 & 43 & 63.24 & 86 & 63 & 73.26\\
+  Para & 137 & 69 & 50.36 & 118 & 75 & 63.56 & 170 & 126 & 74.12\\
+  Para & 137 & 69 & 50.36 & 118 & 75 & 63.56 & 170 & 126 & 74.12\\
+  \addlinespace
+  Paraiba & 87 & 53 & 60.92 & 77 & 60 & 77.92 & 90 & 70 & 77.78\\
+  Paraiba & 87 & 53 & 60.92 & 77 & 60 & 77.92 & 90 & 70 & 77.78\\
+  Pernambuco & 198 & 75 & 37.88 & 176 & 66 & 37.50 & 152 & 94 & 61.84\\
+  Piaui & 83 & 44 & 53.01 & 87 & 52 & 59.77 & 85 & 71 & 83.53\\
+  Piaui & 83 & 44 & 53.01 & 87 & 52 & 59.77 & 85 & 71 & 83.53\\
+  \addlinespace
+  Parana & 258 & 134 & 51.94 & 265 & 145 & 54.72 & 287 & 197 & 68.64\\
+  Parana & 258 & 134 & 51.94 & 265 & 145 & 54.72 & 287 & 197 & 68.64\\
+  Rio De Janeiro & 707 & 300 & 42.43 & 751 & 319 & 42.48 & 862 & 530 & 61.48\\
+  Rio Grande Do Norte & 68 & 32 & 47.06 & 60 & 40 & 66.67 & 80 & 56 & 70.00\\
+  Rondonia & 69 & 41 & 59.42 & 71 & 44 & 61.97 & 81 & 60 & 74.07\\
+  \addlinespace
+  Rondonia & 69 & 41 & 59.42 & 71 & 44 & 61.97 & 81 & 60 & 74.07\\
+  Roraima & 81 & 34 & 41.98 & 61 & 34 & 55.74 & 77 & 57 & 74.03\\
+  Rio Grande Do Sul & 279 & 194 & 69.53 & 271 & 154 & 56.83 & 305 & 218 & 71.48\\
+  Santa Catarina & 131 & 84 & 64.12 & 147 & 88 & 59.86 & 124 & 75 & 60.48\\
+  Sergipe & 48 & 29 & 60.42 & 54 & 26 & 48.15 & 72 & 56 & 77.78\\
+  \addlinespace
+  Sao Paulo & 952 & 517 & 54.31 & 1030 & 538 & 52.23 & 1239 & 713 & 57.55\\
+  Sao Paulo & 952 & 517 & 54.31 & 1030 & 538 & 52.23 & 1239 & 713 & 57.55\\
+  Tocantins & 70 & 34 & 48.57 & 40 & 32 & 80.00 & 46 & 35 & 76.09\\
+  NA & 4943 & 2573 & 52.05 & 4869 & 2615 & 53.71 & 5868 & 3768 & 64.21\\
+  \bottomrule
+  \end{tabular}
+  \endgroup{}
+  \caption{\red{OLD}Proportion of Candidates with No Missing Data on Covariates (in sample), by State and Electoral Cycle.}
+\label{coverage}
+  \end{table}
 
 {\linespread{1} \small  \bibliographystyle{econometrica}
 \bibliography{\lyxdot choicesetbib}}

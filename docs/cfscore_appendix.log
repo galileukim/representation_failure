@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  13 MAR 2021 21:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2019.5.8)  14 MAR 2021 08:17
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.tex"
-(/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.tex
+**"/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.tex"
+(/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.tex
 LaTeX2e <2018-12-01>
 (/usr/local/texlive/2019/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
@@ -306,23 +306,23 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@assumption=\count120
 \c@rem=\count121
 \c@lem=\count122
- (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux)
-\openout1 = `cfscore_documentation.aux'.
+ (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux)
+\openout1 = `cfscore_appendix.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -384,7 +384,7 @@ Package grfext Info: Graphics extension search list:
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 \AtBeginShipoutBox=\box34
-Package hyperref Info: Link coloring OFF on input line 59.
+Package hyperref Info: Link coloring OFF on input line 61.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
  (/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
@@ -392,127 +392,56 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count129
 )
-LaTeX Info: Redefining \ref on input line 59.
-LaTeX Info: Redefining \pageref on input line 59.
-LaTeX Info: Redefining \nameref on input line 59.
- (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out) (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out)
+LaTeX Info: Redefining \ref on input line 61.
+LaTeX Info: Redefining \pageref on input line 61.
+LaTeX Info: Redefining \nameref on input line 61.
+ (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out) (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out)
 \@outlinefile=\write3
-\openout3 = `cfscore_documentation.out'.
+\openout3 = `cfscore_appendix.out'.
 
-
-
-LaTeX Warning: Citation 'Samuels2003' on page 1 undefined on input line 65.
-
-
-LaTeX Warning: Citation 'Desposato2006' on page 1 undefined on input line 65.
-
-
-LaTeX Warning: Citation 'KlavsnjaTitiunik2017' on page 1 undefined on input line 65.
-
-
-LaTeX Warning: Citation 'Mainwaring1995' on page 1 undefined on input line 65.
-
-
-LaTeX Warning: Citation 'Samuels2003' on page 1 undefined on input line 65.
-
-
-LaTeX Warning: Citation 'Mainwaring1995' on page 1 undefined on input line 66.
-
-
-LaTeX Warning: Citation 'Samuels2003' on page 1 undefined on input line 66.
-
-
-LaTeX Warning: Citation 'KlavsnjaTitiunik2017' on page 1 undefined on input line 66.
-
-LaTeX Font Info:    Try loading font information for U+msa on input line 70.
-(/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsa.fd
+LaTeX Font Info:    Try loading font information for U+msa on input line 74.
+ (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 70.
+LaTeX Font Info:    Try loading font information for U+msb on input line 74.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-
-LaTeX Warning: Citation 'Bonica2014' on page 1 undefined on input line 71.
-
-
-LaTeX Warning: Reference `fig:selectiononvalence' on page 1 undefined on input line 82.
-
-
-LaTeX Warning: Citation 'Canes-Wrone-etal2002' on page 1 undefined on input line 107.
-
-
-LaTeX Warning: Citation 'AnsolabehereJones2010' on page 1 undefined on input line 107.
-
-
-LaTeX Warning: Citation 'Iaryczoweretal2018' on page 1 undefined on input line 107.
-
-
-LaTeX Warning: Citation 'Hagopian2009' on page 1 undefined on input line 107.
-
-[1
+) [1
 
 {/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 
-LaTeX Warning: Citation 'Zucco2009' on page 2 undefined on input line 109.
+LaTeX Warning: Reference `fig:cfscore_percentile' on page 2 undefined on input line 118.
 
 
-LaTeX Warning: Citation 'ZuccoLauderdale2011' on page 2 undefined on input line 109.
+LaTeX Warning: Reference `fig:campaign_contract' on page 2 undefined on input line 120.
 
-
-LaTeX Warning: Citation 'Bonica2014' on page 2 undefined on input line 110.
-
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 131.
 [2]
-
-LaTeX Warning: Citation 'BoasHidalgoRichardson2014' on page 3 undefined on input line 120.
-
-
-LaTeX Warning: Reference `fig:smallpeople' on page 3 undefined on input line 121.
-
-
-LaTeX Warning: Reference `coverage' on page 3 undefined on input line 121.
-
-
-LaTeX Warning: Reference `fig:sanitycheck1' on page 3 undefined on input line 123.
-
-
-LaTeX Warning: Citation 'Zucco2009' on page 3 undefined on input line 123.
-
-
-LaTeX Warning: Reference `fig:sanitycheck2' on page 3 undefined on input line 123.
-
-[3]
-
-LaTeX Warning: Reference `fig:abstention' on page 4 undefined on input line 126.
-
-No file cfscore_documentation.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 138.
-[4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 138.
- (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 138.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 138.
-Package rerunfilecheck Info: File `cfscore_documentation.out' has not changed.
-(rerunfilecheck)             Checksum: 5AB7FD1848AAE28085B2352DE2EABA2F;63.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 131.
+ (/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 131.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 131.
+Package rerunfilecheck Info: File `cfscore_appendix.out' has not changed.
+(rerunfilecheck)             Checksum: A015DCDDFD4D43DA0024FF95320B03CA;164.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 138.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 131.
  ) 
 Here is how much of TeX's memory you used:
- 8607 strings out of 492616
- 139392 string characters out of 6129482
- 252277 words of memory out of 5000000
- 12398 multiletter control sequences out of 15000+600000
- 11842 words of font info for 46 fonts, out of 8000000 for 9000
+ 8591 strings out of 492616
+ 139169 string characters out of 6129482
+ 253277 words of memory out of 5000000
+ 12390 multiletter control sequences out of 15000+600000
+ 11195 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,8n,28p,1452b,321s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on "/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.pdf" (4 pages, 102319 bytes).
+ 28i,8n,28p,1645b,321s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "/Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.pdf" (2 pages, 102696 bytes).
 PDF statistics:
- 85 PDF objects out of 1000 (max. 8388607)
- 70 compressed objects within 1 object stream
- 16 named destinations out of 1000 (max. 500000)
- 9 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 77 PDF objects out of 1000 (max. 8388607)
+ 63 compressed objects within 1 object stream
+ 10 named destinations out of 1000 (max. 500000)
+ 25 words of extra memory for PDF output out of 10000 (max. 10000000)
 

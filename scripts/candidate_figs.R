@@ -1165,8 +1165,8 @@ party_ideology %>%
   scale_color_brewer(
     palette = "Dark2"
   ) +
-  ylab("Federal ideology") +
-  xlab("Local ideology") +
+  ylab("Federal-level Party Positions") +
+  xlab("Local-level Party Positions") +
   coord_cartesian(
     xlim = c(-2, 2),
     ylim = c(-2, 2)
@@ -1850,9 +1850,9 @@ table_blp <- candidate_blp %>%
 table_blp <- table_blp %>% 
   add_row(
     state = "total", 
-    `2006`= 3282,
-    `2010` = 3308,
-    `2014` = 4162
+    `2006` = 2573,
+    `2010` = 2615,
+    `2014` = 3768
   ) %>% 
   rename_at(
     vars(as.character(seq(2006, 2014, 4))),
@@ -1887,7 +1887,7 @@ table_cand <- table_full %>%
   )
 
 table_cand %>% 
-  kable(
+  kableExtra::kable(
     format = "latex",
     booktabs  = T,
     col.names = c(
@@ -1897,7 +1897,7 @@ table_cand %>%
       )
     )
   ) %>% 
-  add_header_above(
+  kableExtra::add_header_above(
     c(
       " ",
       "2006" = 3,
@@ -1905,7 +1905,7 @@ table_cand %>%
       "2014" = 3
     )
   ) %>% 
-  kable_styling(
+  kableExtra::kable_styling(
     font_size = 8
   )
 

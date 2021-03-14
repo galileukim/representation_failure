@@ -113,8 +113,13 @@ cfscore_pooled %>%
     fill = "white",
     col = "black"
   ) +
+  scale_y_continuous(
+    breaks = seq(0, 4e4, 1e4),
+    labels = seq(0, 40, 10)
+  ) +
+  labs(x = "CFscore", y = "Total (thousands)") +
   ggsave(
-    here("figs/histogram_pooled_cfscore.png")
+    here("figs/histogram_pooled_cfscore.pdf")
   )
 
 cfscore <- cfscore_pooled$cands %>%
@@ -131,21 +136,31 @@ cfscore %>%
     aes(cfscore_bonica, cfscore)
   ) +
   ggsave(
-    here("figs/cfscore_pooled_campaign_vs_survey.png")
+    here("figs/cfscore_pooled_campaign_vs_survey.pdf")
   )
 
 cfscore_pooled$cands %>%
   filter(
     position == "deputado federal"
   ) %>%
+  mutate(
+    party = if_else(
+      party %in% c("pt", "pmdb", "psdb", "psol", "dem", "prb"),
+      party,
+      "minor parties"
+    ) %>%
+      fct_relevel(., "minor parties", after = Inf)
+  ) %>%
   ggplot() +
   geom_boxplot(
-    aes(forcats::fct_rev(party), cfscore)
+    aes(
+      forcats::fct_rev(party), cfscore
+    )
   ) +
   coord_flip() +
-  labs(x = "party") +
+  labs(x = "", y = "CFscore") +
   ggsave(
-    here("figs/cfscore_pooled_by_party.png")
+    here("figs/cfscore_pooled_by_party.pdf")
   )
 
 # ---------------------------------------------------------------------------- #
@@ -164,7 +179,7 @@ candidate_fed_state_cfscore <- candidate_fed_state_cpf %>%
 candidate_local_cpf <- candidate_local %>%
   distinct(cpf_candidate)
 
-candidate_local_cfscore <- candidate_local_cpf %>%
+candidate_local_cfscore <- candidates_local_cpf %>%
   inner_join(
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
@@ -178,6 +193,8 @@ list(
   )
 ) %>%
   pwalk(fwrite)
+
+save(cfscore_pooled, file = here("data/ideology/cfscore_pooled.RData"))
 
 # export candidates for only federal and state level and local level
 # p[roduce a detailed documentation of the construction of contrib_matrix

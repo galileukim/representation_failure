@@ -2,8 +2,8 @@ PWD /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs
 INPUT /usr/local/texlive/2019/texmf.cnf
 INPUT /usr/local/texlive/2019/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.tex
-OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.log
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.tex
+OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.log
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/base/size12.clo
@@ -97,9 +97,9 @@ INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/float/float.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/float/float.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/carlisle/scalefnt.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/carlisle/scalefnt.sty
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux
-OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux
+OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux
 INPUT /usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
@@ -112,17 +112,17 @@ INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 INPUT /usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.pdf
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.pdf
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+OUTPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
-INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
@@ -152,18 +152,17 @@ INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmti12.tfm
-INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
 INPUT /usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map
-INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.aux
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
-INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_documentation.out
+INPUT /usr/local/texlive/2019/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.aux
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
+INPUT /Users/gali/Dropbox (Personal)/Value_new_Candidates/replication/docs/cfscore_appendix.out
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
 INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
-INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb
+INPUT /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
