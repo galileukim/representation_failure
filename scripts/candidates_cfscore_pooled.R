@@ -117,7 +117,7 @@ cfscore_pooled %>%
     breaks = seq(0, 4e4, 1e4),
     labels = seq(0, 40, 10)
   ) +
-  labs(x = "CFscore", y = "Total (thousands)") +
+  labs(x = "Policy Position", y = "Total (thousands)") +
   ggsave(
     here("figs/histogram_pooled_cfscore.pdf")
   )
@@ -158,7 +158,7 @@ cfscore_pooled$cands %>%
     )
   ) +
   coord_flip() +
-  labs(x = "", y = "CFscore") +
+  labs(x = "", y = "Policy Possition") +
   ggsave(
     here("figs/cfscore_pooled_by_party.pdf")
   )
