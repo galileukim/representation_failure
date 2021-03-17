@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.6.25)  22 JAN 2021 15:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.6.25)  16 MAR 2021 21:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -39,9 +39,9 @@ LaTeX Font Info:    ... okay on input line 3.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 3.
 LaTeX Font Info:    ... okay on input line 3.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 8.
+(Font)              <7> on input line 7.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 8.
+(Font)              <5> on input line 7.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.aux) ) 
@@ -54,7 +54,7 @@ Here is how much of TeX's memory you used:
  36 hyphenation exceptions out of 8191
  23i,9n,17p,259b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on /home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf (1 page, 53910 bytes).
+Output written on /home/gali/Dropbox/Value_new_Candidates/replication/results/validate_unobserved_valence.pdf (1 page, 54068 bytes).
 PDF statistics:
  28 PDF objects out of 1000 (max. 8388607)
  19 compressed objects within 1 object stream

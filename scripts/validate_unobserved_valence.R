@@ -15,9 +15,20 @@ candidate <- read_csv(
     here("data/candidate/fed_state/candidate_2014.csv")
 )
 
+unobserved_valence <- read_csv(
+    here("../estimation/unobserved_valence.csv")
+) %>%
+    rename(
+        cpf_candidate = candidate
+    )
+
 candidate_corruption <- candidate %>%
     left_join(
         corruption,
+        by = c("cpf_candidate")
+    ) %>%
+    left_join(
+        unobserved_valence,
         by = c("cpf_candidate")
     ) %>%
     filter(elected == 1) %>%
@@ -36,7 +47,7 @@ candidate_corruption <- candidate %>%
     )
 
 logit <- glm(
-    corrupt ~ age + female + occupation + edu + incumbent,
+    corrupt ~ log(unobserved_valence) + age + female + occupation + edu + incumbent,
     data = candidate_corruption
 )
 
@@ -46,6 +57,7 @@ stargazer::stargazer(
     title = "Logistic Regression: Unobserved and Observed Valence Characteristics",
     dep.var.labels = "Corruption Indictment",
     covariate.labels = c(
+        "Unobserved Valence",
         "Age",
         "Female",
         "Business",
