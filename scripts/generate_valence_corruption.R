@@ -46,9 +46,10 @@ corruption <- corruption %>%
 # 3) illicit resources
 # 4) illicit behavior
 # 5) votebuying
+# 6) impugnation
 corrupt_candidate <- corruption %>%
     filter(
-        str_detect(cause_indictment, "Ficha limpa|Abuso|Gasto|Conduta|Compra")
+        str_detect(cause_indictment, "Ficha limpa|Impugna|Abuso|Gasto|Conduta|Compra")
     ) %>%
     inner_join(
         candidate_2018,

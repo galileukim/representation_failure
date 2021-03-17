@@ -1,8 +1,10 @@
 
 \documentclass{article}
 \begin{document}
+
+% logistic regression
 \begin{table}[!htbp] \centering 
-  \caption{Logistic Regression: Unobserved and Observed Valence Characteristics} 
+  \caption{Logistic Regression: Observed and Unobserved Valence Characteristics} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lc} 
 \\[-1.8ex]\hline 
@@ -11,40 +13,93 @@
 \cline{2-2} 
 \\[-1.8ex] & Corruption Indictment \\ 
 \hline \\[-1.8ex] 
- Unobserved Valence (Log) & $-$0.004 \\ 
-  & (0.004) \\ 
+ Unobserved Valence & $-$0.017 \\ 
+  & (0.102) \\ 
   & \\ 
- Age & $-$0.0002 \\ 
-  & (0.0005) \\ 
+ Age & 0.020 \\ 
+  & (0.047) \\ 
   & \\ 
- Female & $-$0.003 \\ 
-  & (0.016) \\ 
+ Female & $-$15.485 \\ 
+  & (2,305.309) \\ 
   & \\ 
- Business & 0.037$^{*}$ \\ 
-  & (0.020) \\ 
+ Business & 1.065 \\ 
+  & (1.370) \\ 
   & \\ 
- Government & 0.012 \\ 
-  & (0.034) \\ 
+ Government & $-$14.838 \\ 
+  & (4,634.459) \\ 
   & \\ 
- Technician & 0.005 \\ 
-  & (0.023) \\ 
+ Technician & $-$14.825 \\ 
+  & (3,909.293) \\ 
   & \\ 
- White-Collar & 0.033$^{*}$ \\ 
-  & (0.019) \\ 
+ White-Collar & 2.001 \\ 
+  & (1.475) \\ 
   & \\ 
- Higher Education & $-$0.013 \\ 
-  & (0.049) \\ 
+ Higher Education & 14.496 \\ 
+  & (7,668.066) \\ 
   & \\ 
- Middle School & 0.025 \\ 
-  & (0.050) \\ 
+ Middle School & 16.296 \\ 
+  & (7,668.066) \\ 
   & \\ 
- Incumbency Status & 0.020$^{*}$ \\ 
-  & (0.011) \\ 
+ Incumbency Status & 0.244 \\ 
+  & (1.103) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 424 \\ 
-Log Likelihood & 351.139 \\ 
-Akaike Inf. Crit. & $-$680.279 \\ 
+Observations & 503 \\ 
+Log Likelihood & $-$20.622 \\ 
+Akaike Inf. Crit. & 63.245 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+% linear probability model
+\begin{table}[!htbp] \centering 
+  \caption{Linear Probability Model: Observed and Unobserved Valence Characteristics} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Corruption Indictment \\ 
+\hline \\[-1.8ex] 
+ Unobserved Valence & $-$0.0001 \\ 
+  & (0.001) \\ 
+  & \\ 
+ Age & 0.0001 \\ 
+  & (0.0004) \\ 
+  & \\ 
+ Female & $-$0.007 \\ 
+  & (0.013) \\ 
+  & \\ 
+ Business & 0.013 \\ 
+  & (0.015) \\ 
+  & \\ 
+ Government & $-$0.005 \\ 
+  & (0.026) \\ 
+  & \\ 
+ Technician & $-$0.003 \\ 
+  & (0.021) \\ 
+  & \\ 
+ White-Collar & 0.017 \\ 
+  & (0.014) \\ 
+  & \\ 
+ Higher Education & 0.002 \\ 
+  & (0.040) \\ 
+  & \\ 
+ Middle School & 0.018 \\ 
+  & (0.041) \\ 
+  & \\ 
+ Incumbency Status & 0.002 \\ 
+  & (0.009) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 503 \\ 
+R$^{2}$ & 0.011 \\ 
+Adjusted R$^{2}$ & $-$0.009 \\ 
+Residual Std. Error & 0.089 (df = 492) \\ 
+F Statistic & 0.546 (df = 10; 492) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
