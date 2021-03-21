@@ -8,7 +8,6 @@ corruption <- read_csv(
     distinct(cpf_candidate, candidate_name) %>%
     transmute(
         cpf_candidate,
-        candidate_name,
         corrupt = 1
     )
 
@@ -50,6 +49,59 @@ candidate_corruption <- candidate %>%
         ) %>%
             fct_relevel("other")
     )
+
+candidate_corruption %>%
+    write_csv(
+        here("data/corruption/candidate_corruption_with_valence.csv")
+    )
+
+
+logit_observable <- glm(
+    corrupt ~ age + female + occupation + edu + incumbent,
+    family = "binomial",
+    data = candidate_corruption
+)
+
+linear_observable <- lm(
+    corrupt ~ age + female + occupation + edu + incumbent,
+    data = candidate_corruption
+)
+
+stargazer::stargazer(
+    logit_observable,
+    omit = "Constant|as.factor",
+    title = "Logistic Regression: Observed Valence Characteristics",
+    dep.var.labels = "Corruption Indictment",
+    covariate.labels = c(
+        "Age",
+        "Female",
+        "Business",
+        "Government",
+        "Technician",
+        "White-Collar",
+        "Higher Education",
+        "Middle School",
+        "Incumbency Status"
+    ),
+    type = 'latex')
+
+stargazer::stargazer(
+    linear_observable,
+    omit = "Constant|as.factor",
+    title = "Linear Probability Model: Observed Valence Characteristics",
+    dep.var.labels = "Corruption Indictment",
+    covariate.labels = c(
+        "Age",
+        "Female",
+        "Business",
+        "Government",
+        "Technician",
+        "White-Collar",
+        "Higher Education",
+        "Middle School",
+        "Incumbency Status"
+    ),
+    type = 'latex')
 
 logit <- glm(
     corrupt ~ unobserved_valence + age + female + occupation + edu + incumbent,
