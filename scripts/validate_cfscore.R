@@ -100,6 +100,13 @@ cfscore_fed_validation %>%
     cfscore_robust = mean(cfscore_robust, na.rm = T),
     count = n()
   ) %>%
+  mutate(
+    percentile = recode(
+      percentile, 
+      "5_percentile" = "5th percentile", 
+      "10_percentile" = "10th percentile"
+      )
+  ) %>%
   ggplot(
     aes(cfscore_original, cfscore_robust)
   ) +
@@ -107,6 +114,7 @@ cfscore_fed_validation %>%
   geom_smooth(col = "red3", method = "lm", alpha = 0.1) +
   theme_minimal() +
   facet_wrap(percentile ~ .) +
+  labs(x = "Full Sample Policy Position", "Subset Policy Position") +
   ggsave(
     here::here("../Presentation/figs/ideology/cfscore_robustness.pdf"),
     height = 4,

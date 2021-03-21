@@ -61,12 +61,12 @@ candidate_federal_2006 <- fread(
 campaign <- campaign %>%
   filter(
     str_count(cpf_cnpj_donor) == 11,
-    election_year == 2010
+    election_year %in% c(2006, 2010)
   )
 
 # aggregate campaign contribution by candidate
 campaign_by_candidate <- campaign %>%
-  group_by(cpf_candidate) %>%
+  group_by(cpf_candidate, election_year) %>%
   summarise(
     total_contribution = sum(value_receipt)
   )
@@ -103,22 +103,29 @@ contribution_by_candidate_2010 <- campaign_by_candidate %>%
   )
 
 contribution_by_candidate_2010 %>%
+  filter(
+    total_contribution > 0 & contracts > 0
+  ) %>%
   ggplot(
     aes(contracts, total_contribution)
   ) +
   geom_point(color = "steelblue3") +
   geom_smooth(method = "lm", color = "red") +
   theme_minimal() +
-  labs(x = "total contracts (log-scale)", y = "total donations (log-scale)") +
-  coord_cartesian(ylim = c(10^2, 10^7)) +
+  labs(x = "Total Contracts (log-scale)", y = "Total Donations (log-scale)") +
+  coord_cartesian(
+    xlim = c(10^2, 10^7),
+    ylim = c(10^2, 10^7)
+  ) +
   scale_x_log10(
-    breaks = trans_breaks("log10", function(x) 10^x),
+    breaks = trans_breaks("log10", function(x) 10^(x + 1)),
     labels = trans_format("log10", math_format(10^.x))
   ) +
   scale_y_log10(
-    breaks = trans_breaks("log10", function(x) 10^x),
+    breaks = trans_breaks("log10", function(x) 10^(x+ 1)),
     labels = trans_format("log10", math_format(10^.x))
   ) +
+  facet_wrap(election_year ~ .) +
   ggsave(
     here("../Presentation/figs/ideology/validation_contracts_contribution.pdf")
   )
