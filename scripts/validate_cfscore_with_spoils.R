@@ -52,7 +52,10 @@ candidate_federal_2006 <- fread(
     uf = state,
     party,
     name = candidate_name,
-    cpf_candidate
+    cpf_candidate,
+    edu,
+    incumbent,
+    occupation
   )
 
 # subset to individual donors, non partisan
@@ -110,7 +113,7 @@ contribution_by_candidate_2010 %>%
     aes(contracts, total_contribution)
   ) +
   geom_point(color = "steelblue3") +
-  geom_smooth(method = "lm", color = "red") +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "red") +
   theme_minimal() +
   labs(x = "Total Contracts (log-scale)", y = "Total Donations (log-scale)") +
   coord_cartesian(
