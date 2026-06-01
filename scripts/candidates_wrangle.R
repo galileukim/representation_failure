@@ -4,10 +4,11 @@ lapply(
     "tidyverse",
     "data.table",
     "Matrix",
-    "R.utils",
     "here",
     "rprojroot",
+    "lubridate",
     "foreach",
+    "stringi",
     "doParallel"
   ),
   require,
@@ -16,33 +17,26 @@ lapply(
 
 # electoral data ----------------------------------------------------------
 # candidate data
-candidate <- list.files(
-  "~/gdrive/princeton/R/data/tse/data/wrangle",
-  pattern = "^candidate.csv.gz$",
-  full.names = T
-) %>%
-  gunzip(
-    remove = F,
-    overwrite = T,
-    temporary = T
-  ) %>%
-  fread(
+candidate <- fread(
+    here("data", "tse", "candidate.csv.gz"),
     nThread = parallel::detectCores() - 1
   ) %>%
   filter(
     election_year >= 2002 & election_year <= 2014
   )
 
-candidate_deprecated <- list.files(
-  here("data/candidate"),
-  ".*feb4.csv$",
-  recursive = T,
-  full.names = T
-) %>%
-  map(
-    . %>% fread(integer64 = "character")
-  ) %>%
-  rbindlist(fill = T)
+party_membership <- fread(
+  here("data", "tse", "filiado.csv.gz")
+)
+
+municipio <- read_csv(
+  here("data", "municipal", "municipios.csv"),
+  col_select = c(nome_municipio, cod_ibge_6, codigo_uf)
+)
+
+state <- read_csv(
+  here("data", "municipal", "input", "state_id.csv")
+)
 
 # select vars
 candidate <- candidate %>%
@@ -59,10 +53,12 @@ candidate <- candidate %>%
     candidate_status,
     edu,
     gender,
+    race,
     incumbent,
     elected,
     mun_birth_code,
     mun_birth_name,
+    state_birth_name = state_birth_code,
     outcome,
     party,
     starts_with("times"),
@@ -72,6 +68,66 @@ candidate <- candidate %>%
   ) %>%
   mutate(
     age = election_year - as.integer(birthyear)
+  )
+
+# identify candidates in the party membership data
+# we recover 679.3 thousand records
+# we verify that 84.7% of records match the name exactly
+candidate_party_membership <- party_membership %>%
+  rename(
+    elec_title = electoral_title
+  ) %>%
+  # only retain party members who appear in our candidate data
+  inner_join(
+    candidate %>% distinct(elec_title),
+    by = c("elec_title")
+  ) |>
+  # add start year of party membership 
+  mutate(
+    year_start = year(
+      ymd(date_start)
+    )
+  ) |> 
+  # remove measurement error
+  filter(
+    # the majority of start dates are after 1980 and prior to 2019 which suggests
+    # measurement error prior to that year
+    year_start >= 1980 &
+    year_start <= 2019
+  ) |> 
+  select(-matches("candidate"))
+
+# by candidate and electoral cycle, identify the latest party membership record
+# there are 973.4 thousand distinct electoral titles in the candidate database
+# we recover 518.8 thousand from the party membership data, or 53.3%
+# note: (1) this dataset only includes candidates whose party membership is available
+# (2) there are candidates whose party registration when a candidate
+# does not match the party membership data (19.4%). we drop those.
+candidate_last_membership <- candidate |> 
+  select(
+    cpf_candidate,
+    elec_title,
+    election_year,
+    party_candidate = party
+  ) |> 
+  left_join(
+    candidate_party_membership,
+    by = "elec_title",
+    relationship = "many-to-many"
+  ) |> 
+  arrange(
+    desc(date_start)
+  ) |> 
+  filter(
+    year_start <= election_year &
+    party_candidate == party
+  )  |> 
+  group_by(elec_title, election_year) |> 
+  slice_head(n = 1) |> 
+  ungroup() |> 
+  select(-starts_with("party")) |> 
+  rename(
+    cod_ibge_6_party_membership = mun_name
   )
 
 # coarsen occupation
@@ -100,9 +156,49 @@ candidate <- candidate %>%
     )
   )
 
+# fix race: race is self-identified and only available post-2014
+# this has been cross-validated with the original race data
+# due to inconsistencies in coding of race of candidates
+candidate <- candidate %>%
+  mutate(
+    race = as.character(race),
+    race = case_when(
+      race == 3 ~ "white",
+      race == 1 ~ "black_or_brown",
+      race == 9 ~ "black_or_brown",
+      race %in% c(5, 7) ~ "other",
+      race == -4 ~ NA,
+      T ~ race
+    )
+  )
+
+# fix birth municipality and ensure that we use cod_ibge_6
+# combine municipio data with state data
+municipio <- municipio |> 
+  left_join(
+    state,
+    by = c("codigo_uf" = "state_id")
+  ) |> 
+  # remove special characters and convert string to lower
+  transmute(
+    cod_ibge_6_birth = cod_ibge_6,
+    mun_birth_name = stri_trans_general(
+        nome_municipio, "latin-ascii"
+      ) |> 
+      str_to_lower(),
+    state_birth_name = str_to_lower(state)
+  )
+
+# join cod_ibge_6_birth: municipality of birth
+# we fail to join 81693/1358159 = 6% of our sample
+candidate_clean <- candidate |> 
+  left_join(
+    municipio,
+    by = c("mun_birth_name", "state_birth_name")
+  )
 
 # write-out all federal candidates
-candidate %>%
+candidate_clean %>%
   filter(election_year %in% seq(2002, 2014, 4)) %>%
   fwrite(
     here(
@@ -113,15 +209,15 @@ candidate %>%
   )
 
 # write-out candidates
-candidate <- candidate %>%
+candidate_clean <- candidate %>%
   filter(
     election_year >= 2004
   )
 
-for (i in unique(candidate$election_year)) {
+for (i in unique(candidate_clean$election_year)) {
   if (i %in% seq(2002, 2014, 4)) {
     # only deputados
-    candidate %>%
+    candidate_clean %>%
       filter(election_year == i, position == "deputado federal") %>%
       fwrite(
         here(
@@ -131,7 +227,7 @@ for (i in unique(candidate$election_year)) {
         )
       )
   } else {
-    candidate %>%
+    candidate_clean %>%
       filter(election_year == i) %>%
       fwrite(
         here(
@@ -142,6 +238,13 @@ for (i in unique(candidate$election_year)) {
       )
   }
 }
+
+# write-out party membership
+# 665.0 thousand records found
+candidate_last_membership |>
+  fwrite(
+    here("data", "candidate", "candidate_party_membership.csv.gz")
+  )
 
 # ---------------------------------------------------------------------------- #
 # electoral data
@@ -272,137 +375,6 @@ for (i in unique(coalition$election_year)) {
     )
 }
 
-# municipal table ---------------------------------------------------------
-censo <- list.files(
-  "~/princeton/R/data/censo_br/data/wrangle/ibge/",
-  "censo_mun_[20]\\d+",
-  full.names = T
-) %>%
-  map_dfr(
-    function(x) {
-      fread(x) %>%
-        select(
-          cod_ibge_6,
-          year,
-          pop,
-          median_wage,
-          employed = worked,
-          lower_school,
-          middle_school,
-          high_school,
-          higher_education,
-          water,
-          domestic_light = light,
-          sanitation,
-          garbage,
-          lit_rate,
-          rural,
-          age,
-          female
-        ) %>%
-        mutate_if(
-          is.double,
-          funs(. * 100)
-        ) %>%
-        mutate(
-          median_wage = median_wage / 100,
-          age = age / 100
-        )
-    }
-  )
-
-# join state id's
-state_id <- election %>%
-  mutate(
-    state_id = str_sub(cod_ibge_6, 1, 2)
-  ) %>%
-  filter(
-    !is.na(state_id)
-  ) %>%
-  distinct(
-    state_id, state
-  )
-
-censo <- censo %>%
-  mutate(
-    state_id = str_sub(cod_ibge_6, 1, 2)
-  ) %>%
-  left_join(
-    state_id,
-    by = c("state_id")
-  ) %>%
-  select(
-    -state_id
-  )
-
-# budget
-finbra <- list.files(
-  "~/princeton/R/data/finbra/data/wrangle",
-  "^receita_mun.csv$",
-  full.names = T
-) %>%
-  fread(
-    colClasses = c("cod_ibge_6" = "character")
-  ) %>%
-  filter(
-    year %in% seq(2002, 2016, 4),
-    transf_intergov_da_uniao > 0
-  ) %>%
-  transmute(
-    cod_ibge_6,
-    year,
-    log_budget = log(rec_orcamentaria),
-    log_fed_transfer = log(transf_intergov_da_uniao)
-  )
-
-# cast cols
-finbra <- as.data.table(finbra) %>%
-  dcast(
-    cod_ibge_6 ~ year,
-    value.var = c("log_budget", "log_fed_transfer")
-  )
-
-# join data
-municipal <- censo %>%
-  left_join(
-    finbra %>%
-      mutate(
-        cod_ibge_6 = as.integer(cod_ibge_6)
-      ),
-    by = "cod_ibge_6"
-  ) %>%
-  select(
-    order(colnames(.))
-  ) %>%
-  select(
-    cod_ibge_6,
-    state,
-    everything()
-  )
-
-# write-out
-municipal %>%
-  fwrite(
-    here("data/municipal/municipal_data.csv")
-  )
-
-# state table -------------------------------------------------------------
-state <- list.files(
-  "~/princeton/R/data/censo_br/data/wrangle/",
-  "^censo_state",
-  recursive = T,
-  full.names = T
-) %>%
-  map_dfr(
-    . %>%
-      fread()
-  )
-
-state %>%
-  fwrite(
-    here("data/state/census_state.csv")
-  )
-
 # cfscore -----------------------------------------------------------------
 # extract candidates by level (federal/state and local)
 # note that we use all candidates (make sure we are not using a subset)
@@ -500,23 +472,6 @@ foreach(i = seq(1, 2)) %do% {
       total_contrib = sum(value_receipt)
     ) %>%
     ungroup()
-
-  # create categories of donations
-  # contribution <- contribution %>%
-  #   mutate(
-  #     total_contrib = case_when(
-  #       between(total_contrib, 0, 1000) ~ 1,
-  #       between(total_contrib, 1001, 2000) ~ 2,
-  #       between(total_contrib, 2001, 3000) ~ 3,
-  #       between(total_contrib, 3001, 4000) ~ 4,
-  #       between(total_contrib, 4001, 5000) ~ 5,
-  #       between(total_contrib, 5001, 6000) ~ 6,
-  #       between(total_contrib, 6001, 7000) ~ 7,
-  #       between(total_contrib, 7001, 8000) ~ 8,
-  #       between(total_contrib, 8001, 9000) ~ 9,
-  #       T ~ 10
-  #     )
-  #   )
 
   contributor_ids <- unique(contribution$cpf_cnpj_donor)
   candidate_ids <- unique(contribution$cpf_candidate)
