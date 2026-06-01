@@ -1,4 +1,3 @@
-
 # set-up ------------------------------------------------------------------
 lapply(
   c(
@@ -117,10 +116,11 @@ cfscore_pooled %>%
     breaks = seq(0, 4e4, 1e4),
     labels = seq(0, 40, 10)
   ) +
-  labs(x = "Policy Position", y = "Total (thousands)") +
-  ggsave(
-    here("figs/histogram_pooled_cfscore.pdf")
-  )
+  labs(x = "Policy Position", y = "Total (thousands)")
+
+ggsave(
+  here("figs/histogram_pooled_cfscore.pdf")
+)
 
 cfscore <- cfscore_pooled$cands %>%
   group_by(party) %>%
@@ -134,10 +134,12 @@ cfscore %>%
   ggplot() +
   geom_point(
     aes(cfscore_bonica, cfscore)
-  ) +
-  ggsave(
-    here("figs/cfscore_pooled_campaign_vs_survey.pdf")
   )
+
+
+ggsave(
+  here("figs/cfscore_pooled_campaign_vs_survey.pdf")
+)
 
 cfscore_pooled$cands %>%
   filter(
@@ -154,14 +156,17 @@ cfscore_pooled$cands %>%
   ggplot() +
   geom_boxplot(
     aes(
-      forcats::fct_rev(party), cfscore
+      forcats::fct_rev(party),
+      cfscore
     )
   ) +
   coord_flip() +
-  labs(x = "", y = "Policy Position") +
-  ggsave(
-    here("figs/cfscore_pooled_by_party.pdf")
-  )
+  labs(x = "", y = "Policy Position")
+
+
+ggsave(
+  here("figs/cfscore_pooled_by_party.pdf")
+)
 
 # ---------------------------------------------------------------------------- #
 message("generate local and federal candidate tables")
@@ -179,7 +184,7 @@ candidate_fed_state_cfscore <- candidate_fed_state_cpf %>%
 candidate_local_cpf <- candidate_local %>%
   distinct(cpf_candidate)
 
-candidate_local_cfscore <- candidates_local_cpf %>%
+candidate_local_cfscore <- candidate_local_cpf %>%
   inner_join(
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
@@ -189,7 +194,8 @@ candidate_local_cfscore <- candidates_local_cpf %>%
 list(
   x = list(candidate_fed_state_cfscore, candidate_local_cfscore),
   file = sprintf(
-    here("data/output/ideology/candidate_ideology_pooled_%s.csv"), c("fed_state", "local")
+    here("data/output/ideology/candidate_ideology_pooled_%s.csv"),
+    c("fed_state", "local")
   )
 ) %>%
   pwalk(fwrite)
@@ -197,4 +203,4 @@ list(
 save(cfscore_pooled, file = here("data/output/ideology/cfscore_pooled.RData"))
 
 # export candidates for only federal and state level and local level
-# p[roduce a detailed documentation of the construction of contrib_matrix
+# produce a detailed documentation of the construction of contrib_matrix

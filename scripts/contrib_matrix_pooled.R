@@ -20,7 +20,7 @@ lapply(
 
 # import all candidates
 candidate <- paste0(
-    here("data/output/candidate/"),
+    "data/output/candidate/",
     c("cfscore_estimation", "local")
 ) %>%
     map(
