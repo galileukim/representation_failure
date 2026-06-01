@@ -55,7 +55,6 @@ candidate_corruption %>%
         here("data/output/corruption/candidate_corruption_with_valence.csv")
     )
 
-
 logit_observable <- glm(
     corrupt ~ age + female + occupation + edu + incumbent,
     family = "binomial",

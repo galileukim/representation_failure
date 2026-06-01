@@ -251,11 +251,6 @@ election <- list.files(
   pattern = "^election.csv.gz$",
   full.names = T
 ) %>%
-  gunzip(
-    remove = F,
-    overwrite = T,
-    temporary = T
-  ) %>%
   fread(
     nThread = parallel::detectCores() - 1
   ) %>%

@@ -53,7 +53,7 @@ corrupt_candidate <- corruption %>%
     ) %>%
     inner_join(
         candidate_2018,
-        on = "candidate_seq"
+        by = "candidate_seq"
     )
 
 corrupt_candidate <- corrupt_candidate %>%
