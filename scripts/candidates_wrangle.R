@@ -325,7 +325,7 @@ for (i in unique(vote$election_year)) {
 
 # vote for legend
 coalition <- list.files(
-  "~/princeton/R/data/tse/data/wrangle/",
+  "data/tse",
   "party.csv.gz",
   full.names = T
 ) %>%
