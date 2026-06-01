@@ -329,11 +329,6 @@ coalition <- list.files(
   "party.csv.gz",
   full.names = T
 ) %>%
-  gunzip(
-    remove = F,
-    temporary = T,
-    overwrite = T
-  ) %>%
   fread()
 
 # extract deputados federais
@@ -354,7 +349,6 @@ coalition <- coalition %>%
     election_year,
     cod_ibge_6,
     coalition,
-    coalition_name,
     coalition_type
   ) %>%
   summarise(
