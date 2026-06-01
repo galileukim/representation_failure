@@ -19,7 +19,7 @@ theme_set(theme_minimal())
 
 # read-in -----------------------------------------------------------------
 candidate <- list.files(
-  here("data/candidate/fed_state"),
+  here("data/output/candidate/fed_state"),
   pattern = "^candidate",
   full.names = T
 ) %>% 
@@ -37,7 +37,7 @@ candidate <- list.files(
 # note: filter candidates who have been deferred
 
 election <- list.files(
-  here("data/election/"),
+  here("data/output/election/"),
   "^election",
   full.names = T
 ) %>% 
@@ -51,7 +51,7 @@ election <- list.files(
 
 # municipal census
 censo_mun <- fread(
-  here("data/municipal/municipal_data.csv")
+  here("data/output/municipal/municipal_data.csv")
 ) %>% 
   filter(
     year == 2010
@@ -59,11 +59,11 @@ censo_mun <- fread(
 
 # state census
 censo_state <- fread(
-  here("data/state/census_state.csv")
+  here("data/input/state/census_state.csv")
 )
 
 ideology <- fread(
-  here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
+  here("data/output/ideology/candidate_ideology_pooled_fed_state.csv"),
   integer64 = "character"
 )
 
@@ -84,17 +84,17 @@ candidate_blp <- fread(
 
 # cfscore validation
 ideology_local <- fread(
-  here("data/ideology/candidate_ideology_pooled_local.csv"),
+  here("data/output/ideology/candidate_ideology_pooled_local.csv"),
   integer64 = "character"
 )
 
 ideology_fed_state <- fread(
-  here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
+  here("data/output/ideology/candidate_ideology_pooled_fed_state.csv"),
   integer64 = "character"
 )
 
 candidate_local <- list.files(
-  here("data/candidate/local"),
+  here("data/output/candidate/local"),
   pattern = "^candidate",
   full.names = T
 ) %>% 
@@ -108,7 +108,7 @@ candidate_local <- list.files(
   )
 
 candidate_fed_state <- list.files(
-  here("data/candidate/fed_state"),
+  here("data/output/candidate/fed_state"),
   pattern = "^candidate",
   full.names = T
 ) %>% 
@@ -173,7 +173,7 @@ party_ideology <- inner_join(
 
 # campaign
 campaign <- list.files(
-  here("data/contribution/"),
+  here("data/input/contribution/"),
   "^campaign",
   full.names = T
 ) %>% 
@@ -190,7 +190,7 @@ campaign <- list.files(
 
 # latinobarometer
 latinobar <- fread(
-  here("data/ideology/latinobarometer_ideology.csv")
+  here("data/input/ideology/latinobarometer_ideology.csv")
 )
 
 latinobar <- latinobar %>% 
@@ -212,13 +212,13 @@ latinobar <- latinobar %>%
   )
 
 states <- fread(
-  here("data/identifiers/state_names.csv")
+  here("data/input/identifiers/state_names.csv")
 )
 
 # obtain legislative ideal points from Zucco and Lauderdale (2011)
 # Ideal Point Estimates of Brazilian Legislators (2003-2010)
 legislative <- fread(
-  here("data/ideology/legislative_ideology.csv")
+  here("data/output/ideology/legislative_ideology.csv")
 ) %>% 
   rename(
     name = candidate_name
@@ -226,7 +226,7 @@ legislative <- fread(
 
 # fix deputado names
 deputado <- fread(
-  here("data/candidate/deputados.csv")
+  here("data/input/candidate/deputados.csv")
 ) 
 
 # fix cols for deputado

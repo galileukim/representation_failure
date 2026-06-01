@@ -2,18 +2,18 @@ library(data.table)
 library(tidyverse)
 
 candidate <- fread(
-    here("data/candidate/cfscore_estimation/candidate_federal_state.csv"),
+    here("data/output/candidate/cfscore_estimation/candidate_federal_state.csv"),
     colClasses = "character"
 )
 
 missing_2010 <- fread(
-    here("data/candidate/missing/missing2010.csv"),
+    here("data/input/candidate/missing/missing2010.csv"),
     colClasses = "character"
 ) %>%
     distinct(candidate_name)
 
 missing_2014 <- fread(
-    here("data/candidate/missing/missing2014.csv"),
+    here("data/input/candidate/missing/missing2014.csv"),
     colClasses = "character"
 ) %>%
     distinct(candidate_name) %>%
@@ -46,14 +46,14 @@ candidate_missing_2014 <- candidate %>%
     select(cpf_candidate, candidate_name)
 
 # fix election tables
-election_2010 <- fread(here("data/election/election_2010.csv"), colClasses = "character")
-election_2014 <- fread(here("data/election/election_2014.csv"), colClasses = "character")
+election_2010 <- fread(here("data/output/election/election_2010.csv"), colClasses = "character")
+election_2014 <- fread(here("data/output/election/election_2014.csv"), colClasses = "character")
 
 election_2010[candidate_missing_2010, on = c("candidate_name"), cpf_candidate := i.cpf_candidate]
 election_2014[candidate_missing_2014, on = c("candidate_name"), cpf_candidate := i.cpf_candidate]
 
 election_2010 %>%
-    fwrite(here("data/election/election_2010.csv"))
+    fwrite(here("data/output/election/election_2010.csv"))
 
 election_2014 %>%
-    fwrite(here("data/election/election_2014.csv"))
+    fwrite(here("data/output/election/election_2014.csv"))

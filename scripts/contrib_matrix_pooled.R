@@ -20,7 +20,7 @@ lapply(
 
 # import all candidates
 candidate <- paste0(
-    here("data/candidate/"),
+    here("data/output/candidate/"),
     c("cfscore_estimation", "local")
 ) %>%
     map(
@@ -42,7 +42,7 @@ candidate <- paste0(
 
 # contribution data
 contributors <- list.files(
-    here("data/contribution/"),
+    here("data/input/contribution/"),
     pattern = "^campaign.*\\.csv.gz$",
     full.names = T
 ) %>%
@@ -136,5 +136,5 @@ cm <- list(
 # save contribution matrix
 save(
     cm,
-    file =  here("data/ideology/contrib_matrix_pooled.RData")
+    file =  here("data/output/ideology/contrib_matrix_pooled.RData")
 )

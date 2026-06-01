@@ -19,20 +19,20 @@ theme_set(theme_bw())
 # read-in -----------------------------------------------------------------
 # contribution matrix (federal)
 load(
-  here("data/ideology/contrib_matrix_pooled.RData")
+  here("data/output/ideology/contrib_matrix_pooled.RData")
 )
 
 ideology_survey <- fread(
-  here("data/ideology/legislative_survey_ideology_party.csv")
+  here("data/input/ideology/legislative_survey_ideology_party.csv")
 )
 
 candidate_fed_state <- fread(
-  here("data/candidate/cfscore_estimation/candidate_federal_state.csv"),
+  here("data/output/candidate/cfscore_estimation/candidate_federal_state.csv"),
   integer64 = "character"
 )
 
 candidate_local <- list.files(
-  here("data/candidate/local"),
+  here("data/output/candidate/local"),
   pattern = "^candidate",
   full.names = T
 ) %>%
@@ -189,12 +189,12 @@ candidate_local_cfscore <- candidates_local_cpf %>%
 list(
   x = list(candidate_fed_state_cfscore, candidate_local_cfscore),
   file = sprintf(
-    here("data/ideology/candidate_ideology_pooled_%s.csv"), c("fed_state", "local")
+    here("data/output/ideology/candidate_ideology_pooled_%s.csv"), c("fed_state", "local")
   )
 ) %>%
   pwalk(fwrite)
 
-save(cfscore_pooled, file = here("data/ideology/cfscore_pooled.RData"))
+save(cfscore_pooled, file = here("data/output/ideology/cfscore_pooled.RData"))
 
 # export candidates for only federal and state level and local level
 # p[roduce a detailed documentation of the construction of contrib_matrix

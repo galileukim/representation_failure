@@ -17,13 +17,13 @@ set.seed(1789)
 # read-in -----------------------------------------------------------------
 # contribution matrix (federal)
 load(
-  here("data/ideology/contrib_matrix_pooled.RData")
+  here("data/output/ideology/contrib_matrix_pooled.RData")
 )
 
 # setting priors for ideology scores of parties
 # using power and rodrigues silveira survey of brazilian legislators (2018)
 ideology_survey <- fread(
-  here("data/ideology/legislative_survey_ideology_party.csv")
+  here("data/input/ideology/legislative_survey_ideology_party.csv")
 )
 
 party_ideology_survey <- ideology_survey %>%
@@ -114,7 +114,7 @@ cfscore_robust_cands <- cfscore_robust %>%
     )
 
 file_output <- sprintf(
-  here("data/ideology/candidate_ideology_pooled_%s_percentile.csv"),
+  here("data/output/ideology/candidate_ideology_pooled_%s_percentile.csv"),
   c("5", "10")
 )
 
@@ -123,4 +123,4 @@ pwalk(
     fwrite
   )
 
-save(cfscore_robust, file = here("data/ideology/cfscore_pooled_robustness.RData"))
+save(cfscore_robust, file = here("data/output/ideology/cfscore_pooled_robustness.RData"))

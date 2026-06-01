@@ -5,10 +5,10 @@ library(data.table)
 library(tidyverse)
 library(here)
 
-candidate <- fread("/home/gali/gdrive/princeton/R/data/tse/data/wrangle/candidate.csv.gz")
+candidate <- fread(here("data/input/tse/candidate.csv.gz"))
 
 cfscore <- fread(
-    here("data/ideology/candidate_ideology_pooled_fed_state.csv"),
+    here("data/output/ideology/candidate_ideology_pooled_fed_state.csv"),
     integer64 = "character"
 ) %>%
     select(cpf_candidate, cfscore)
@@ -75,5 +75,5 @@ candidate_state_level <- candidate_state_level %>%
 
 candidate_state_level %>%
     fwrite(
-        here("data/ideology/candidate_ideology_only_state.csv")
+        here("data/output/ideology/candidate_ideology_only_state.csv")
     )

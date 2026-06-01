@@ -35,7 +35,7 @@ gg_summary <- function(data, x, y, fun = "mean", size = 2, geom = "point", color
 # ---------------------------------------------------------------------------- #
 # federal candidates
 cfscore_fed <- fread(
-  "data/ideology/candidate_ideology_pooled_fed_state.csv",
+  here("data/output/ideology/candidate_ideology_pooled_fed_state.csv"),
   integer64 = "character"
 ) %>%
   select(
@@ -44,7 +44,7 @@ cfscore_fed <- fread(
   )
 
 robustness_files <- sprintf(
-  here("data/ideology/candidate_ideology_pooled_%s_percentile.csv"),
+  here("data/output/ideology/candidate_ideology_pooled_%s_percentile.csv"),
   c("5", "10")
 ) %>%
   set_names(c("5_percentile", "10_percentile"))
@@ -63,7 +63,7 @@ cfscore_fed_robust <- map_dfr(
 
 # demonstrate intuition of the cfscores
 candidate_cpf <- list.files(
-  here("data/candidate/fed_state"),
+  here("data/output/candidate/fed_state"),
   pattern = "^candidate",
   full.names = TRUE
 ) %>%
@@ -123,7 +123,7 @@ cfscore_fed_validation %>%
 
 # ---------------------------------------------------------------------------- #
 election <- list.files(
-  here("data/election/"),
+  here("data/output/election/"),
   "^election",
   full.names = T
 ) %>% 

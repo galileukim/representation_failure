@@ -42,11 +42,11 @@ standardize_chars <- function(data) {
 
 # ---------------------------------------------------------------------------- #
 campaign <- fread(
-  here("data/contribution/campaign_fed_state.csv.gz")
+  here("data/input/contribution/campaign_fed_state.csv.gz")
 )
 
 candidate_federal_2006 <- fread(
-  here("data/candidate/fed_state/candidate_2006.csv")
+  here("data/output/candidate/fed_state/candidate_2006.csv")
 ) %>%
   select(
     uf = state,
@@ -75,7 +75,7 @@ campaign_by_candidate <- campaign %>%
   )
 
 load(
-  here::here("data/spoils_of_victory/spoils_of_victory_replication_data.RData")
+  here("data/input/spoils_of_victory/spoils_of_victory_replication_data.RData")
 )
 
 # extract deputados federais and

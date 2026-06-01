@@ -121,5 +121,5 @@ municipal <- censo %>%
 # write-out
 municipal %>%
   fwrite(
-    here("data/municipal/municipal_data.csv")
+    here("data", "output", "municipal", "municipal_data.csv")
   )

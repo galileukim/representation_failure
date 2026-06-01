@@ -9,11 +9,11 @@ library(data.table)
 
 # ---------------------------------------------------------------------------- #
 load(
-  here("data/ideology/contrib_matrix_fed_state.RData")
+  here("data/output/ideology/contrib_matrix_fed_state.RData")
 )
 
 candidate <- fread(
-    here("data/candidate/cfscore_estimation/candidate_federal_state.csv")
+    here("data/output/candidate/cfscore_estimation/candidate_federal_state.csv")
 )
 
 contrib_matrix <- cm$contrib_matrix

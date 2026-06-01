@@ -3,7 +3,7 @@ library(data.table)
 library(here)
 
 corruption_files <- list.files(
-    here("data/corruption"),
+    here("data/input/corruption"),
     pattern = "^motivo_cassacao",
     full.names = TRUE
 )
@@ -15,12 +15,12 @@ corruption <- fread(
 )
 
 candidate_2018 <- fread(
-        here('data/corruption/candidate_2018.csv'),
+        here('data/input/corruption/candidate_2018.csv'),
         integer64 = "character"
     )
 
 candidate_2014 <- fread(
-    here("data/candidate/fed_state/candidate_2014.csv")
+    here("data/output/candidate/fed_state/candidate_2014.csv")
 )
 
 candidate_2018 <- candidate_2018 %>%
@@ -66,5 +66,5 @@ corrupt_candidate <- corrupt_candidate %>%
 
 corrupt_candidate %>%
     fwrite(
-        here("data/corruption/corrupt_candidate_2018.csv")
+        here("data/output/corruption/corrupt_candidate_2018.csv")
     )

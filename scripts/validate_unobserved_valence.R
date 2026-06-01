@@ -3,7 +3,7 @@ library(here)
 library(data.table)
 
 corruption <- read_csv(
-    here("data/corruption/corrupt_candidate_2018.csv")
+    here("data/output/corruption/corrupt_candidate_2018.csv")
 ) %>%
     distinct(cpf_candidate, candidate_name) %>%
     transmute(
@@ -12,7 +12,7 @@ corruption <- read_csv(
     )
 
 candidate <- fread(
-    here("data/candidate/fed_state/candidate_2014.csv"),
+    here("data/output/candidate/fed_state/candidate_2014.csv"),
     integer64 = "character"
 )
 
@@ -52,7 +52,7 @@ candidate_corruption <- candidate %>%
 
 candidate_corruption %>%
     write_csv(
-        here("data/corruption/candidate_corruption_with_valence.csv")
+        here("data/output/corruption/candidate_corruption_with_valence.csv")
     )
 
 

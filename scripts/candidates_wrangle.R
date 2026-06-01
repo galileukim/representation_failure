@@ -18,7 +18,7 @@ lapply(
 # electoral data ----------------------------------------------------------
 # candidate data
 candidate <- fread(
-    here("data", "tse", "candidate.csv.gz"),
+    here("data", "input", "tse", "candidate.csv.gz"),
     nThread = parallel::detectCores() - 1
   ) %>%
   filter(
@@ -26,16 +26,16 @@ candidate <- fread(
   )
 
 party_membership <- fread(
-  here("data", "tse", "filiado.csv.gz")
+  here("data", "input", "tse", "filiado.csv.gz")
 )
 
 municipio <- read_csv(
-  here("data", "municipal", "municipios.csv"),
+  here("data", "input", "municipal", "municipios.csv"),
   col_select = c(nome_municipio, cod_ibge_6, codigo_uf)
 )
 
 state <- read_csv(
-  here("data", "municipal", "input", "state_id.csv")
+  here("data", "input", "municipal", "state_id.csv")
 )
 
 # select vars
@@ -202,9 +202,7 @@ candidate_clean %>%
   filter(election_year %in% seq(2002, 2014, 4)) %>%
   fwrite(
     here(
-      paste0(
-        "data/candidate/cfscore_estimation/candidate_federal_state.csv"
-      )
+      "data", "output", "candidate", "cfscore_estimation", "candidate_federal_state.csv"
     )
   )
 
@@ -222,7 +220,7 @@ for (i in unique(candidate_clean$election_year)) {
       fwrite(
         here(
           paste0(
-            "data/candidate/fed_state/candidate_", i, ".csv"
+            "data/output/candidate/fed_state/candidate_", i, ".csv"
           )
         )
       )
@@ -232,7 +230,7 @@ for (i in unique(candidate_clean$election_year)) {
       fwrite(
         here(
           paste0(
-            "data/candidate/local/candidate_", i, ".csv"
+            "data/output/candidate/local/candidate_", i, ".csv"
           )
         )
       )
@@ -243,13 +241,13 @@ for (i in unique(candidate_clean$election_year)) {
 # 665.0 thousand records found
 candidate_last_membership |>
   fwrite(
-    here("data", "candidate", "candidate_party_membership.csv.gz")
+    here("data", "output", "candidate", "candidate_party_membership.csv.gz")
   )
 
 # ---------------------------------------------------------------------------- #
 # electoral data
 election <- list.files(
-  "~/princeton/R/data/tse/data/wrangle",
+  here("data", "input", "tse"),
   pattern = "^election.csv.gz$",
   full.names = T
 ) %>%
@@ -290,7 +288,7 @@ for (i in seq(2002, 2014, 4)) {
     fwrite(
       here(
         paste0(
-          "data/election/election_", i, ".csv"
+          "data/output/election/election_", i, ".csv"
         )
       )
     )
@@ -298,7 +296,7 @@ for (i in seq(2002, 2014, 4)) {
 
 # blank votes
 vote <- list.files(
-  "~/princeton/R/data/tse/data/wrangle/",
+  here("data", "input", "tse"),
   "vote_count",
   full.names = T
 ) %>%
@@ -317,7 +315,7 @@ for (i in unique(vote$election_year)) {
     fwrite(
       here(
         paste0(
-          "data/election/vote_count_", i, ".csv"
+          "data/output/election/vote_count_", i, ".csv"
         )
       )
     )
@@ -325,7 +323,7 @@ for (i in unique(vote$election_year)) {
 
 # vote for legend
 coalition <- list.files(
-  "data/tse",
+  here("data", "input", "tse"),
   "party.csv.gz",
   full.names = T
 ) %>%
@@ -363,7 +361,7 @@ for (i in unique(coalition$election_year)) {
     fwrite(
       here(
         paste0(
-          "data/election/coalition_vote_", i, ".csv"
+          "data/output/election/coalition_vote_", i, ".csv"
         )
       )
     )
@@ -375,8 +373,8 @@ for (i in unique(coalition$election_year)) {
 foreach(i = seq(1, 2)) %do% {
   candidate <- list.files(
     paste0(
-      here("data/candidate/"),
-      c("cfscore_estimation", "local")[i]
+      here("data", "output", "candidate"),
+      "/", c("cfscore_estimation", "local")[i]
     ),
     pattern = "^candidate",
     full.names = T
@@ -392,7 +390,7 @@ foreach(i = seq(1, 2)) %do% {
 
   # contribution data
   contributors <- list.files(
-    here("data/contribution/"),
+    here("data/input/contribution/"),
     pattern = c("campaign_fed_state", "campaign_local")[i],
     full.names = T
   ) %>%
@@ -491,7 +489,7 @@ foreach(i = seq(1, 2)) %do% {
   save(
     cm,
     file = paste0(
-      here("data/ideology/contrib_matrix_"), c("fed_state", "local")[i], ".RData"
+      here("data/output/ideology/contrib_matrix_"), c("fed_state", "local")[i], ".RData"
     )
   )
 }
@@ -499,7 +497,7 @@ foreach(i = seq(1, 2)) %do% {
 # ideal point -------------------------------------------------------------
 # retrieved from Zucco and Lauderdale (2011)
 legislative <- list.files(
-  here("data/ideology/"),
+  here("data/input/ideology/"),
   pattern = "^legislative_200[3|7].*csv$",
   full.names = T
 ) %>%
@@ -534,5 +532,5 @@ legislative <- legislative %>%
 # write out
 legislative %>%
   fwrite(
-    here("data/ideology/legislative_ideology.csv")
+    here("data/output/ideology/legislative_ideology.csv")
   )
