@@ -9,6 +9,7 @@ lapply(
     "lubridate",
     "foreach",
     "stringi",
+    "R.utils",
     "doParallel"
   ),
   require,
@@ -460,6 +461,15 @@ foreach(i = seq(1, 2)) %do% {
     ) %>%
     ungroup()
 
+  candidate_contribution_by_year <- contributors %>%
+    filter(
+      is_projected != 1
+    ) |>
+    summarise(
+      total_contrib = sum(value_receipt),
+      .by = c("cpf_candidate", "election_year")
+    )
+
   contributor_ids <- unique(contribution$cpf_cnpj_donor)
   candidate_ids <- unique(contribution$cpf_candidate)
   # create contribution matrix
@@ -485,6 +495,14 @@ foreach(i = seq(1, 2)) %do% {
     cm,
     file = paste0(
       here("data/output/ideology/contrib_matrix_"), c("fed_state", "local")[i], ".RData"
+    )
+  )
+
+  # save contribution by candidate
+  write_csv(
+    candidate_contribution_by_year,
+    file = paste0(
+      here("data/output/contribution/contribution_by_candidate_"), c("fed_state", "local")[i], ".csv"
     )
   )
 }

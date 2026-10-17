@@ -3,8 +3,6 @@ lapply(
     c(
         "tidyverse",
         "data.table",
-        "Matrix",
-        "R.utils",
         "here",
         "rprojroot",
         "foreach",
