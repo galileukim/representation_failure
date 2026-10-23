@@ -12,16 +12,25 @@ The first section covers everything that belongs under `data/input/`, which is t
 |---|---|---|
 | `candidate.csv.gz` | `01a_electoral_wrangle.R`, `08_create_state_level_ideology.R` | TSE candidate registry, all years. The scripts filter it to 2002–2014. |
 | `filiado.csv.gz` | `01a_electoral_wrangle.R` | TSE party membership registry. |
-| `election.csv.gz` | `01a_electoral_wrangle.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
-| `*vote_count*` | `01a_electoral_wrangle.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |
+| `election.csv.gz` | `01a_electoral_wrangle.R`, `14_candidates_diagnostics.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
+| `*vote_count*` | `01a_electoral_wrangle.R`, `14_candidates_diagnostics.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |
 | `party.csv.gz` | `01a_electoral_wrangle.R` | Party and coalition (legend) votes. Matched by the regex `party.csv.gz`, so exactly one file in the folder may match. |
 
-### `municipal/`: municipality identifiers
+### `municipal/`: municipality identifiers, census and revenue
 
 | File | Read by | Notes |
 |---|---|---|
 | `municipios.csv` | `01a_electoral_wrangle.R`, `04_complaints.R` | IBGE municipality crosswalk (`cod_ibge_6`, `nome_municipio`, `codigo_uf`, …). |
-| `state_id.csv` | `01a_electoral_wrangle.R`, `04_complaints.R` | Maps the IBGE state code (`state_id`) to the state abbreviation. |
+| `state_id.csv` | `01a_electoral_wrangle.R`, `03_censo_wrangle.R`, `04_complaints.R` | Maps the IBGE state code (`state_id`) to the state abbreviation. |
+| `censo_mun_<year>.csv` | `03_censo_wrangle.R` | Municipal census covariates, one file per census year (2000 and 2010). Matched by `censo_mun_[20]\d+`. |
+| `receita_mun.csv` | `03_censo_wrangle.R` | FINBRA municipal revenue. |
+
+### `maps/`: boundary shapefiles
+
+| File | Read by | Notes |
+|---|---|---|
+| `municipio.*` | `funs.R`, sourced by `15_candidate_figs.R` | ESRI shapefile of municipal boundaries (`.shp`, `.shx`, `.dbf`, `.prj`). Read with `sf::st_read()`. The attribute table must have the IBGE code in a column named `MUNICÍPI0`. |
+| `estados_2010.*` | `funs.R`, sourced by `15_candidate_figs.R` | ESRI shapefile of 2010 state boundaries. |
 
 ### `contribution/`: campaign finance
 
@@ -81,15 +90,9 @@ The first section covers everything that belongs under `data/input/`, which is t
 
 ## 2. Inputs read from outside `data/input/`
 
-These files are needed, but the scripts read them from paths that are stale (from before the `data/input` and `data/output` refactor) or that sit outside this repository. Until the paths are updated, each file has to be placed exactly where the code expects it.
+These files are needed, but the scripts read them from outside this repository. Until the paths are updated, each file has to be placed exactly where the code expects it.
 
 | Path in the code | Read by | Issue |
 |---|---|---|
-| `data/municipal/input/censo_mun_<year>*` (one file per census year, matched by `censo_mun_[20]\d+`) | `03_censo_wrangle.R` | Old path. It probably belongs under `data/input/municipal/`. |
-| `data/municipal/input/state_id.csv` | `03_censo_wrangle.R` | The same file as `data/input/municipal/state_id.csv`, read from the old path. |
-| `data/municipal/input/receita_mun.csv` | `03_censo_wrangle.R` | FINBRA municipal revenue. Old path. |
-| `data/maps/municipio.*` and `data/maps/estados_2010.*` (ESRI shapefiles) | `funs.R`, sourced by `15_candidate_figs.R` | Old path. The script reads them with `rgdal::readOGR()`, but rgdal is no longer on CRAN and is not in `renv.lock`. |
-| `data/candidate/fed_state/candidate_200[2-6].csv` | `15_candidate_figs.R` | Old path for files that `01a_electoral_wrangle.R` now writes to `data/output/candidate/fed_state/`. Only `candidate_2002.csv` and `candidate_2006.csv` would match there. |
 | `../estimation/unobserved_valence.csv` | `13_validate_unobserved_valence.R` | Lives in a sibling `estimation` repository, not in this one. |
 | `../estimation/stacking.csv` | `15_candidate_figs.R` | Lives in a sibling `estimation` repository, not in this one. |
-| `~/princeton/R/data/tse/data/wrangle/election.csv.gz` and `…/wrangle/*vote_count*` | `14_candidates_diagnostics.R` | An absolute path on an older machine. These appear to be the same files as `data/input/tse/election.csv.gz` and `data/input/tse/*vote_count*`. |

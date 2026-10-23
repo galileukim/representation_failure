@@ -1,7 +1,7 @@
 # import map --------------------------------------------------------------
 lapply(
   c(
-    "rgdal",
+    "sf",
     "tidyverse",
     "RColorBrewer",
     "scales",
@@ -13,32 +13,21 @@ lapply(
 )
 
 # prep map
-map_br <- readOGR(
-  here("data/maps/"),
-  "municipio"
-)
-
-map_br@data <- map_br@data %>%
-  mutate(id = row.names(map_br))
-
-# fortify
-map_br <- map_br %>% 
-  fortify %>% 
-  left_join(., map_br@data, by = "id") %>%
+map_br <- st_read(
+  here("data/input/maps/municipio.shp"),
+  quiet = T
+) %>%
   transmute(
-    long, 
-    lat, 
-    group, 
     cod_ibge_6 = MUNICÍPI0 %>% as.character %>% as.integer
-  ) 
+  )
 
 # state boundaries
-map_state <- readOGR(
-  here("data/maps/"),
-  "estados_2010"
-) %>% 
-  fortify
-  
+map_state <- st_read(
+  here("data/input/maps/estados_2010.shp"),
+  quiet = T
+) %>%
+  mutate(id = as.character(row_number() - 1))
+
 # functions ---------------------------------------------------------------
 # clean theme
 theme_clean <- theme(
@@ -103,23 +92,15 @@ summarise_mun <- function(data, var){
 # plot map
 plot_map <- function(data, var, palette = "RdYlBu", limits = c(-100, 100)){
   ggplot() +
-    geom_polygon(
-      data = data, 
+    geom_sf(
+      data = data,
       aes(
-        x = long, 
-        y = lat, 
-        group = group, 
-        fill = get(var)
+        fill = .data[[var]]
       ),
       color = NA
     ) +
-    geom_polygon(
+    geom_sf(
       data = map_state,
-      aes(
-        x = long, 
-        y = lat, 
-        group = group
-      ),
       color = "grey35",
       fill = NA
     ) +
@@ -132,8 +113,7 @@ plot_map <- function(data, var, palette = "RdYlBu", limits = c(-100, 100)){
       na.value = "grey80"
     ) +
     theme_void() +
-    coord_map() +
-    xlim(range(data$long)) + ylim(range(data$lat)) +
+    coord_sf() +
     theme(
       legend.position = "none",
       legend.title = element_blank(),

@@ -1,11 +1,12 @@
 # set-up ------------------------------------------------------------------
 library(tidyverse)
+library(here)
 library(data.table)
 
 # read-in -----------------------------------------------------------------
 # electoral data
 election <- list.files(
-  "~/princeton/R/data/tse/data/wrangle",
+  here("data", "input", "tse"),
   pattern = "^election.csv.gz$",
   full.names = T
 ) %>% 
@@ -36,7 +37,7 @@ election <- election %>%
 
 # blank votes
 vote <- list.files(
-  "~/princeton/R/data/tse/data/wrangle/",
+  here("data", "input", "tse"),
   "vote_count",
   full.names = T
 ) %>% 

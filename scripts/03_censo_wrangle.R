@@ -9,7 +9,7 @@ library(purrr)
 # municipal table ---------------------------------------------------------
 # read-in
 censo <- list.files(
-  here("data", "municipal", "input"),
+  here("data", "input", "municipal"),
   "censo_mun_[20]\\d+",
   full.names = T
 ) %>%
@@ -51,7 +51,7 @@ censo <- list.files(
 # combine -----------------------------------------------------------------
 # join state id's
 state_id <- read_csv(
-  here("data", "municipal", "input", "state_id.csv")
+  here("data", "input", "municipal", "state_id.csv")
 ) %>%
   mutate(
     state_id = as.character(state_id),
@@ -72,7 +72,7 @@ censo <- censo %>%
 
 # budget
 finbra <- list.files(
-  here("data", "municipal", "input"),
+  here("data", "input", "municipal"),
   "^receita_mun.csv$",
   full.names = T
 ) %>%

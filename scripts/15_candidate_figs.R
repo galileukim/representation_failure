@@ -251,7 +251,7 @@ deputado <- deputado %>%
 
 # elected candidates
 cands_elected <- list.files(
-   here("data/candidate/fed_state/"),
+   here("data/output/candidate/fed_state/"),
    pattern = "200[2-6].csv$",
    full.names = T
 ) %>% 
@@ -335,15 +335,12 @@ map_br <- map_br %>%
 # plot national map
 map_state %>% 
   ggplot() +
-  geom_polygon(
+  geom_sf(
     aes(
-      long,
-      lat,
-      group = group,
       fill = id
     ),
     color = "grey45",
-    size = 0.6
+    linewidth = 0.6
   ) +
   scale_fill_hue(
     l = 63,
@@ -351,9 +348,7 @@ map_state %>%
     h = c(0, 360)
   ) +
   theme_void() +
-  coord_map() +
-  xlim(range(map_state$long)) +
-  ylim(range(map_state$lat)) +
+  coord_sf() +
   theme(
     legend.position = "none",
     legend.title = element_blank(),
