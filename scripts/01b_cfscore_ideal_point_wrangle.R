@@ -110,6 +110,7 @@ foreach(i = seq(1, 2)) %do% {
     ) |>
     summarise(
       total_contrib = sum(value_receipt),
+      total_contributors = n_distinct(cpf_cnpj_donor),
       .by = c("cpf_candidate", "election_year")
     )
 
