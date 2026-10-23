@@ -40,6 +40,11 @@ party_membership <- fread(
   here("data", "input", "tse", "filiado.csv.gz")
 )
 
+# party-level vote tallies (nominal and legend votes)
+party_vote <- fread(
+  here("data", "input", "tse", "party.csv.gz")
+)
+
 municipio <- read_csv(
   here("data", "input", "municipal", "municipios.csv"),
   col_select = c(nome_municipio, cod_ibge_6, codigo_uf)
@@ -80,6 +85,63 @@ candidate <- candidate %>%
   mutate(
     age = election_year - as.integer(birthyear)
   )
+
+# fix coalition labels
+# in 2006 and 2010, the raw tse data lumps all parties that ran alone in a state
+# into one coalition label (e.g. 16 parties for deputado federal in sp, 2006)
+# since a party joins a single coalition per office and state, we take labels
+# from the party-level tallies, which reproduce the seat allocation in the chamber
+# (all 513 seats in 2002, 2010 and 2014, and all but one in 2006).
+# running mates and senate substitutes take the label of the ticket's office
+coalition_lookup <- party_vote |>
+  filter(round == 1 & coalition != "") |>
+  distinct(election_year, state, office = position, party, coalition_fix = coalition) |>
+  filter(n() == 1, .by = c(election_year, state, office, party))
+
+fix_coalition <- function(data) {
+  data <- data |>
+    mutate(
+      office = str_remove(position, "^vice-|^.*suplente ")
+    ) |>
+    left_join(
+      coalition_lookup,
+      by = c("election_year", "state", "office", "party")
+    )
+
+  # parties absent from the tallies (e.g. without votes) keep the raw label,
+  # minus the parties that the tallies place in a coalition without them
+  coalition_fallback <- data |>
+    filter(is.na(coalition_fix) & !is.na(coalition)) |>
+    distinct(election_year, state, office, party, coalition) |>
+    mutate(member = str_split(coalition, " / ")) |>
+    unnest(member) |>
+    left_join(
+      coalition_lookup |> rename(member = party, coalition_member = coalition_fix),
+      by = c("election_year", "state", "office", "member")
+    ) |>
+    filter(
+      is.na(coalition_member) |
+      str_detect(
+        paste0(" / ", coalition_member, " / "), fixed(paste0(" / ", party, " / "))
+      )
+    ) |>
+    summarise(
+      coalition_fallback = paste(member, collapse = " / "),
+      .by = c(election_year, state, office, party, coalition)
+    )
+
+  data |>
+    left_join(
+      coalition_fallback,
+      by = c("election_year", "state", "office", "party", "coalition")
+    ) |>
+    mutate(
+      coalition = coalesce(coalition_fix, coalition_fallback, coalition)
+    ) |>
+    select(-office, -coalition_fix, -coalition_fallback)
+}
+
+candidate <- fix_coalition(candidate)
 
 # recover missing cpfs from other records with the same electoral title
 # in 2002, this recovers 22/208 federal deputy candidates without cpf,
@@ -267,6 +329,9 @@ election <- election %>%
       cod_ibge_6
     )
   )
+
+# the vote tallies carry the same lumped coalition labels
+election <- fix_coalition(election)
 
 # fill missing cpfs from the candidate data by ballot number
 # withdrawn candidates share their ballot number with their substitute,
@@ -472,15 +537,8 @@ for (i in unique(vote$election_year)) {
 }
 
 # vote for legend
-coalition <- list.files(
-  here("data", "input", "tse"),
-  "party.csv.gz",
-  full.names = T
-) %>%
-  fread()
-
 # extract deputados federais
-coalition <- coalition %>%
+coalition <- party_vote %>%
   filter(
     position == "deputado federal"
   )

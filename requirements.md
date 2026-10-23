@@ -14,7 +14,7 @@ The first section covers everything that belongs under `data/input/`, which is t
 | `filiado.csv.gz` | `01a_electoral_wrangle.R` | TSE party membership registry. |
 | `election.csv.gz` | `01a_electoral_wrangle.R`, `13_candidates_diagnostics.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
 | `*vote_count*` | `01a_electoral_wrangle.R`, `13_candidates_diagnostics.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |
-| `party.csv.gz` | `01a_electoral_wrangle.R` | Party and coalition (legend) votes. Matched by the regex `party.csv.gz`, so exactly one file in the folder may match. |
+| `party.csv.gz` | `01a_electoral_wrangle.R` | Party and coalition (legend) votes. Also the source of the coalition labels for candidates and election tallies, since the coalition labels in `candidate.csv.gz` and `election.csv.gz` are wrong in 2006 and 2010. |
 
 ### `municipal/`: municipality identifiers, census and revenue
 
