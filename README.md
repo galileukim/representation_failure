@@ -67,18 +67,18 @@ Scripts are numbered in execution order; each script only reads outputs of lower
 |------|--------|-------------|
 | 1a | `scripts/01a_electoral_wrangle.R` | Clean raw TSE candidate, party membership and election data → `data/output/candidate/`, `data/output/election/` |
 | 1b | `scripts/01b_cfscore_ideal_point_wrangle.R` | Build fed-state/local contribution matrices from step 1a's candidate files, and legislator ideal points → `data/output/contribution/`, `data/output/ideology/` |
-| 3 | `scripts/03_censo_wrangle.R` | Process IBGE census covariates → `data/output/municipal/` |
-| 4 | `scripts/04_complaints.R` | Aggregate Fala.BR citizen complaints by municipality → `data/output/complaints/` |
-| 5 | `scripts/05_contrib_matrix_pooled.R` | Build pooled candidate–donor contribution matrix → `data/output/ideology/` |
-| 6 | `scripts/06_candidates_cfscore_pooled.R` | Estimate pooled CFscores → `data/output/ideology/`, `figs/` |
-| 7 | `scripts/07_candidates_pooled_robustness.R` | Robustness checks for CFscore estimation → `data/output/ideology/` |
-| 8 | `scripts/08_create_state_level_ideology.R` | Attach CFscores to state-level candidates → `data/output/ideology/` |
-| 9 | `scripts/09_generate_valence_corruption.R` | Construct valence/corruption measures → `data/output/corruption/` |
-| 10 | `scripts/10_validate_contrib_matrix.R` | Validate the fed-state contribution matrix |
-| 11 | `scripts/11_validate_cfscore.R` | Validate CFscores against robustness estimates |
-| 12 | `scripts/12_validate_cfscore_with_spoils.R` | Validate using spoils-based measures |
-| 13 | `scripts/13_validate_unobserved_valence.R` | Validate unobserved valence measure → `data/output/corruption/` |
-| 14 | `scripts/14_candidates_diagnostics.R` | Diagnostics and summary statistics |
-| 15 | `scripts/15_candidate_figs.R` | Generate descriptive figures (saved under `Presentation/`; see `outputs.md`) |
+| 2 | `scripts/02_censo_wrangle.R` | Process IBGE census covariates → `data/output/municipal/` |
+| 3 | `scripts/03_complaints.R` | Aggregate Fala.BR citizen complaints by municipality → `data/output/complaints/` |
+| 4 | `scripts/04_contrib_matrix_pooled.R` | Build pooled candidate–donor contribution matrix → `data/output/ideology/` |
+| 5 | `scripts/05_candidates_cfscore_pooled.R` | Estimate pooled CFscores → `data/output/ideology/`, `figs/` |
+| 6 | `scripts/06_candidates_pooled_robustness.R` | Robustness checks for CFscore estimation → `data/output/ideology/` |
+| 7 | `scripts/07_create_state_level_ideology.R` | Attach CFscores to state-level candidates → `data/output/ideology/` |
+| 8 | `scripts/08_generate_valence_corruption.R` | Construct valence/corruption measures → `data/output/corruption/` |
+| 9 | `scripts/09_validate_contrib_matrix.R` | Validate the fed-state contribution matrix |
+| 10 | `scripts/10_validate_cfscore.R` | Validate CFscores against robustness estimates |
+| 11 | `scripts/11_validate_cfscore_with_spoils.R` | Validate using spoils-based measures |
+| 12 | `scripts/12_validate_unobserved_valence.R` | Validate unobserved valence measure → `data/output/corruption/` |
+| 13 | `scripts/13_candidates_diagnostics.R` | Diagnostics and summary statistics |
+| 14 | `scripts/14_candidate_figs.R` | Generate descriptive figures (saved under `Presentation/`; see `outputs.md`) |
 
-Helper functions are defined in `scripts/functions.R` (sourced by steps 6–7) and `scripts/funs.R` (sourced by step 15); they are not run on their own.
+Helper functions are defined in `scripts/functions.R` (sourced by steps 5–6) and `scripts/funs.R` (sourced by step 14); they are not run on their own.

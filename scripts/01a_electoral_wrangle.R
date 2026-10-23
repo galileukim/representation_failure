@@ -272,7 +272,10 @@ election <- election %>%
 # withdrawn candidates share their ballot number with their substitute,
 # so we also require the first name to match
 # this recovers the 2010 and 2014 cases that names alone fail to match
-# (e.g. joao marcelo santos sousa/souza) and the 2002 cpfs recovered above
+# (e.g. joao marcelo santos sousa/souza) and the 2002 cpfs recovered above.
+# it supersedes the hand-coded name fixes for the cpfs missing from the 2010
+# (carlos fernando d'aguiar silva palacio) and 2014 (joao marcelo santos sousa,
+# joaquim passarinho pinto de souza) election data
 candidate_cpf <- candidate |>
   filter(
     position == "deputado federal" &
@@ -445,6 +448,16 @@ vote <- vote %>%
     position == "deputado federal"
   )
 
+# fix missing codigo ibge
+vote <- vote |>
+  mutate(
+    cod_ibge_6 = if_else(
+      cod_tse == 91065 & is.na(cod_ibge_6),
+      150550,
+      cod_ibge_6
+    )
+  )
+
 # write-out vote
 for (i in unique(vote$election_year)) {
   vote %>%
@@ -472,10 +485,14 @@ coalition <- coalition %>%
     position == "deputado federal"
   )
 
-# drop boa esperanca do norte: non-installed municipality
+# fix boa esperanca do norte
 coalition <- coalition %>%
-  filter(
-    mun_name != "boa esperanca do norte"
+  mutate(
+    cod_ibge_6 = if_else(
+      mun_name == "boa esperanca do norte" & state == "mt",
+      510183,
+      cod_ibge_6
+    )
   )
 
 # aggregate by coalition
