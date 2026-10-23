@@ -44,8 +44,8 @@ The first section covers everything that belongs under `data/input/`, which is t
 
 | File | Read by | Notes |
 |---|---|---|
-| `missing/missing2010.csv` | `02_fix_defective_candidates.R` | Names of 2010 candidates whose CPF is missing from the election file. |
-| `missing/missing2014.csv` | `02_fix_defective_candidates.R` | The same for 2014. Only the first two names are used. |
+| `missing/missing2010.csv` | `deprecated/02_fix_defective_candidates.R` | Names of 2010 candidates whose CPF is missing from the election file. No longer needed: `01a` now fills these CPFs. |
+| `missing/missing2014.csv` | `deprecated/02_fix_defective_candidates.R` | The same for 2014. Only the first two names are used. |
 | `deputados.csv` | `15_candidate_figs.R` | Chamber of Deputies roster (`nomeCivil`, `dataNascimento`, `municipioNascimento`, …), used to link deputies to the roll-call ideal points. |
 
 ### `corruption/`: candidate cassation records
@@ -89,7 +89,7 @@ These files are needed, but the scripts read them from paths that are stale (fro
 | `data/municipal/input/state_id.csv` | `03_censo_wrangle.R` | The same file as `data/input/municipal/state_id.csv`, read from the old path. |
 | `data/municipal/input/receita_mun.csv` | `03_censo_wrangle.R` | FINBRA municipal revenue. Old path. |
 | `data/maps/municipio.*` and `data/maps/estados_2010.*` (ESRI shapefiles) | `funs.R`, sourced by `15_candidate_figs.R` | Old path. The script reads them with `rgdal::readOGR()`, but rgdal is no longer on CRAN and is not in `renv.lock`. |
-| `data/candidate/fed_state/candidate_200[2-6].csv` | `15_candidate_figs.R` | Old path for files that `01a_electoral_wrangle.R` now writes to `data/output/candidate/fed_state/`. Only `candidate_2006.csv` would match there, because `01a` writes no 2002 file. |
+| `data/candidate/fed_state/candidate_200[2-6].csv` | `15_candidate_figs.R` | Old path for files that `01a_electoral_wrangle.R` now writes to `data/output/candidate/fed_state/`. Only `candidate_2002.csv` and `candidate_2006.csv` would match there. |
 | `../estimation/unobserved_valence.csv` | `13_validate_unobserved_valence.R` | Lives in a sibling `estimation` repository, not in this one. |
 | `../estimation/stacking.csv` | `15_candidate_figs.R` | Lives in a sibling `estimation` repository, not in this one. |
 | `~/princeton/R/data/tse/data/wrangle/election.csv.gz` and `…/wrangle/*vote_count*` | `14_candidates_diagnostics.R` | An absolute path on an older machine. These appear to be the same files as `data/input/tse/election.csv.gz` and `data/input/tse/*vote_count*`. |

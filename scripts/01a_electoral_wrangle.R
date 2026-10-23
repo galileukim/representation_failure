@@ -1,23 +1,37 @@
 # set-up ------------------------------------------------------------------
-lapply(
-  c(
-    "tidyverse",
-    "data.table",
-    "here",
-    "lubridate",
-    "stringi",
-    "R.utils"
-  ),
-  require,
-  character.only = T
-)
+library(tidyverse)
+library(data.table)
+library(here)
+library(lubridate)
+library(stringi)
+library(R.utils)
 
 # electoral data ----------------------------------------------------------
 # candidate data
-candidate <- fread(
-    here("data", "input", "tse", "candidate.csv.gz"),
-    nThread = parallel::detectCores() - 1
-  ) %>%
+candidate_input <- fread(
+  here("data", "input", "tse", "candidate.csv.gz"),
+  colClasses = list(character = c("cpf_candidate", "elec_title")),
+  nThread = parallel::detectCores() - 1,
+  na.strings = ""
+)
+
+# lookup of cpf by electoral title and name across all years (1998-2016)
+# used to recover cpfs missing from the raw tse data (208 federal deputy
+# candidates in 2002). we require an exact name match because electoral titles
+# are not unique, and drop title-name pairs that map to more than one cpf
+cpf_lookup <- candidate_input |>
+  filter(
+    nchar(cpf_candidate) == 11 &
+    !(elec_title %in% c("", "#ni#", "-1"))
+  ) |>
+  distinct(elec_title, cpf_recovered = cpf_candidate) |>
+  mutate(
+    n = n()
+  ) |>
+  filter(n == 1, .by = c(elec_title)) |>
+  select(-n)
+
+candidate <- candidate_input %>%
   filter(
     election_year >= 2002 & election_year <= 2014
   )
@@ -65,6 +79,30 @@ candidate <- candidate %>%
   ) %>%
   mutate(
     age = election_year - as.integer(birthyear)
+  )
+
+# recover missing cpfs from other records with the same electoral title
+# in 2002, this recovers 22/208 federal deputy candidates without cpf,
+# including 8/11 candidates who received votes
+candidate <- candidate |>
+  left_join(
+    cpf_lookup,
+    by = c("elec_title")
+  ) |>
+  mutate(
+    cpf_candidate = if_else(
+      is.na(cpf_candidate), cpf_recovered, cpf_candidate
+    )
+  ) |>
+  select(-cpf_recovered)
+
+# fix names with stray quotes in the raw data
+# e.g. """"carlos fernando d""""aguiar silva palacio"""" (2010)
+candidate <- candidate |>
+  mutate(
+    candidate_name = candidate_name |>
+      str_remove_all('^"+|"+$') |>
+      str_replace_all('"+', "'")
   )
 
 # identify candidates in the party membership data
@@ -169,6 +207,25 @@ candidate <- candidate %>%
     )
   )
 
+# create a flag for whether the candidate participated or not in the elections
+candidate <- candidate |>
+  mutate(
+    flag_participated = if_else(
+      candidate_status %in% c(
+        "indeferido",
+        "renuncia",
+        "cancelado",
+        "indeferido com recurso",
+        "nao conhecimento do pedido",
+        "inelegivel",
+        "falecido",
+        "falecimento"
+      ),
+      FALSE,
+      TRUE
+    )
+  )
+
 # fix birth municipality and ensure that we use cod_ibge_6
 # combine municipio data with state data
 municipio <- municipio |> 
@@ -184,6 +241,125 @@ municipio <- municipio |>
       ) |> 
       str_to_lower(),
     state_birth_name = str_to_lower(state)
+  )
+
+# electoral data
+election <- list.files(
+  here("data", "input", "tse"),
+  pattern = "^election.csv.gz$",
+  full.names = T
+) %>%
+  fread(
+    colClasses = list(character = "cpf_candidate"),
+    nThread = parallel::detectCores() - 1
+  ) %>%
+  filter(
+    election_year %in% seq(2002, 2014, 4),
+    position == "deputado federal"
+  )
+
+# fix boa esperanca do norte without cod_ibge_6
+election <- election %>%
+  mutate(
+    cod_ibge_6 = if_else(
+      mun_name == "boa esperanca do norte" & state == "mt",
+      510183,
+      cod_ibge_6
+    )
+  )
+
+# fill missing cpfs from the candidate data by ballot number
+# withdrawn candidates share their ballot number with their substitute,
+# so we also require the first name to match
+# this recovers the 2010 and 2014 cases that names alone fail to match
+# (e.g. joao marcelo santos sousa/souza) and the 2002 cpfs recovered above
+candidate_cpf <- candidate |>
+  filter(
+    position == "deputado federal" &
+    nchar(cpf_candidate) == 11
+  ) |>
+  distinct(
+    election_year,
+    state,
+    candidate_num,
+    first_name = word(candidate_name, 1),
+    cpf_fill = cpf_candidate
+  ) |>
+  filter(n() == 1, .by = c(election_year, state, candidate_num, first_name))
+
+election <- election |>
+  mutate(
+    first_name = word(candidate_name, 1)
+  ) |>
+  left_join(
+    candidate_cpf,
+    by = c("election_year", "state", "candidate_num", "first_name")
+  ) |>
+  mutate(
+    cpf_candidate = if_else(
+      nchar(cpf_candidate) == 11, cpf_candidate, cpf_fill
+    )
+  )
+
+# reconcile federal deputies' outcomes with the vote tallies
+# the candidate data keeps a pre-election status for some winners whose
+# registration was later reinstated (e.g. vinicius gurgel and rosinha da adefal
+# in 2010), and flags as elected candidates absent from the vote tallies
+# we match on ballot number as well since some candidates are registered twice
+winner_outcomes <- c("eleito", "media", "eleito por media", "eleito por qp")
+
+election_outcome <- election |>
+  filter(!is.na(cpf_candidate)) |>
+  distinct(
+    election_year,
+    state,
+    candidate_num,
+    cpf_candidate,
+    outcome_election = outcome
+  )
+
+candidate <- candidate |>
+  left_join(
+    election_outcome,
+    by = c("election_year", "state", "candidate_num", "cpf_candidate")
+  ) |>
+  mutate(
+    is_fed_deputy = position == "deputado federal" &
+      election_year %in% seq(2002, 2014, 4),
+    outcome = case_when(
+      !is_fed_deputy ~ outcome,
+      # keep the candidate data's label when both sources agree on a win
+      # (e.g. "eleito por media" vs. "media" in 2002)
+      outcome %in% winner_outcomes & outcome_election %in% winner_outcomes ~ outcome,
+      !is.na(outcome_election) ~ outcome_election,
+      # winners absent from the vote tallies withdrew and were replaced by a
+      # substitute under the same ballot number (marcus savius teixeira sousa, 2002)
+      outcome %in% winner_outcomes ~ "renuncia/falecimento/cassacao antes da eleicao",
+      T ~ outcome
+    ),
+    elected = if_else(
+      is_fed_deputy,
+      as.integer(outcome_election %in% winner_outcomes),
+      as.integer(elected)
+    )
+  ) |>
+  select(-outcome_election, -is_fed_deputy)
+
+# select vars
+election <- election %>%
+  transmute(
+    cod_ibge_6,
+    state,
+    party,
+    election_year,
+    cpf_candidate,
+    candidate_name,
+    coalition,
+    age = election_year - as.integer(birthyear),
+    candidate_status,
+    state,
+    outcome,
+    vote
   )
 
 # join cod_ibge_6_birth: municipality of birth
@@ -242,37 +418,6 @@ candidate_last_membership |>
   )
 
 # ---------------------------------------------------------------------------- #
-# electoral data
-election <- list.files(
-  here("data", "input", "tse"),
-  pattern = "^election.csv.gz$",
-  full.names = T
-) %>%
-  fread(
-    nThread = parallel::detectCores() - 1
-  ) %>%
-  filter(
-    election_year %in% seq(2002, 2014, 4),
-    position == "deputado federal"
-  )
-
-# select vars
-election <- election %>%
-  transmute(
-    cod_ibge_6,
-    state,
-    party,
-    election_year,
-    cpf_candidate,
-    candidate_name,
-    coalition,
-    age = election_year - as.integer(birthyear),
-    candidate_status,
-    state,
-    outcome,
-    vote
-  )
-
 # write-out election
 for (i in seq(2002, 2014, 4)) {
   election %>%

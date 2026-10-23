@@ -8,11 +8,11 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/candidate/cfscore_estimation/candidate_federal_state.csv` | `01b`, `02`, `05`, `06`, `10` | Candidates for every position in 2002, 2006, 2010 and 2014. This is the only candidate file that carries `cod_ibge_6_birth`. |
-| `data/output/candidate/fed_state/candidate_{2006,2010,2014}.csv` | `09`, `11`, `12`, `13`, `15` | Federal deputies only. There is no 2002 file, because this loop starts at 2004. |
+| `data/output/candidate/cfscore_estimation/candidate_federal_state.csv` | `01b`, `05`, `06`, `10` | Candidates for every position in 2002, 2006, 2010 and 2014. This is the only candidate file that carries `cod_ibge_6_birth`. Missing 2002 CPFs are recovered where possible, and federal deputies' `elected`/`outcome` are reconciled with the vote tallies. |
+| `data/output/candidate/fed_state/candidate_{2002,2006,2010,2014}.csv` | `09`, `11`, `12`, `13`, `15` | Federal deputies only. 186 of the 4,900 candidates in 2002 have no CPF in the raw TSE data; 183 of them received no votes. |
 | `data/output/candidate/local/candidate_{2004,2008,2012}.csv` | `01b`, `05`, `06`, `15` | All local candidates, one file per municipal election year. |
 | `data/output/candidate/candidate_party_membership.csv.gz` | — | The latest party membership record for each candidate and election year. |
-| `data/output/election/election_{2002,2006,2010,2014}.csv` | `02`, `11`, `15` | Federal deputies' votes by municipality. `02` overwrites the 2010 and 2014 files. |
+| `data/output/election/election_{2002,2006,2010,2014}.csv` | `11`, `15` | Federal deputies' votes by municipality. Votes cast in Boa Esperança do Norte (MT, 2002), which has no IBGE code, are dropped. Five losing candidates have no CPF: three in 2002 and two in 2014 (absent from the candidate registry). |
 | `data/output/election/vote_count_{year}.csv` | — | Federal deputy vote counts by municipality, one file per year in the input. |
 | `data/output/election/coalition_vote_{year}.csv` | — | Federal deputy legend votes by coalition and municipality, one file per year in the input. |
 
@@ -25,17 +25,6 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 | `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions per candidate and election year, excluding projected contributions. |
 | `data/output/contribution/contribution_by_candidate_local.csv` | — | The same for local candidates. |
 | `data/output/ideology/legislative_ideology.csv` | `15` | Zucco and Lauderdale (2011) legislator ideal points for 2002 and 2006. |
-
-### `02_fix_defective_candidates.R`
-
-This script creates no new files. It fills in missing CPFs and **overwrites two of `01a`'s outputs in place**:
-
-| File | Used by | Notes |
-|---|---|---|
-| `data/output/election/election_2010.csv` | `11`, `15` | Overwritten in place. |
-| `data/output/election/election_2014.csv` | `11`, `15` | Overwritten in place. |
-
-Rerunning `01a` reverts this fix, so run `02` again every time you rerun `01a`.
 
 ### `03_censo_wrangle.R`
 

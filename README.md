@@ -15,7 +15,7 @@ representation_failure/
 │   │   ├── contribution/            # Campaign finance files (campaign_fed_state.csv.gz, etc.)
 │   │   ├── ideology/                # Legislative survey ideology data, Latinobarometer
 │   │   ├── corruption/              # TSE cassation files and 2018 candidate list
-│   │   ├── candidate/missing/       # Manually corrected missing candidate records
+│   │   ├── candidate/missing/       # Manually corrected missing candidate records (deprecated)
 │   │   ├── spoils_of_victory/       # Replication data from Brollo et al. (2013)
 │   │   ├── state/                   # State-level census data
 │   │   └── identifiers/             # State name crosswalks
@@ -67,7 +67,6 @@ Scripts are numbered in execution order; each script only reads outputs of lower
 |------|--------|-------------|
 | 1a | `scripts/01a_electoral_wrangle.R` | Clean raw TSE candidate, party membership and election data → `data/output/candidate/`, `data/output/election/` |
 | 1b | `scripts/01b_cfscore_ideal_point_wrangle.R` | Build fed-state/local contribution matrices from step 1a's candidate files, and legislator ideal points → `data/output/contribution/`, `data/output/ideology/` |
-| 2 | `scripts/02_fix_defective_candidates.R` | Patch missing CPFs in `data/output/election/election_{2010,2014}.csv` in place (rerun after every run of step 1a) |
 | 3 | `scripts/03_censo_wrangle.R` | Process IBGE census covariates → `data/output/municipal/` |
 | 4 | `scripts/04_complaints.R` | Aggregate Fala.BR citizen complaints by municipality → `data/output/complaints/` |
 | 5 | `scripts/05_contrib_matrix_pooled.R` | Build pooled candidate–donor contribution matrix → `data/output/ideology/` |
