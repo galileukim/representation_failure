@@ -1,16 +1,11 @@
 # import map --------------------------------------------------------------
-lapply(
-  c(
-    "sf",
-    "tidyverse",
-    "RColorBrewer",
-    "scales",
-    "here",
-    "broom",
-    "dplyr"
-  ),
-  require, character.only = T
-)
+library(sf)
+library(tidyverse)
+library(RColorBrewer)
+library(scales)
+library(here)
+library(broom)
+library(dplyr)
 
 # prep map
 map_br <- st_read(

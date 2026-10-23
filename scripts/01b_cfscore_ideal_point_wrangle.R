@@ -1,16 +1,10 @@
 # set-up ------------------------------------------------------------------
-lapply(
-  c(
-    "tidyverse",
-    "data.table",
-    "Matrix",
-    "here",
-    "foreach",
-    "R.utils"
-  ),
-  require,
-  character.only = T
-)
+library(tidyverse)
+library(data.table)
+library(Matrix)
+library(here)
+library(foreach)
+library(R.utils)
 
 # cfscore -----------------------------------------------------------------
 # extract candidates by level (federal/state and local)

@@ -1,16 +1,10 @@
 # set-up ------------------------------------------------------------------
-lapply(
-    c(
-        "tidyverse",
-        "data.table",
-        "here",
-        "rprojroot",
-        "foreach",
-        "doParallel"
-    ),
-    require,
-    character.only = T
-)
+library(tidyverse)
+library(data.table)
+library(here)
+library(rprojroot)
+library(foreach)
+library(doParallel)
 
 # cfscore -----------------------------------------------------------------
 # extract candidates by level (federal/state and local)
