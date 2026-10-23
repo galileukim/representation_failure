@@ -10,25 +10,25 @@ The first section covers everything that belongs under `data/input/`, which is t
 
 | File | Read by | Notes |
 |---|---|---|
-| `candidate.csv.gz` | `01_candidates_wrangle.R`, `08_create_state_level_ideology.R` | TSE candidate registry, all years. The scripts filter it to 2002–2014. |
-| `filiado.csv.gz` | `01_candidates_wrangle.R` | TSE party membership registry. |
-| `election.csv.gz` | `01_candidates_wrangle.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
-| `*vote_count*` | `01_candidates_wrangle.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |
-| `party.csv.gz` | `01_candidates_wrangle.R` | Party and coalition (legend) votes. Matched by the regex `party.csv.gz`, so exactly one file in the folder may match. |
+| `candidate.csv.gz` | `01a_electoral_wrangle.R`, `08_create_state_level_ideology.R` | TSE candidate registry, all years. The scripts filter it to 2002–2014. |
+| `filiado.csv.gz` | `01a_electoral_wrangle.R` | TSE party membership registry. |
+| `election.csv.gz` | `01a_electoral_wrangle.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
+| `*vote_count*` | `01a_electoral_wrangle.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |
+| `party.csv.gz` | `01a_electoral_wrangle.R` | Party and coalition (legend) votes. Matched by the regex `party.csv.gz`, so exactly one file in the folder may match. |
 
 ### `municipal/`: municipality identifiers
 
 | File | Read by | Notes |
 |---|---|---|
-| `municipios.csv` | `01_candidates_wrangle.R`, `04_complaints.R` | IBGE municipality crosswalk (`cod_ibge_6`, `nome_municipio`, `codigo_uf`, …). |
-| `state_id.csv` | `01_candidates_wrangle.R`, `04_complaints.R` | Maps the IBGE state code (`state_id`) to the state abbreviation. |
+| `municipios.csv` | `01a_electoral_wrangle.R`, `04_complaints.R` | IBGE municipality crosswalk (`cod_ibge_6`, `nome_municipio`, `codigo_uf`, …). |
+| `state_id.csv` | `01a_electoral_wrangle.R`, `04_complaints.R` | Maps the IBGE state code (`state_id`) to the state abbreviation. |
 
 ### `contribution/`: campaign finance
 
 | File | Read by | Notes |
 |---|---|---|
-| `campaign_fed_state.csv.gz` | `01_candidates_wrangle.R`, `05_contrib_matrix_pooled.R`, `12_validate_cfscore_with_spoils.R`, `15_candidate_figs.R` | Contributions to federal and state candidates. |
-| `campaign_local.csv.gz` | `01_candidates_wrangle.R`, `05_contrib_matrix_pooled.R`, `15_candidate_figs.R` | Contributions to local candidates. `01` matches it by the substring `campaign_local`, and `05` also requires the `.csv.gz` extension. |
+| `campaign_fed_state.csv.gz` | `01b_cfscore_ideal_point_wrangle.R`, `05_contrib_matrix_pooled.R`, `12_validate_cfscore_with_spoils.R`, `15_candidate_figs.R` | Contributions to federal and state candidates. |
+| `campaign_local.csv.gz` | `01b_cfscore_ideal_point_wrangle.R`, `05_contrib_matrix_pooled.R`, `15_candidate_figs.R` | Contributions to local candidates. `01b` matches it by the substring `campaign_local`, and `05` also requires the `.csv.gz` extension. |
 
 `05_contrib_matrix_pooled.R` and `15_candidate_figs.R` read **every** file in this folder whose name starts with `campaign`. Any other file with that prefix would be pooled into the contribution matrix without warning.
 
@@ -36,7 +36,7 @@ The first section covers everything that belongs under `data/input/`, which is t
 
 | File | Read by | Notes |
 |---|---|---|
-| `legislative_2003*.csv` and `legislative_2007*.csv` | `01_candidates_wrangle.R` | Zucco and Lauderdale (2011) legislator ideal points. Matched by `^legislative_200[3\|7].*csv$` and labelled 2002 and 2006 in alphabetical order, so exactly two files may match. |
+| `legislative_2003*.csv` and `legislative_2007*.csv` | `01b_cfscore_ideal_point_wrangle.R` | Zucco and Lauderdale (2011) legislator ideal points. Matched by `^legislative_200[3\|7].*csv$` and labelled 2002 and 2006 in alphabetical order, so exactly two files may match. |
 | `legislative_survey_ideology_party.csv` | `06_candidates_cfscore_pooled.R`, `07_candidates_pooled_robustness.R` | Power and Rodrigues-Silveira (2018) party ideology from the Brazilian Legislative Survey. It anchors the CFscore priors. |
 | `latinobarometer_ideology.csv` | `15_candidate_figs.R` | Latinobarómetro left–right self-placement by year. |
 
@@ -89,7 +89,7 @@ These files are needed, but the scripts read them from paths that are stale (fro
 | `data/municipal/input/state_id.csv` | `03_censo_wrangle.R` | The same file as `data/input/municipal/state_id.csv`, read from the old path. |
 | `data/municipal/input/receita_mun.csv` | `03_censo_wrangle.R` | FINBRA municipal revenue. Old path. |
 | `data/maps/municipio.*` and `data/maps/estados_2010.*` (ESRI shapefiles) | `funs.R`, sourced by `15_candidate_figs.R` | Old path. The script reads them with `rgdal::readOGR()`, but rgdal is no longer on CRAN and is not in `renv.lock`. |
-| `data/candidate/fed_state/candidate_200[2-6].csv` | `15_candidate_figs.R` | Old path for files that `01_candidates_wrangle.R` now writes to `data/output/candidate/fed_state/`. Only `candidate_2006.csv` would match there, because `01` writes no 2002 file. |
+| `data/candidate/fed_state/candidate_200[2-6].csv` | `15_candidate_figs.R` | Old path for files that `01a_electoral_wrangle.R` now writes to `data/output/candidate/fed_state/`. Only `candidate_2006.csv` would match there, because `01a` writes no 2002 file. |
 | `../estimation/unobserved_valence.csv` | `13_validate_unobserved_valence.R` | Lives in a sibling `estimation` repository, not in this one. |
 | `../estimation/stacking.csv` | `15_candidate_figs.R` | Lives in a sibling `estimation` repository, not in this one. |
 | `~/princeton/R/data/tse/data/wrangle/election.csv.gz` and `…/wrangle/*vote_count*` | `14_candidates_diagnostics.R` | An absolute path on an older machine. These appear to be the same files as `data/input/tse/election.csv.gz` and `data/input/tse/*vote_count*`. |
