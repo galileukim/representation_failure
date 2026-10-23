@@ -319,8 +319,9 @@ election <- election |>
 # in the vote tallies, we also match by first name (e.g. joao marcelo santos
 # sousa/souza, 2014).
 # this matches all but 0.1% of candidacies in the vote tallies. candidates
-# without votes (e.g. registrations denied or withdrawn before the election),
-# running mates and senate substitutes keep the candidate data's labels
+# absent from the vote tallies (e.g. registrations denied or withdrawn before
+# the election, running mates and senate substitutes) keep the candidate data's
+# labels
 winner_outcomes <- c("eleito", "media", "eleito por media", "eleito por qp")
 candidacy_key <- c(
   "election_year", "regular_election", "round", "position", "unit", "candidate_num"
@@ -388,61 +389,47 @@ match_election <- function(id, lookup = election_status) {
     select(row_id, outcome_election, status_election)
 }
 
-candidate_election <- candidate_key |>
-  # ballot numbers in the vote tallies, to identify replaced candidates
-  left_join(
-    election_status |>
-      distinct(across(all_of(candidacy_key))) |>
-      mutate(on_ballot = TRUE),
-    by = candidacy_key
-  ) |>
-  left_join(
-    bind_rows(
-      match_election("cpf_candidate"),
-      match_election("elec_title"),
-      match_election("name_key"),
-      match_election(
-        "first_name", election_status |> filter(is.na(cpf_candidate))
-      )
-    ) |>
-      mutate(in_election = TRUE) |>
-      distinct(row_id, .keep_all = TRUE),
-    by = "row_id"
-  ) |>
-  transmute(
-    row_id,
-    in_election = coalesce(in_election, FALSE),
-    replaced = !in_election & coalesce(on_ballot, FALSE),
-    outcome_election,
-    status_election
+candidate_election <- bind_rows(
+  match_election("cpf_candidate"),
+  match_election("elec_title"),
+  match_election("name_key"),
+  match_election(
+    "first_name", election_status |> filter(is.na(cpf_candidate))
   )
+) |>
+  mutate(in_election = TRUE) |>
+  distinct(row_id, .keep_all = TRUE)
 
 candidate <- candidate |>
   mutate(row_id = row_number()) |>
   left_join(candidate_election, by = "row_id") |>
   mutate(
-    outcome = case_when(
-      # keep the candidate data's label when both sources agree
-      # (e.g. "eleito por media" vs. "media", "2º turno" vs. "2o turno")
-      outcome %in% winner_outcomes & outcome_election %in% winner_outcomes ~ outcome,
-      outcome == "2º turno" & outcome_election == "2o turno" ~ outcome,
-      in_election ~ outcome_election,
-      # winners absent from the vote tallies withdrew and were replaced by a
-      # substitute under the same ballot number (marcus savius teixeira sousa, 2002)
-      replaced & outcome %in% winner_outcomes ~
-        "renuncia/falecimento/cassacao antes da eleicao",
-      T ~ outcome
-    ),
+    in_election = coalesce(in_election, FALSE),
+    outcome = if_else(in_election, outcome_election, outcome),
     candidate_status = if_else(
       in_election, coalesce(status_election, candidate_status), candidate_status
     ),
-    elected = case_when(
-      in_election ~ as.integer(outcome_election %in% winner_outcomes),
-      replaced ~ 0L,
-      T ~ as.integer(elected)
+    elected = if_else(
+      in_election,
+      as.integer(outcome_election %in% winner_outcomes),
+      as.integer(elected)
     )
   ) |>
-  select(-outcome_election, -status_election, -replaced)
+  select(-outcome_election, -status_election)
+
+# marcus savius teixeira sousa (2002) withdrew and was replaced by a substitute
+# under the same ballot number, but the candidate data flags him as elected
+candidate <- candidate |>
+  mutate(
+    is_replaced = election_year == 2002 &
+      position == "deputado federal" &
+      candidate_name == "marcus savius teixeira sousa",
+    outcome = if_else(
+      is_replaced, "renuncia/falecimento/cassacao antes da eleicao", outcome
+    ),
+    elected = if_else(is_replaced, 0L, elected)
+  ) |>
+  select(-is_replaced)
 
 rm(election_all, election_status, candidate_key, candidate_election)
 
@@ -548,6 +535,34 @@ candidate <- candidate |>
     -row_id, -in_election, -shared_cpf, -cpf_owner, -cod_tse, -round, -election_type
   )
 
+# fix incumbency: incumbents were elected to the same office in the previous
+# cycle (8 years earlier for the senate). we keep the candidate data's labels
+# when the previous cycle is unavailable (2002, 2004, and the senate in 2006),
+# and for candidates without cpf
+candidate_winner <- candidate |>
+  filter(elected == 1 & !is.na(cpf_candidate)) |>
+  distinct(
+    cpf_candidate,
+    position,
+    election_year = election_year + if_else(position == "senador", 8L, 4L)
+  ) |>
+  mutate(elected_previous = TRUE)
+
+candidate <- candidate |>
+  left_join(
+    candidate_winner,
+    by = c("cpf_candidate", "position", "election_year")
+  ) |>
+  mutate(
+    previous_cycle = election_year - if_else(position == "senador", 8L, 4L),
+    incumbent = if_else(
+      previous_cycle %in% election_year & !is.na(cpf_candidate),
+      as.integer(coalesce(elected_previous, FALSE)),
+      as.integer(incumbent)
+    )
+  ) |>
+  select(-elected_previous, -previous_cycle)
+
 # identify candidates in the party membership data
 # we recover 679.3 thousand records
 # we verify that 84.7% of records match the name exactly
@@ -609,7 +624,7 @@ candidate_last_membership <- candidate |>
   )
 
 # join cod_ibge_6_birth: municipality of birth
-# we fail to join 81693/1358159 = 6% of our sample
+# we fail to join 81443/1353882 = 6% of our sample
 candidate_clean <- candidate |> 
   left_join(
     municipio,
