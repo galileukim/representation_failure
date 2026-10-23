@@ -438,6 +438,8 @@ candidate_clean <- candidate |>
     by = c("mun_birth_name", "state_birth_name")
   )
 
+# fix duplicate cpf candidates
+
 # write-out all federal candidates
 candidate_clean %>%
   filter(election_year %in% seq(2002, 2014, 4)) %>%

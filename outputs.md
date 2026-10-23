@@ -12,7 +12,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 | `data/output/candidate/fed_state/candidate_{2002,2006,2010,2014}.csv` | `08`, `10`, `11`, `12`, `14` | Federal deputies only. Coalition labels reproduce the seat allocation of every chamber except one seat in ES 2006, where two lists finished 73 votes apart. 186 of the 4,900 candidates in 2002 have no CPF in the raw TSE data; 183 of them received no votes. |
 | `data/output/candidate/local/candidate_{2004,2008,2012}.csv` | `01b`, `04`, `05`, `14` | All local candidates, one file per municipal election year. |
 | `data/output/candidate/candidate_party_membership.csv.gz` | — | The latest party membership record for each candidate and election year. |
-| `data/output/election/election_{2002,2006,2010,2014}.csv` | `10`, `14` | Federal deputies' votes by municipality. Votes cast in Boa Esperança do Norte (MT, 2002), which has no IBGE code, are dropped. Five losing candidates have no CPF: three in 2002 and two in 2014 (absent from the candidate registry). |
+| `data/output/election/election_{2002,2006,2010,2014}.csv` | `10`, `14` | Federal deputies' votes by municipality. Five losing candidates have no CPF: three in 2002 and two in 2014 (absent from the candidate registry). |
 | `data/output/election/vote_count_{year}.csv` | — | Federal deputy vote counts by municipality, one file per year in the input. |
 | `data/output/election/coalition_vote_{year}.csv` | — | Federal deputy legend votes by coalition and municipality, one file per year in the input. |
 
