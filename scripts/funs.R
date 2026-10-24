@@ -7,22 +7,6 @@ library(here)
 library(broom)
 library(dplyr)
 
-# prep map
-map_br <- st_read(
-  here("data/input/maps/municipio.shp"),
-  quiet = T
-) %>%
-  transmute(
-    cod_ibge_6 = MUNICÍPI0 %>% as.character %>% as.integer
-  )
-
-# state boundaries
-map_state <- st_read(
-  here("data/input/maps/estados_2010.shp"),
-  quiet = T
-) %>%
-  mutate(id = as.character(row_number() - 1))
-
 # functions ---------------------------------------------------------------
 # clean theme
 theme_clean <- theme(
@@ -142,8 +126,14 @@ fit_felm <- function(
     felm(
       formula = formula(
         paste(
-          dv, "~", predictor, "+", str_c(control, collapse = "+"),
-          "|", cluster, "| 0"
+          dv,
+          "~",
+          predictor,
+          "+",
+          str_c(control, collapse = "+"),
+          "|",
+          cluster,
+          "| 0"
         )
       ),
       data = .
@@ -181,4 +171,47 @@ fit_logit <- function(
     )
   
   return(repo)
+}
+
+fix_coalition <- function(data) {
+  data <- data |>
+    mutate(
+      office = str_remove(position, "^vice-|^.*suplente ")
+    ) |>
+    left_join(
+      coalition_lookup,
+      by = c("election_year", "state", "office", "party")
+    )
+
+  # parties absent from the tallies (e.g. without votes) keep the raw label,
+  # minus the parties that the tallies place in a coalition without them
+  coalition_fallback <- data |>
+    filter(is.na(coalition_fix) & !is.na(coalition)) |>
+    distinct(election_year, state, office, party, coalition) |>
+    mutate(member = str_split(coalition, " / ")) |>
+    unnest(member) |>
+    left_join(
+      coalition_lookup |> rename(member = party, coalition_member = coalition_fix),
+      by = c("election_year", "state", "office", "member")
+    ) |>
+    filter(
+      is.na(coalition_member) |
+      str_detect(
+        paste0(" / ", coalition_member, " / "), fixed(paste0(" / ", party, " / "))
+      )
+    ) |>
+    summarise(
+      coalition_fallback = paste(member, collapse = " / "),
+      .by = c(election_year, state, office, party, coalition)
+    )
+
+  data |>
+    left_join(
+      coalition_fallback,
+      by = c("election_year", "state", "office", "party", "coalition")
+    ) |>
+    mutate(
+      coalition = coalesce(coalition_fix, coalition_fallback, coalition)
+    ) |>
+    select(-office, -coalition_fix, -coalition_fallback)
 }

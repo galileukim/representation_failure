@@ -325,6 +325,22 @@ cands_ideal <- bind_cols(
     )
 )
 
+# prep map
+map_br <- st_read(
+  here("data/input/maps/municipio.shp"),
+  quiet = T
+) %>%
+  transmute(
+    cod_ibge_6 = MUNICÍPI0 %>% as.character %>% as.integer
+  )
+
+# state boundaries
+map_state <- st_read(
+  here("data/input/maps/estados_2010.shp"),
+  quiet = T
+) %>%
+  mutate(id = as.character(row_number() - 1))
+
 # mapping demographics ----------------------------------------------------
 map_br <- map_br %>% 
   left_join(

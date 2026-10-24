@@ -6,6 +6,10 @@ library(lubridate)
 library(stringi)
 library(R.utils)
 
+source(
+  "scripts/funs.R"
+)
+
 # electoral data ----------------------------------------------------------
 # candidate data
 candidate_input <- fread(
@@ -15,7 +19,7 @@ candidate_input <- fread(
   na.strings = ""
 )
 
-# lookup of cpf by electoral title and name across all years (1998-2016)
+# lookup table for cpf by electoral title and name across all years (1998-2016)
 # used to recover cpfs missing from the raw tse data (208 federal deputy
 # candidates in 2002). we require an exact name match because electoral titles
 # are not unique, and drop title-name pairs that map to more than one cpf
@@ -24,12 +28,8 @@ cpf_lookup <- candidate_input |>
     nchar(cpf_candidate) == 11 &
     !(elec_title %in% c("", "#ni#", "-1"))
   ) |>
-  distinct(elec_title, cpf_recovered = cpf_candidate) |>
-  mutate(
-    n = n()
-  ) |>
-  filter(n == 1, .by = c(elec_title)) |>
-  select(-n)
+  distinct(elec_title, candidate_name, cpf_recovered = cpf_candidate) |>
+  filter(n() == 1, .by = c(elec_title, candidate_name))
 
 candidate <- candidate_input %>%
   filter(
@@ -102,49 +102,6 @@ coalition_lookup <- party_vote |>
   distinct(election_year, state, office = position, party, coalition_fix = coalition) |>
   filter(n() == 1, .by = c(election_year, state, office, party))
 
-fix_coalition <- function(data) {
-  data <- data |>
-    mutate(
-      office = str_remove(position, "^vice-|^.*suplente ")
-    ) |>
-    left_join(
-      coalition_lookup,
-      by = c("election_year", "state", "office", "party")
-    )
-
-  # parties absent from the tallies (e.g. without votes) keep the raw label,
-  # minus the parties that the tallies place in a coalition without them
-  coalition_fallback <- data |>
-    filter(is.na(coalition_fix) & !is.na(coalition)) |>
-    distinct(election_year, state, office, party, coalition) |>
-    mutate(member = str_split(coalition, " / ")) |>
-    unnest(member) |>
-    left_join(
-      coalition_lookup |> rename(member = party, coalition_member = coalition_fix),
-      by = c("election_year", "state", "office", "member")
-    ) |>
-    filter(
-      is.na(coalition_member) |
-      str_detect(
-        paste0(" / ", coalition_member, " / "), fixed(paste0(" / ", party, " / "))
-      )
-    ) |>
-    summarise(
-      coalition_fallback = paste(member, collapse = " / "),
-      .by = c(election_year, state, office, party, coalition)
-    )
-
-  data |>
-    left_join(
-      coalition_fallback,
-      by = c("election_year", "state", "office", "party", "coalition")
-    ) |>
-    mutate(
-      coalition = coalesce(coalition_fix, coalition_fallback, coalition)
-    ) |>
-    select(-office, -coalition_fix, -coalition_fallback)
-}
-
 candidate <- fix_coalition(candidate)
 
 # recover missing cpfs from other records with the same electoral title
@@ -161,7 +118,7 @@ candidate <- candidate |>
   ) |>
   left_join(
     cpf_lookup,
-    by = c("elec_title")
+    by = c("elec_title", "candidate_name")
   ) |>
   mutate(
     cpf_candidate = if_else(
@@ -624,7 +581,7 @@ candidate_last_membership <- candidate |>
   )
 
 # join cod_ibge_6_birth: municipality of birth
-# we fail to join 81443/1353882 = 6% of our sample
+# we fail to join 81442/1353874 = 6% of our sample
 candidate_clean <- candidate |> 
   left_join(
     municipio,
