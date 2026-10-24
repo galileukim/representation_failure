@@ -70,7 +70,7 @@ Scripts are numbered in execution order; each script only reads outputs of lower
 | 2 | `scripts/02_censo_wrangle.R` | Process IBGE census covariates → `data/output/municipal/` |
 | 3 | `scripts/03_complaints.R` | Aggregate Fala.BR citizen complaints by municipality → `data/output/complaints/` |
 | 4 | `scripts/04_contrib_matrix_pooled.R` | Build pooled candidate–donor contribution matrix → `data/output/ideology/` |
-| 5 | `scripts/05_candidates_cfscore_pooled.R` | Estimate pooled CFscores → `data/output/ideology/`, `figs/` |
+| 5 | `scripts/05_candidates_cfscore_pooled.R` | Estimate pooled CFscores → `data/output/ideology/`, `figs/ideology/` |
 | 6 | `scripts/06_candidates_pooled_robustness.R` | Robustness checks for CFscore estimation → `data/output/ideology/` |
 | 7 | `scripts/07_create_state_level_ideology.R` | Attach CFscores to state-level candidates → `data/output/ideology/` |
 | 8 | `scripts/08_generate_valence_corruption.R` | Construct valence/corruption measures → `data/output/corruption/` |

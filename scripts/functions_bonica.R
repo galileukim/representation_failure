@@ -71,7 +71,16 @@ awm <- function(cands=NA, cm=NA,iters = 8, party_ideology){
 
     ko <- which(is.na(cands[,'cfscore']))
     cands[ko,'cfscore'] <- mean(as.numeric(cands$cfscore[-ko], na.rm = T))
-    
+
+    ##ALIGNING CANDIDATES WITH CONTRIB. MATRIX COLUMNS
+    # cand.ips is indexed by the columns of cm, so row i of cands
+    # must be the candidate in column i of cm
+    cands <- cands[match(colnames(contrib_matrix), cands$cpf_candidate), ]
+    stopifnot(
+      "every contrib. matrix column must match one candidate" =
+        identical(cands$cpf_candidate, colnames(contrib_matrix))
+    )
+
     # candidate ideal points
     cand.ips <- as.numeric(cands[['cfscore']])
 

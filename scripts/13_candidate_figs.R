@@ -17,6 +17,11 @@ source(
 
 theme_set(theme_minimal())
 
+# ggsave does not create missing folders
+fs::dir_create(
+  here("figs", c("demo", "campaign", "party", "ideology", "candidate"))
+)
+
 # read-in -----------------------------------------------------------------
 candidate <- list.files(
   here("data/output/candidate/fed_state"),
@@ -259,7 +264,7 @@ cands_elected <- list.files(
    full.names = T
 ) %>% 
   map_dfr(
-    function(x) fread(x, integer64 = "character")
+    function(x) fread(x, integer64 = "character", colClasses = c("birthyear" = "character"))
   ) %>% 
   filter(
     str_detect(outcome, "^eleito|^media")
@@ -372,8 +377,9 @@ map_state %>%
     legend.position = "none",
     legend.title = element_blank(),
     text = element_text(family = "Roboto", size = 14)
-  ) +
-  ggsave("Presentation/figs/demo/map_br.png")
+  )
+
+ggsave("figs/demo/map_br.png")
 
 # plot maps
 vars <- c("median_wage", "lit_rate", "rural", "sanitation")
@@ -390,7 +396,7 @@ for(i in 1:length(vars)){
   
   ggsave(
     here(
-      paste0("Presentation/figs/demo/map_", vars[i], ".png")
+      paste0("figs/demo/map_", vars[i], ".png")
     ),
     map[[i]]
   )
@@ -426,10 +432,11 @@ campaign %>%
   ) +
   theme(
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    here("Presentation/figs/campaign/campaign_total.png")
   )
+
+ggsave(
+  here("figs/campaign/campaign_total.png")
+)
 
 campaign %>%
   filter(
@@ -450,10 +457,11 @@ campaign %>%
   ylab("Year") +
   theme(
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    here("Presentation/figs/campaign/campaign_distribution.png")
   )
+
+ggsave(
+  here("figs/campaign/campaign_distribution.png")
+)
 
 # party system ------------------------------------------------------------
 # party vote share by electoral cycle
@@ -512,10 +520,11 @@ election_party %>%
   theme(
     legend.position = "none",
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    here("Presentation/figs/party/party_vote_share.png")
   )
+
+ggsave(
+  here("figs/party/party_vote_share.png")
+)
 
 # party vote share by state
 # party vote share by electoral cycle
@@ -591,10 +600,11 @@ herfin %>%
   coord_cartesian(
     ylim = c(0.05, 0.2)
   ) +
-  theme_minimal() +
-  ggsave(
-    here("Presentation/figs/party/herfindahl_median_wage.pdf")
-  )
+  theme_minimal()
+
+ggsave(
+  here("figs/party/herfindahl_median_wage.pdf")
+)
 
 herfin %>% 
   mutate(
@@ -604,10 +614,11 @@ herfin %>%
     h_index ~ log(median_wage) + log(pop) + lit_rate + rural + as.factor(region),
     data = .
   ) %>% 
-  tidycoef +
-  ggsave(
-    here("Presentation/figs/party/herfindahl_lm.pdf")
-  )
+  tidycoef
+
+ggsave(
+  here("figs/party/herfindahl_lm.pdf")
+)
 
 # party vote share by electoral cycle and state
 election_party_state %>%
@@ -659,12 +670,13 @@ election_party_state %>%
     xintercept = 20,
     linetype = "dashed",
     color = "grey65"
-  ) +
-  ggsave(
-    here("Presentation/figs/party_vote_share_state.pdf"),
-    height = 3.5,
-    width = 4
   )
+
+ggsave(
+  here("figs/party_vote_share_state.pdf"),
+  height = 3.5,
+  width = 4
+)
 
 # party vote share by mun
 election_party_mun <- election %>% 
@@ -752,10 +764,11 @@ fit_party %>%
   scale_color_brewer(
     palette = "Set1"
   ) +
-  theme_clean +
-  ggsave(
-    here("Presentation/figs/party/party_share_fit.pdf")
-  )
+  theme_clean
+
+ggsave(
+  here("figs/party/party_share_fit.pdf")
+)
 # note how much the pmdb benefits from poor and uneducated voters! it's insane.
 
 # ideology ----------------------------------------------------------------
@@ -849,7 +862,7 @@ party_ideology_candidate %>%
     panel.grid = element_blank()
   ) 
   # ggsave(
-  #   here("Presentation/figs/ideology/party_ideology_pelotas.pdf")
+  #   here("figs/ideology/party_ideology_pelotas.pdf")
   # )
 
 # party_ideology %>% 
@@ -903,7 +916,7 @@ party_ideology_candidate %>%
 #     panel.grid = element_blank()
 #   ) +
 #   ggsave(
-#     here("Presentation/figs/ideology/party_ideology_labels.pdf")
+#     here("figs/ideology/party_ideology_labels.pdf")
 #   )
 
 # party ideology vs. district income
@@ -945,10 +958,11 @@ candidate %>%
   facet_grid(. ~ party) +
   coord_cartesian(
     ylim = c(-1, 0.5)
-  ) +
-  ggsave(
-    here("../Presentation/figs/ideology/party_ideology_median_wage.pdf")
   )
+
+ggsave(
+  here("figs/ideology/party_ideology_median_wage.pdf")
+)
 
 # party ideology vs. district rural
 candidate %>% 
@@ -989,10 +1003,11 @@ candidate %>%
   facet_grid(. ~ party) +
   coord_cartesian(
     ylim = c(-1, 0.5)
-  ) +
-  ggsave(
-    here("../Presentation/figs/ideology/party_ideology_rural.pdf")
   )
+
+ggsave(
+  here("figs/ideology/party_ideology_rural.pdf")
+)
 
 # party ideology vs. district education
 candidate %>% 
@@ -1033,10 +1048,11 @@ candidate %>%
   facet_grid(. ~ party) +
   coord_cartesian(
     ylim = c(-1, 0.5)
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/party_ideology_lower_school.pdf")
   )
+
+ggsave(
+  here("figs/ideology/party_ideology_lower_school.pdf")
+)
 
 # interparty heterogeneity
 candidate %>%
@@ -1065,10 +1081,11 @@ candidate %>%
     panel.grid = element_blank(),
     axis.ticks.x = element_blank(),
     axis.title.x = element_blank()
-  ) + 
-  ggsave(
-    "Presentation/figs/ideology/party_ideology.pdf"
   )
+
+ggsave(
+  "figs/ideology/party_ideology.pdf"
+)
 
 # elected vs. non-elected candidates
 candidate %>% 
@@ -1097,10 +1114,11 @@ candidate %>%
   ) +
   ggtitle(
     "Ideology of elected and non-elected candidates"
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/candidates_elected_ideology.pdf")
   )
+
+ggsave(
+  here("figs/ideology/candidates_elected_ideology.pdf")
+)
 
 # local vs. federal ideology
 party_ideology %>%
@@ -1141,10 +1159,11 @@ party_ideology %>%
   ) +
   facet_grid(
     election_year ~ .
-  ) +
-  ggsave(
-    here("../Presentation/figs/ideology/party_ideology_deputy_mayor.png")
   )
+
+ggsave(
+  here("figs/ideology/party_ideology_deputy_mayor.png")
+)
 
 party_ideology %>% 
   ggplot(
@@ -1184,10 +1203,11 @@ party_ideology %>%
   coord_cartesian(
     xlim = c(-2, 2),
     ylim = c(-2, 2)
-  ) +
-  ggsave(
-    here("../Presentation/figs/ideology/reg_ideology.png")
   )
+
+ggsave(
+  here("figs/ideology/reg_ideology.png")
+)
 
 # latinobarometer
 latinobar %>% 
@@ -1217,10 +1237,11 @@ latinobar %>%
   ylab("Ideology") +
   ggtitle(
     "Mean policy position for Latinobarometer respondents"
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/reg_electorate_ideology.png")
   )
+
+ggsave(
+  here("figs/ideology/reg_electorate_ideology.png")
+)
   
 
 latinobar %>% 
@@ -1249,10 +1270,11 @@ latinobar %>%
   theme(
     panel.grid  = element_blank(),
     legend.position = "none"
-  ) +
-  ggsave(
-    here("Presentation/figs/ideology/electorate_ideology.png")
   )
+
+ggsave(
+  here("figs/ideology/electorate_ideology.png")
+)
 
 # party map
 cands_ideal %>%
@@ -1293,13 +1315,14 @@ cands_ideal %>%
     legend.position = "bottom"
   ) +
   xlab("Campaign Contribution Policy Position") +
-  ylab("Row-call Policy Position")
+  ylab("Roll-call Policy Position") +
   ggtitle(
-    "Legislative Policy Positions: Row-Call vs. Campaign Contribution Estimation"
-  ) +
-  ggsave(
-    here("../Presentation/figs/ideology/ideology_cfscore.png")
+    "Legislative Policy Positions: Roll-Call vs. Campaign Contribution Estimation"
   )
+
+ggsave(
+  here("figs/ideology/ideology_cfscore.png")
+)
 
 # valence -----------------------------------------------------------------
 # create candidate state table
@@ -1351,10 +1374,11 @@ candidate_state %>%
   ) +
   ggtitle(
     "Distribution of valence characteristics across states (pooled)"
-  ) +
-  ggsave(
-    here("Presentation/figs/candidate/candidate_valence_states.pdf")
   )
+
+ggsave(
+  here("figs/candidate/candidate_valence_states.pdf")
+)
 
 # candidate valence characteristics
 candidate_valence_state <- candidate %>% 
@@ -1412,11 +1436,12 @@ candidate_valence_state %>%
   ) +
   ggtitle(
     "Proportion of valence characteristics across\n states (2014)"
-  )  +
-  ggsave(
-    here("Presentation/figs/candidate/valence_state.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_state.pdf"),
+  device = cairo_pdf
+)
 
 # candidate elected valence
 candidate_elected <- candidate %>% 
@@ -1480,11 +1505,12 @@ candidate_elected %>%
   ) +
   ggtitle(
     "Proportion of individual characteristics across\n elected and non-elected candidates"
-  )  +
-  ggsave(
-    here("Presentation/figs/candidate/valence_elected_nonelected.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_elected_nonelected.pdf"),
+  device = cairo_pdf
+)
 
 candidate_elected %>%
   arrange(
@@ -1527,11 +1553,12 @@ candidate_elected %>%
   ) +
   ggtitle(
     "Difference in proportion of valence characteristics across\n elected and non-elected candidates"
-  )  +
-  ggsave(
-    here("Presentation/figs/candidate/valence_selection.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_selection.pdf"),
+  device = cairo_pdf
+)
 
 # # linear fit candidate vote share
 # election %>% 
@@ -1585,7 +1612,7 @@ candidate_elected %>%
 #     axis.title.y = element_blank()
 #   ) +
 #   ggsave(
-#     "Presentation/figs/candidate/candidate_valence_fit.pdf",
+#     "figs/candidate/candidate_valence_fit.pdf",
 #     device = cairo_pdf
 #   )
 
@@ -1629,11 +1656,12 @@ candidate_state_demo %>%
   ) +
   ggtitle(
     "Proportion of candidates with higher education vs.\n state proportion of higher education"
-  ) +
-  ggsave(
-    here("Presentation/figs/candidate/valence_education.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_education.pdf"),
+  device = cairo_pdf
+)
 
 # rural vs. edu
 candidate_state_demo %>% 
@@ -1661,11 +1689,12 @@ candidate_state_demo %>%
   ) +
   ggtitle(
     "Proportion of candidates with higher education vs.\n state rural"
-  ) +
-  ggsave(
-    here("Presentation/figs/candidate/valence_rural_edu.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_rural_edu.pdf"),
+  device = cairo_pdf
+)
 
 # incumbents vs literacy rate
 candidate_state_demo %>% 
@@ -1693,11 +1722,12 @@ candidate_state_demo %>%
   ) +
   ggtitle(
     "Proportion of incumbent candidates vs.\n state rural"
-  ) +
-  ggsave(
-    here("Presentation/figs/candidate/valence_lit_incumbent.pdf"),
-    device = cairo_pdf
   )
+
+ggsave(
+  here("figs/candidate/valence_lit_incumbent.pdf"),
+  device = cairo_pdf
+)
 
 # valence by party
 candidate_party <- candidate %>% 
@@ -1760,10 +1790,11 @@ candidate_party %>%
     panel.grid = element_blank(),
     axis.title.y = element_blank(),
     legend.position = "none"
-  ) +
-  ggsave(
-    "Presentation/figs/candidate/valence_candidate_party.pdf"
   )
+
+ggsave(
+  "figs/candidate/valence_candidate_party.pdf"
+)
 
 # education vs. ideology
 candidate %>% 
@@ -1793,10 +1824,11 @@ candidate %>%
   theme(
     legend.position = "none",
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    "Presentation/figs/ideology/candidate_edu_ideology.png"
   )
+
+ggsave(
+  "figs/ideology/candidate_edu_ideology.png"
+)
 
 # occupation vs. ideology
 candidate %>% 
@@ -1827,10 +1859,11 @@ candidate %>%
   theme(
     legend.position = "none",
     panel.grid = element_blank()
-  ) +
-  ggsave(
-    "Presentation/figs/ideology/candidate_occupation_ideology.png"
   )
+
+ggsave(
+  "figs/ideology/candidate_occupation_ideology.png"
+)
 
 # candidate table
 table_full <- candidate %>% 

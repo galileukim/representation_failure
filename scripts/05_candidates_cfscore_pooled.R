@@ -81,13 +81,12 @@ contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
 cands.in <- cands %>%
-  filter(
-    cpf_candidate %in% colnames(contrib_matrix)
-  ) %>%
-  distinct(
-    cpf_candidate,
-    .keep_all = T
-  )
+  distinct(cpf_candidate, .keep_all = T)
+
+# reorder to match contrib_matrix, since awm aligns by position
+cands.in <- cands.in[
+  match(colnames(contrib_matrix), cands.in$cpf_candidate), 
+]
 
 # cfscore estimation
 cfscore_pooled <- awm(
@@ -113,7 +112,7 @@ cfscore_pooled %>%
   labs(x = "Policy Position", y = "Total (thousands)")
 
 ggsave(
-  here("figs/histogram_pooled_cfscore.pdf")
+  here("figs/ideology/histogram_pooled_cfscore.pdf")
 )
 
 cfscore <- cfscore_pooled$cands %>%
@@ -130,9 +129,8 @@ cfscore %>%
     aes(cfscore_bonica, cfscore)
   )
 
-
 ggsave(
-  here("figs/cfscore_pooled_campaign_vs_survey.pdf")
+  here("figs/ideology/cfscore_pooled_campaign_vs_survey.pdf")
 )
 
 cfscore_pooled$cands %>%
@@ -159,7 +157,7 @@ cfscore_pooled$cands %>%
 
 
 ggsave(
-  here("figs/cfscore_pooled_by_party.pdf")
+  here("figs/ideology/cfscore_pooled_by_party.pdf")
 )
 
 # ---------------------------------------------------------------------------- #

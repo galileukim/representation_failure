@@ -18,6 +18,7 @@ When the two disagree about what happened on election day, we now trust the elec
 - **One record per candidate:** each CPF now appears at most once per election year. CPFs that were wrongly shared by different people are given to their owner or set to missing.
 - **Incumbency:** `incumbent` is rebuilt from the corrected results of the previous election.
 - **Identifiers and names:** missing and malformed CPFs are recovered where possible, stray quotation marks are removed from names, and missing municipality codes are filled in.
+- **CFscores:** scores are now attached to the right candidates. Previously almost every candidate got another candidate's score.
 
 ### What changed, and why
 
@@ -74,6 +75,12 @@ The raw flag stays where the data has no earlier election to look back to: 2002,
 - **Broken CPFs.** 137 truncated CPFs (2004) and 23 all-zero CPFs are now treated as missing, so the same step can recover them.
 - **CPFs missing from the vote tallies** are filled in from the candidate data, using the ballot number and first name. This replaces `02_fix_defective_candidates.R`, which patched three candidates by hand and had to be rerun after every run of `01a`. That script has been removed.
 - **Leading zeros.** CPFs and electoral titles are now read as text, so leading zeros are no longer lost.
+
+#### CFscores are attached to the right candidates
+
+The estimation function `awm()` matched scores to candidates by position, assuming that row *i* of the candidate table was the candidate in column *i* of the contribution matrix. The two were in different orders, so almost every candidate got the starting value and the final score of an unrelated candidate. Party averages still looked plausible, because each row's score largely reflected the party position it started with.
+
+The candidate table is now put in the order of the matrix columns, both in `05` and `06` and inside `awm()`, which also stops with an error if any column has no matching candidate. This affects all CFscore outputs, including `cfscore_pooled_legacy.RData`. See [`docs/cfscore_alignment_fix.md`](docs/cfscore_alignment_fix.md) for the details and checks.
 
 #### Smaller fixes
 
