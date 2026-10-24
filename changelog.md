@@ -1,8 +1,8 @@
 # Changelog
 
-## `refactor` branch (October 2026)
+## `refactor` (October 2026)
 
-This branch cleans up the TSE candidate and election data that every later script builds on. Most of the fixes change the files in `data/output/`, so rerun the pipeline from `01a_electoral_wrangle.R` onward before using the new numbers, using the `00_main.R` script.
+This refactirubg cleans up the TSE candidate and election data that every later script builds on. Most of the fixes change the files in `data/output/`, so rerun the pipeline from `01a_electoral_wrangle.R` onward before using the new numbers, using the `00_main.R` script.
 
 Many of the fixes come down to how two TSE sources disagree, so here is a quick orientation:
 
