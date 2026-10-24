@@ -81,4 +81,4 @@ Scripts are numbered in execution order; each script only reads outputs of lower
 | 13 | `scripts/13_candidates_diagnostics.R` | Diagnostics and summary statistics |
 | 14 | `scripts/14_candidate_figs.R` | Generate descriptive figures (saved under `Presentation/`; see `outputs.md`) |
 
-Helper functions are defined in `scripts/functions.R` (sourced by steps 5–6) and `scripts/funs.R` (sourced by step 14); they are not run on their own.
+Helper functions are defined in `scripts/functions_bonica.R` (sourced by steps 5–6) and `scripts/funs.R` (sourced by step 14); they are not run on their own.

@@ -5,7 +5,7 @@ library(Matrix)
 library(here)
 library(R.utils)
 
-source(here("scripts/functions.R"))
+source(here("scripts/functions_bonica.R"))
 set.seed(1789)
 theme_set(theme_bw())
 

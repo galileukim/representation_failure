@@ -3,7 +3,17 @@ library(data.table)
 library(scales)
 library(tidyverse)
 
-gg_summary <- function(data, x, y, fun = "mean", size = 2, geom = "point", color = "steelblue3", smooth = T, ...) {
+gg_summary <- function(
+  data,
+  x,
+  y,
+  fun = "mean",
+  size = 2,
+  geom = "point",
+  color = "steelblue3",
+  smooth = T,
+  ...
+) {
   plot <- data %>%
     ggplot(
       aes(
@@ -125,10 +135,12 @@ contribution_by_candidate_2010 %>%
     labels = trans_format("log10", math_format(10^.x))
   ) +
   scale_y_log10(
-    breaks = trans_breaks("log10", function(x) 10^(x+ 1)),
+    breaks = trans_breaks("log10", function(x) 10^(x + 1)),
     labels = trans_format("log10", math_format(10^.x))
   ) +
-  facet_wrap(election_year ~ .) +
-  ggsave(
-    here("../Presentation/figs/ideology/validation_contracts_contribution.pdf")
-  )
+  facet_wrap(election_year ~ .)
+
+
+ggsave(
+  here("figs/ideology/validation_contracts_contribution.pdf")
+)

@@ -32,6 +32,9 @@ candidate <- list.files(
   ) %>% 
   filter(
     str_detect(candidate_status, "^deferido")
+  ) |>
+  mutate(
+    birthyear = as.integer(birthyear)
   )
 
 # note: filter candidates who have been deferred
@@ -79,7 +82,7 @@ candidate <- candidate %>%
   )
 
 candidate_blp <- fread(
-  here("../estimation/stacking.csv")
+  here("data/input/estimation/stacking.csv")
 )
 
 # cfscore validation
