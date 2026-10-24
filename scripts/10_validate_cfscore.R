@@ -5,7 +5,17 @@ library(tidyverse)
 library(data.table)
 library(here)
 
-gg_summary <- function(data, x, y, fun = "mean", size = 2, geom = "point", color = "steelblue3", smooth = T, ...) {
+gg_summary <- function(
+  data,
+  x,
+  y,
+  fun = "mean",
+  size = 2,
+  geom = "point",
+  color = "steelblue3",
+  smooth = T,
+  ...
+) {
   plot <- data %>%
     ggplot(
       aes(
@@ -52,7 +62,8 @@ robustness_files <- sprintf(
 cfscore_fed_robust <- map_dfr(
   robustness_files,
   ~ fread(
-    ., integer64 = "character"
+    .,
+    integer64 = "character"
   ) %>%
     select(
       cpf_candidate,
@@ -69,6 +80,7 @@ candidate_cpf <- list.files(
 ) %>%
   map_dfr(
     fread,
+    colClasses = "character",
     integer64 = "character"
   )
 
@@ -102,10 +114,10 @@ cfscore_fed_validation %>%
   ) %>%
   mutate(
     percentile = recode(
-      percentile, 
-      "5_percentile" = "5th percentile", 
+      percentile,
+      "5_percentile" = "5th percentile",
       "10_percentile" = "10th percentile"
-      )
+    )
   ) %>%
   ggplot(
     aes(cfscore_original, cfscore_robust)
@@ -114,21 +126,22 @@ cfscore_fed_validation %>%
   geom_smooth(col = "red3", method = "lm", alpha = 0.1) +
   theme_minimal() +
   facet_wrap(percentile ~ .) +
-  labs(x = "Full Sample Policy Position", "Subset Policy Position") +
-  ggsave(
-    here::here("../Presentation/figs/ideology/cfscore_robustness.pdf"),
-    height = 4,
-    width = 6
-  )
+  labs(x = "Full Sample Policy Position", y = "Subset Policy Position")
+
+ggsave(
+  here::here("figs/ideology/cfscore_robustness.pdf"),
+  height = 4,
+  width = 6
+)
 
 # ---------------------------------------------------------------------------- #
 election <- list.files(
   here("data/output/election/"),
   "^election",
   full.names = T
-) %>% 
+) %>%
   map_dfr(
-    . %>% 
+    . %>%
       fread(., integer64 = "character")
   ) %>%
   filter(
@@ -136,11 +149,11 @@ election <- list.files(
   )
 
 # votes by candidate
-candidate_vote <- election %>% 
+candidate_vote <- election %>%
   group_by(
     cpf_candidate,
     election_year
-  ) %>% 
+  ) %>%
   summarise(
     vote = sum(vote, na.rm = T)
   ) %>%
@@ -156,10 +169,12 @@ candidate_cfscore %>%
     ylim = c(-0.5, 0.1)
   )
 
-candidate_cfscore %>% 
+candidate_cfscore %>%
   mutate(
     highlight = if_else(
-      party %in% c("pt", "pmdb", "psdb"), T, F
+      party %in% c("pt", "pmdb", "psdb"),
+      T,
+      F
     )
   ) %>%
   ggplot() +
@@ -169,7 +184,7 @@ candidate_cfscore %>%
     linetype = "dashed"
   ) +
   geom_point(
-    data = . %>% 
+    data = . %>%
       filter(highlight),
     aes(
       cfscore_original,
@@ -180,7 +195,7 @@ candidate_cfscore %>%
     position = position_jitter(width = 0, height = 0.005)
   ) +
   geom_text(
-    data = . %>% 
+    data = . %>%
       filter(highlight),
     aes(
       cfscore_original,
@@ -203,35 +218,36 @@ candidate_cfscore %>%
 
 # ideology
 party_ideology_candidate <- candidate_cfscore %>%
+  mutate(election_year = as.integer(election_year)) %>%
   filter(
     election_year > 2002
-  ) %>% 
+  ) %>%
   left_join(
-    candidate_vote,
+    candidate_vote |> mutate(election_year = as.integer(election_year)),
     by = c("cpf_candidate", "election_year")
-  ) %>% 
+  ) %>%
   mutate(
     highlight = if_else(
-      party %in% c("pt", "pmdb", "psdb"), T, F
+      party %in% c("pt", "pmdb", "psdb"),
+      T,
+      F
     )
-  ) %>% 
-  # group_by(
-  #   election_year
-  # ) %>% 
+  ) %>%
   mutate(
     total_vote = sum(vote, na.rm = T)
-  ) %>% 
+  ) %>%
   group_by(
     party,
     highlight,
-    add = T
-  ) %>% 
+    election_year,
+    .add = T
+  ) %>%
   summarise(
     ideology = mean(cfscore_original, na.rm = T),
-    party_share = sum(vote, na.rm = T)/unique(total_vote)
+    party_share = sum(vote, na.rm = T) / unique(total_vote)
   )
 
-party_ideology_candidate %>% 
+party_ideology_candidate %>%
   ggplot() +
   geom_hline(
     yintercept = 0,
@@ -239,7 +255,7 @@ party_ideology_candidate %>%
     linetype = "dashed"
   ) +
   geom_point(
-    data = . %>% 
+    data = . %>%
       filter(!highlight),
     aes(
       ideology,
@@ -251,7 +267,7 @@ party_ideology_candidate %>%
     position = position_jitter(width = 0, height = 0.005)
   ) +
   geom_text(
-    data = . %>% 
+    data = . %>%
       filter(highlight),
     aes(
       ideology,
@@ -278,7 +294,4 @@ party_ideology_candidate %>%
     axis.title.y = element_blank(),
     axis.text.y = element_blank(),
     panel.grid = element_blank()
-  ) 
-  # ggsave(
-  #   here("Presentation/figs/ideology/party_ideology_pelotas.pdf")
-  # )
+  )

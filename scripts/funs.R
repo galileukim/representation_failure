@@ -1,44 +1,12 @@
 # import map --------------------------------------------------------------
-lapply(
-  c(
-    "rgdal",
-    "tidyverse",
-    "RColorBrewer",
-    "scales",
-    "here",
-    "broom",
-    "dplyr"
-  ),
-  require, character.only = T
-)
+library(sf)
+library(tidyverse)
+library(RColorBrewer)
+library(scales)
+library(here)
+library(broom)
+library(dplyr)
 
-# prep map
-map_br <- readOGR(
-  here("data/maps/"),
-  "municipio"
-)
-
-map_br@data <- map_br@data %>%
-  mutate(id = row.names(map_br))
-
-# fortify
-map_br <- map_br %>% 
-  fortify %>% 
-  left_join(., map_br@data, by = "id") %>%
-  transmute(
-    long, 
-    lat, 
-    group, 
-    cod_ibge_6 = MUNICÍPI0 %>% as.character %>% as.integer
-  ) 
-
-# state boundaries
-map_state <- readOGR(
-  here("data/maps/"),
-  "estados_2010"
-) %>% 
-  fortify
-  
 # functions ---------------------------------------------------------------
 # clean theme
 theme_clean <- theme(
@@ -103,23 +71,15 @@ summarise_mun <- function(data, var){
 # plot map
 plot_map <- function(data, var, palette = "RdYlBu", limits = c(-100, 100)){
   ggplot() +
-    geom_polygon(
-      data = data, 
+    geom_sf(
+      data = data,
       aes(
-        x = long, 
-        y = lat, 
-        group = group, 
-        fill = get(var)
+        fill = .data[[var]]
       ),
       color = NA
     ) +
-    geom_polygon(
+    geom_sf(
       data = map_state,
-      aes(
-        x = long, 
-        y = lat, 
-        group = group
-      ),
       color = "grey35",
       fill = NA
     ) +
@@ -132,8 +92,7 @@ plot_map <- function(data, var, palette = "RdYlBu", limits = c(-100, 100)){
       na.value = "grey80"
     ) +
     theme_void() +
-    coord_map() +
-    xlim(range(data$long)) + ylim(range(data$lat)) +
+    coord_sf() +
     theme(
       legend.position = "none",
       legend.title = element_blank(),
@@ -167,8 +126,14 @@ fit_felm <- function(
     felm(
       formula = formula(
         paste(
-          dv, "~", predictor, "+", str_c(control, collapse = "+"),
-          "|", cluster, "| 0"
+          dv,
+          "~",
+          predictor,
+          "+",
+          str_c(control, collapse = "+"),
+          "|",
+          cluster,
+          "| 0"
         )
       ),
       data = .
@@ -206,4 +171,47 @@ fit_logit <- function(
     )
   
   return(repo)
+}
+
+fix_coalition <- function(data) {
+  data <- data |>
+    mutate(
+      office = str_remove(position, "^vice-|^.*suplente ")
+    ) |>
+    left_join(
+      coalition_lookup,
+      by = c("election_year", "state", "office", "party")
+    )
+
+  # parties absent from the tallies (e.g. without votes) keep the raw label,
+  # minus the parties that the tallies place in a coalition without them
+  coalition_fallback <- data |>
+    filter(is.na(coalition_fix) & !is.na(coalition)) |>
+    distinct(election_year, state, office, party, coalition) |>
+    mutate(member = str_split(coalition, " / ")) |>
+    unnest(member) |>
+    left_join(
+      coalition_lookup |> rename(member = party, coalition_member = coalition_fix),
+      by = c("election_year", "state", "office", "member")
+    ) |>
+    filter(
+      is.na(coalition_member) |
+      str_detect(
+        paste0(" / ", coalition_member, " / "), fixed(paste0(" / ", party, " / "))
+      )
+    ) |>
+    summarise(
+      coalition_fallback = paste(member, collapse = " / "),
+      .by = c(election_year, state, office, party, coalition)
+    )
+
+  data |>
+    left_join(
+      coalition_fallback,
+      by = c("election_year", "state", "office", "party", "coalition")
+    ) |>
+    mutate(
+      coalition = coalesce(coalition_fix, coalition_fallback, coalition)
+    ) |>
+    select(-office, -coalition_fix, -coalition_fallback)
 }

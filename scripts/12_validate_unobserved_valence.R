@@ -17,10 +17,10 @@ candidate <- fread(
 )
 
 unobserved_valence <- read_csv(
-    here("../estimation/unobserved_valence.csv")
+    here("data/input/estimation/unobserved_valence.csv")
 ) %>%
-    select(
-        cpf_candidate = candidate,
+    transmute(
+        cpf_candidate = as.character(candidate),
         state,
         year,
         unobserved_valence
@@ -43,8 +43,9 @@ candidate_corruption <- candidate %>%
             fct_relevel("lower school"),
         corrupt = ifelse(is.na(corrupt), 0, corrupt),
         occupation = if_else(
-            occupation %in% c("government", "business", "technician", "white-collar"),
-            occupation, 
+            occupation %in%
+                c("government", "business", "technician", "white-collar"),
+            occupation,
             "other"
         ) %>%
             fct_relevel("other")
@@ -82,7 +83,8 @@ stargazer::stargazer(
         "Middle School",
         "Incumbency Status"
     ),
-    type = 'latex')
+    type = 'latex'
+)
 
 stargazer::stargazer(
     linear_observable,
@@ -100,7 +102,8 @@ stargazer::stargazer(
         "Middle School",
         "Incumbency Status"
     ),
-    type = 'latex')
+    type = 'latex'
+)
 
 logit <- glm(
     corrupt ~ unobserved_valence + age + female + occupation + edu + incumbent,
@@ -130,7 +133,8 @@ stargazer::stargazer(
         "Middle School",
         "Incumbency Status"
     ),
-    type = 'latex')
+    type = 'latex'
+)
 
 stargazer::stargazer(
     linear,
@@ -149,4 +153,5 @@ stargazer::stargazer(
         "Middle School",
         "Incumbency Status"
     ),
-    type = 'latex')
+    type = 'latex'
+)

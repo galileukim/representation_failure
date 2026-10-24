@@ -1,15 +1,10 @@
 # set-up ------------------------------------------------------------------
-lapply(
-  c(
-    "tidyverse",
-    "data.table",
-    "Matrix",
-    "here",
-    "R.utils",
-    "sqldf"
-  ),
-  require, character.only = T
-)
+library(tidyverse)
+library(data.table)
+library(Matrix)
+library(here)
+library(R.utils)
+library(sqldf)
 
 source(here("scripts/functions.R"))
 set.seed(1789)

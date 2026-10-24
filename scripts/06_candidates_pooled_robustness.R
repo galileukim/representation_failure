@@ -1,17 +1,12 @@
 # set-up ------------------------------------------------------------------
-lapply(
-  c(
-    "tidyverse",
-    "data.table",
-    "Matrix",
-    "here",
-    "R.utils",
-    "sqldf"
-  ),
-  require, character.only = T
-)
+library(tidyverse)
+library(data.table)
+library(Matrix)
+library(here)
+library(R.utils)
+library(sqldf)
 
-source(here("scripts/functions.R"))
+source(here("scripts/functions_bonica.R"))
 set.seed(1789)
 
 # read-in -----------------------------------------------------------------
@@ -69,23 +64,26 @@ contrib_matrix_10_percentile <- contrib_matrix[rowSums(contrib_matrix) <= top_10
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
-cands.in_5_percentile <- cands %>% 
-  filter(
-    cpf_candidate %in% colnames(contrib_matrix_5_percentile)
-  ) %>% 
+cands.in_5_percentile <- cands %>%
   distinct(
     cpf_candidate,
     .keep_all = T
   )
 
-cands.in_10_percentile <- cands %>% 
-  filter(
-    cpf_candidate %in% colnames(contrib_matrix_10_percentile)
-  ) %>% 
+# reorder to match contrib_matrix, since awm aligns by position
+cands.in_5_percentile <- cands.in_5_percentile[
+  match(colnames(contrib_matrix_5_percentile), cands.in_5_percentile$cpf_candidate), 
+]
+
+cands.in_10_percentile <- cands %>%
   distinct(
     cpf_candidate,
     .keep_all = T
   )
+
+cands.in_10_percentile <- cands.in_10_percentile[
+  match(colnames(contrib_matrix_10_percentile), cands.in_10_percentile$cpf_candidate), 
+]
 
 # cfscore estimation
 cfscore_robust <- map2(
