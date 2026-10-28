@@ -28,6 +28,8 @@ In 2006 and 2010, the raw TSE data put every party that ran alone in a state int
 
 Coalition labels now come from the TSE party-level tallies (`party.csv.gz`), where each party belongs to exactly one list per office and state. As a check, allocating seats with the official D'Hondt formula and the new labels reproduces all 513 federal deputy seats in 2002, 2010 and 2014, and 512 of 513 in 2006 (see Known issues). The fix covers all statewide offices, in both the candidate files and `election_{year}.csv`.
 
+Parties missing from the tallies keep the candidate data's label. Where that label is blank, a party registered as running alone (*partido isolado*) is labeled with its own name. A party in a named coalition gets the list of parties whose candidates registered under that name in the same state, or municipality for local offices. For example, the six parties of *Unidos por Goiás* (GO, 2014), whose registration was denied, are now labeled `pen / phs / pmn / psl / ptc / pv`. This fills the blank labels of Federal District district deputies in 2002–2010 and of most local candidates in 2004 and 2008. About 21,700 local candidates in 2008 and a few dozen others stay blank, because the TSE records neither a coalition type nor a coalition name for them. A coalition rebuilt this way lists only the parties that fielded candidates under that name.
+
 #### Election results come from the election data
 
 The candidate data sometimes records a candidate's status from before the election and never updates it. For example, Vinicius Gurgel and Rosinha da Adefal (2010) won seats after their registrations were reinstated, but the candidate data still shows their earlier status.
@@ -59,7 +61,7 @@ The candidate files go from 1,358,159 to 1,353,874 records. The party membership
 
 In about 400 cases, the same CPF belongs to clearly different people in the same year: their electoral titles differ, and so do their birth years or first names. For example, in 2004 Elza Alves Pereira and Maria Marina Silva, from different municipalities, share a CPF. These are data-entry errors in the TSE files, and nothing in the data says for sure whose CPF it is.
 
-If one of the people uses that CPF in other election years, we give it to them and set it to missing for the others. If nobody does, which is about half the cases, we set it to missing for everyone rather than guess. These candidates stay in the data; they just can't be linked to other years or datasets by CPF.
+If one of the people uses that CPF in other election years, we give it to them and set it to missing for the others. Failing that, if the same year's vote tallies pair the CPF with one of them (by electoral title), it goes to that person. For example, Zairton Cavalcante Santos (CE, 2006) shares his CPF with a governor candidate who withdrew, but only he appears in the tallies. If neither rule applies, we set the CPF to missing for everyone rather than guess. CPFs set to missing in the candidate data are set to missing in `election_{year}.csv` too, so every CPF in the vote tallies has a candidate record. These candidates stay in the data; they just can't be linked to other years or datasets by CPF.
 
 #### Incumbency is rebuilt from election results
 
@@ -92,5 +94,5 @@ The candidate table is now put in the order of the matrix columns, both in `05` 
 ### Known issues
 
 - **Espírito Santo, 2006:** one federal deputy seat doesn't come out of our vote totals. The two lists involved finished 73 votes apart, and every candidate on both lists was approved ("deferido"), so our totals probably differ slightly from the TSE's final count.
-- **Federal District district deputies, 2002–2010:** parties that ran in a coalition have no coalition label, because neither TSE source records it.
+- **Federal District district deputies, 2006–2010:** coalition labels are rebuilt from the coalition names in the candidate data, because neither TSE source lists the member parties. They can't be checked against the seat allocation.
 - **Winners missing from the vote tallies:** 56 candidates whom the candidate data lists as elected have no record in the election data, so they keep the candidate data's values. 27 are 2004 city council members in Rio de Janeiro state, where the vote tallies seem to be missing entire municipalities. The rest are mayors and city council members in 2004, 2008 and 2012.
