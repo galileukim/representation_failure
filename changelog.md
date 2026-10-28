@@ -20,7 +20,7 @@ When the two disagree about what happened on election day, we now trust the elec
 - **Identifiers and names:** missing and malformed CPFs are recovered where possible, stray quotation marks are removed from names, and missing municipality codes are filled in.
 - **CFscores:** scores are now attached to the right candidates. Previously almost every candidate got another candidate's score.
 
-### What changed, and why
+### What changed
 
 #### Coalition labels now match the official seat count
 
@@ -63,6 +63,14 @@ In about 400 cases, the same CPF belongs to clearly different people in the same
 
 If one of the people uses that CPF in other election years, we give it to them and set it to missing for the others. Failing that, if the same year's vote tallies pair the CPF with one of them (by electoral title), it goes to that person. For example, Zairton Cavalcante Santos (CE, 2006) shares his CPF with a governor candidate who withdrew, but only he appears in the tallies. If neither rule applies, we set the CPF to missing for everyone rather than guess. CPFs set to missing in the candidate data are set to missing in `election_{year}.csv` too, so every CPF in the vote tallies has a candidate record. These candidates stay in the data; they just can't be linked to other years or datasets by CPF.
 
+#### Birth year and gender across elections
+
+The TSE records birth year and gender anew for each candidacy, and the same CPF's records often disagree from one election to the next. 3,276 CPFs have the same name but birth years more than 2 years apart, and 612 have different genders. Among federal deputy candidates in 2006–2014, the counts are 132 and 23.
+
+We keep each record's birth year and gender as the TSE recorded them for that election, rather than overwriting them with values from other years. Within an election, each CPF appears once in the candidate data, and `age` in `election_{year}.csv` now comes from that record. Previously it came from the vote tallies' own birth year, which disagreed with the candidate data for three CPFs in 2010 and 2014.
+
+A new column, `flag_ambiguous`, marks the CPFs whose records may belong to different people: the names differ across years, and so do the birth years (by more than 2 years) or the genders. For example, João Espírito Santo (2004) and Elena Fregona Espírito Santo (2008) share a CPF. The flag covers 619 CPFs (1,487 records), mostly in the local files; 22 of them include a federal deputy candidacy in 2006–2014. These records are kept and can still be linked across years by CPF, so analyses that follow candidates over time may want to drop or check them.
+
 #### Incumbency is rebuilt from election results
 
 The raw `incumbent` flag is unreliable. It marks no Senate incumbents at all, and it misses many others: it counts 34,875 city council incumbents in 2008, against 38,902 by our count.
@@ -87,14 +95,19 @@ The candidate table is now put in the order of the matrix columns, both in `05` 
 #### Smaller fixes
 
 - **Names:** stray quotation marks are removed. For example, `""""carlos fernando d""""aguiar silva palacio""""` becomes `carlos fernando d'aguiar silva palacio`.
-- **Municipality codes:** votes cast in Boa Esperança do Norte (MT) now get IBGE code 510183 instead of being dropped, for both candidate and legend votes. In the vote counts, the municipality with TSE code 91065 now gets IBGE code 150550.
+- **Municipality codes:** votes cast in Boa Esperança do Norte (MT, TSE code 91065) now get IBGE code 510183 instead of being dropped, in the candidate votes, legend votes and vote counts alike.
 - **One hand-coded outcome:** Marcus Savius Teixeira Sousa (federal deputy, 2002) withdrew and his ballot number went to a substitute. He is missing from the vote tallies, but the candidate data lists him as elected, so we recode him by hand as withdrawn and not elected.
 - **State-level ideology file:** `07_create_state_level_ideology.R` now builds `candidate_ideology_only_state.csv` from the cleaned candidate data rather than the raw TSE file. It therefore picks up the corrected CPFs, outcomes and incumbency and keeps one record per CPF and year, so the file drops from 45,731 to 45,423 rows. It also computes `age` from the birth year instead of trusting the raw age field, which was wrong in some cases: Maria Lizete Rendeiro da Conceição Baia (PA, 2010) was listed as 7 years old with a 1903 birth year. The `edu_desc` column is gone, because nothing downstream used it.
+- **Birth municipality code dropped:** `mun_birth_code` is removed from the candidate files. The TSE value is −1 or −3 ("not informed") in every year. `candidate_federal_state.csv` keeps `cod_ibge_6_birth`, the IBGE code matched from the birth municipality and state names.
+- **Party membership columns renamed:** in `candidate_party_membership.csv.gz`, `cod_ibge_6_party_membership` now holds the IBGE code of the municipality where membership was recorded, and `mun_name` holds its name. Previously `cod_ibge_6_party_membership` held the name.
+- **Donor counts for CFscores:** `candidate_ideology_pooled_{fed_state,local}.csv` now include `n_donors`, the number of distinct donors behind each CFscore. It counts the donors in the estimation matrix: individuals who gave to the candidate and to at least one other candidate, in any year. About half of the candidates (135,876 of 283,059) have a single donor, so their CFscore rests on one donor's giving. The per-year count in `contribution_by_candidate_{fed_state,local}.csv` (`total_contributors`) is unchanged; it counts all non-projected donors, companies included.
 - **New `flag_participated` column:** `FALSE` for candidates whose registration was rejected, withdrawn or cancelled, or who died before the election. It is based on `candidate_status`, so it uses the corrected status.
 
 ### Known issues
 
 - **Espírito Santo, 2006:** one federal deputy seat doesn't come out of our vote totals. The two lists involved finished 73 votes apart, and every candidate on both lists was approved ("deferido"), so our totals probably differ slightly from the TSE's final count.
 - **Federal District district deputies, 2006–2010:** coalition labels are rebuilt from the coalition names in the candidate data, because neither TSE source lists the member parties. They can't be checked against the seat allocation.
-- **Implausible birth years and gender codes:** these come directly from the raw candidate data, and we leave them as they are. About 160 candidacies in 2002–2014 have a birth year that puts their age outside 18–100 (range 5–112). Examples are Deodata Pereira Borges and José de Souza Pinto (BA, 2006), born in 1905 and 1904, and Nelson Luzia Oliveira (GO, 2006), born in 1999 in that year's record but in 1959 in his 2002 record. In 2004, 208 local candidates have gender code 0. Some of these people have a plausible value in another year's record, but we don't recover it.
+- **Implausible birth years and gender codes:** these come directly from the raw candidate data, and we leave them as they are. Some of these people have a plausible value in another year's record, but we don't recover it.
+  - 158 candidacies have a birth year that puts their age outside 18–100: 150 in the local files (range 5–112) and 8 in `candidate_federal_state.csv`. Examples are Deodata Pereira Borges and José de Souza Pinto (BA, 2006), born in 1905 and 1904, and Nelson Luzia Oliveira (GO, 2006), born in 1999 in that year's record but in 1959 in his 2002 record.
+  - Gender code 0 appears for 208 local candidates in 2004 and 177 federal and state candidates in 2002.
 - **Winners missing from the vote tallies:** 56 candidates whom the candidate data lists as elected have no record in the election data, so they keep the candidate data's values. 27 are 2004 city council members in Rio de Janeiro state, where the vote tallies seem to be missing entire municipalities. The rest are mayors and city council members in 2004, 2008 and 2012.

@@ -78,6 +78,13 @@ MM <- ceiling(contrib_matrix / 1e15)
 contrib_matrix <- contrib_matrix[rowSums(MM) > 1, ]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 
+# number of distinct donors behind each cfscore, i.e. the individual donors
+# in the estimation matrix who gave to the candidate
+cand_donors <- tibble(
+  cpf_candidate = colnames(contrib_matrix),
+  n_donors = colSums(contrib_matrix > 0)
+)
+
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
 cands.in <- cands %>%
@@ -171,7 +178,8 @@ candidate_fed_state_cfscore <- candidate_fed_state_cpf %>%
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
     by = c("cpf_candidate")
-  )
+  ) %>%
+  left_join(cand_donors, by = "cpf_candidate")
 
 candidate_local_cpf <- candidate_local %>%
   distinct(cpf_candidate)
@@ -181,7 +189,8 @@ candidate_local_cfscore <- candidate_local_cpf %>%
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
     by = c("cpf_candidate")
-  )
+  ) %>%
+  left_join(cand_donors, by = "cpf_candidate")
 
 list(
   x = list(candidate_fed_state_cfscore, candidate_local_cfscore),

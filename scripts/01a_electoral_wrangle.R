@@ -74,7 +74,8 @@ candidate <- candidate %>%
     race,
     incumbent,
     elected,
-    mun_birth_code,
+    # the tse birth municipality code is -1 or -3 (not informed) in every year,
+    # so we match the ibge code by name below
     mun_birth_name,
     state_birth_name = state_birth_code,
     outcome,
@@ -336,7 +337,7 @@ candidate_key <- candidate |>
   clean_candidacy() |>
   select(row_id, all_of(c(candidacy_key, person_key)))
 
-match_election <- function(id, lookup = election_status) {
+match_election <- function(candidate_data, id, lookup = election_status) {
   lookup <- lookup |>
     filter(!is.na(.data[[id]])) |>
     distinct(
@@ -344,17 +345,17 @@ match_election <- function(id, lookup = election_status) {
     ) |>
     filter(n() == 1, .by = all_of(c(candidacy_key, id)))
 
-  candidate_key |>
+  candidate_data |>
     inner_join(lookup, by = c(candidacy_key, id)) |>
     select(row_id, outcome_election, status_election)
 }
 
 candidate_election <- bind_rows(
-  match_election("cpf_candidate"),
-  match_election("elec_title"),
-  match_election("name_key"),
+  match_election(candidate_key, "cpf_candidate"),
+  match_election(candidate_key, "elec_title"),
+  match_election(candidate_key, "name_key"),
   match_election(
-    "first_name", election_status |> filter(is.na(cpf_candidate))
+    candidate_key, "first_name", election_status |> filter(is.na(cpf_candidate))
   )
 ) |>
   mutate(in_election = TRUE) |>
@@ -535,6 +536,40 @@ election <- election |>
 
 rm(cpf_title_tally, cpf_shared, cpf_owner_other_year, cpf_owner_tally, cpf_kept)
 
+# flag cpfs whose records may belong to different people: the names differ
+# across election years, and so do the birth years (by more than 2 years) or
+# the genders. we keep each record's birth year and gender as the tse recorded
+# them for that election
+cpf_ambiguous <- candidate |>
+  filter(!is.na(cpf_candidate)) |>
+  mutate(birthyear_raw = as.integer(birthyear)) |>
+  summarise(
+    birthyear_gap = if (all(is.na(birthyear_raw))) 0L else
+      max(birthyear_raw, na.rm = TRUE) - min(birthyear_raw, na.rm = TRUE),
+    flag_ambiguous = n_distinct(candidate_name) > 1 &
+      (birthyear_gap > 2 | n_distinct(gender[gender %in% c(2, 4)]) > 1),
+    .by = cpf_candidate
+  ) |>
+  select(cpf_candidate, flag_ambiguous)
+
+candidate <- candidate |>
+  left_join(cpf_ambiguous, by = "cpf_candidate") |>
+  mutate(flag_ambiguous = coalesce(flag_ambiguous, FALSE))
+
+# within an election, the vote tallies take the candidate data's age
+candidate_age <- candidate |>
+  filter(!is.na(cpf_candidate)) |>
+  distinct(cpf_candidate, election_year, age_candidate = age)
+
+election <- election |>
+  left_join(candidate_age, by = c("cpf_candidate", "election_year")) |>
+  mutate(
+    age = coalesce(age_candidate, age)
+  ) |>
+  select(-age_candidate)
+
+rm(cpf_ambiguous, candidate_age)
+
 # fix incumbency: incumbents were elected to the same office in the previous
 # cycle (8 years earlier for the senate). we keep the candidate data's labels
 # when the previous cycle is unavailable (2002, 2004, and the senate in 2006),
@@ -620,7 +655,7 @@ candidate_last_membership <- candidate |>
   ungroup() |> 
   select(-starts_with("party")) |> 
   rename(
-    cod_ibge_6_party_membership = mun_name
+    cod_ibge_6_party_membership = cod_ibge_6
   )
 
 # join cod_ibge_6_birth: municipality of birth
