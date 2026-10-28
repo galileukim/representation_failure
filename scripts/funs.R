@@ -205,13 +205,41 @@ fix_coalition <- function(data) {
       .by = c(election_year, state, office, party, coalition)
     )
 
+  # some raw labels are blank (e.g. unidos por goias, go 2014, whose registration
+  # was denied). a party running alone takes its own name, and a party in a
+  # named coalition takes the parties registered under that name in its
+  # electoral unit
+  data <- data |>
+    mutate(
+      unit = if_else(
+        position %in% c("prefeito", "vereador"), as.character(cod_tse), state
+      )
+    )
+
+  coalition_named <- data |>
+    filter(!is.na(coalition_name) & coalition_name != "") |>
+    summarise(
+      coalition_named = paste(sort(unique(party)), collapse = " / "),
+      .by = c(election_year, unit, office, coalition_name)
+    )
+
   data |>
     left_join(
       coalition_fallback,
       by = c("election_year", "state", "office", "party", "coalition")
     ) |>
-    mutate(
-      coalition = coalesce(coalition_fix, coalition_fallback, coalition)
+    left_join(
+      coalition_named,
+      by = c("election_year", "unit", "office", "coalition_name")
     ) |>
-    select(-office, -coalition_fix, -coalition_fallback)
+    mutate(
+      coalition_fix = coalesce(coalition_fix, na_if(coalition_fallback, "")),
+      coalition = case_when(
+        !is.na(coalition_fix) ~ coalition_fix,
+        coalition_type == "partido isolado" ~ party,
+        !is.na(coalition_named) ~ coalition_named,
+        T ~ coalition
+      )
+    ) |>
+    select(-office, -unit, -coalition_fix, -coalition_fallback, -coalition_named)
 }

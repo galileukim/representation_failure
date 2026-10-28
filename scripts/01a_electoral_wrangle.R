@@ -65,6 +65,8 @@ candidate <- candidate %>%
     position,
     election_year,
     coalition,
+    coalition_type,
+    coalition_name,
     birthyear,
     candidate_status,
     edu,
@@ -102,7 +104,8 @@ coalition_lookup <- party_vote |>
   distinct(election_year, state, office = position, party, coalition_fix = coalition) |>
   filter(n() == 1, .by = c(election_year, state, office, party))
 
-candidate <- fix_coalition(candidate)
+candidate <- fix_coalition(candidate) |>
+  select(-coalition_type, -coalition_name)
 
 # recover missing cpfs from other records with the same electoral title
 # in 2002, this recovers 22/208 federal deputy candidates without cpf,
@@ -388,6 +391,16 @@ candidate <- candidate |>
   ) |>
   select(-is_replaced)
 
+# cpf-title pairs in the vote tallies, used below to assign cpfs shared by
+# different people
+cpf_title_tally <- election_all |>
+  filter(
+    nchar(cpf_candidate) == 11 &
+    !(elec_title %in% c("", "#ni#", "-1")) &
+    !is.na(elec_title)
+  ) |>
+  distinct(cpf_candidate, elec_title, election_year)
+
 rm(election_all, election_status, candidate_key, candidate_election)
 
 # create a flag for whether the candidate participated or not in the elections
@@ -430,7 +443,9 @@ election <- election %>%
 # 4.6 thousand cpfs appear in more than one record within an election year:
 # (1) different people (the electoral title and the birthyear or first name
 # differ), e.g. elza alves pereira and maria marina silva (2004). the cpf stays
-# with the person who holds it in other election years, and is set to missing
+# with the person who holds it in other election years or, failing that, with
+# the person the vote tallies pair it with (e.g. zairton cavalcante santos, who
+# shares his cpf with a withdrawn 2006 governor candidate). it is set to missing
 # for the others (or for all of them, when no one does)
 # (2) the same person in both rounds, registered twice, running for two
 # offices (e.g. candidates who withdrew from a ticket as running mates to run
@@ -453,9 +468,11 @@ candidate <- candidate |>
     .by = c(cpf_candidate, election_year)
   )
 
-cpf_owner <- candidate |>
+cpf_shared <- candidate |>
   filter(shared_cpf) |>
-  distinct(cpf_candidate, election_year, elec_title) |>
+  distinct(cpf_candidate, election_year, elec_title)
+
+cpf_owner_other_year <- cpf_shared |>
   inner_join(
     cpf_title_year,
     by = c("cpf_candidate", "elec_title"),
@@ -463,7 +480,17 @@ cpf_owner <- candidate |>
   ) |>
   filter(other_year != election_year) |>
   distinct(cpf_candidate, election_year, elec_title) |>
-  filter(n() == 1, .by = c(cpf_candidate, election_year)) |>
+  filter(n() == 1, .by = c(cpf_candidate, election_year))
+
+cpf_owner_tally <- cpf_shared |>
+  anti_join(cpf_owner_other_year, by = c("cpf_candidate", "election_year")) |>
+  semi_join(
+    cpf_title_tally,
+    by = c("cpf_candidate", "elec_title", "election_year")
+  ) |>
+  filter(n() == 1, .by = c(cpf_candidate, election_year))
+
+cpf_owner <- bind_rows(cpf_owner_other_year, cpf_owner_tally) |>
   mutate(cpf_owner = TRUE)
 
 candidate <- candidate |>
@@ -491,6 +518,22 @@ candidate <- candidate |>
   select(
     -row_id, -in_election, -shared_cpf, -cpf_owner, -cod_tse, -round, -election_type
   )
+
+# keep the vote tallies consistent with the candidate data: cpfs set to missing
+# above are also set to missing in the tallies
+cpf_kept <- candidate |>
+  filter(!is.na(cpf_candidate)) |>
+  distinct(cpf_candidate, election_year) |>
+  mutate(cpf_kept = TRUE)
+
+election <- election |>
+  left_join(cpf_kept, by = c("cpf_candidate", "election_year")) |>
+  mutate(
+    cpf_candidate = if_else(coalesce(cpf_kept, FALSE), cpf_candidate, NA)
+  ) |>
+  select(-cpf_kept)
+
+rm(cpf_title_tally, cpf_shared, cpf_owner_other_year, cpf_owner_tally, cpf_kept)
 
 # fix incumbency: incumbents were elected to the same office in the previous
 # cycle (8 years earlier for the senate). we keep the candidate data's labels
