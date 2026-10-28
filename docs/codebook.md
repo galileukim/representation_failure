@@ -48,10 +48,10 @@ Cleaned candidate-level data for federal (*Deputado Federal*, *Senador*) and sta
 | `position` | character | Office sought (e.g. *deputado federal*) |
 | `election_year` | integer | Election year |
 | `coalition` | character | Name/list of parties in the candidate's coalition. In 2010, three parties appear both alone and in a coalition; see the note in section 7 |
-| `birthyear` | integer | Year of birth |
+| `birthyear` | integer | Year of birth, as recorded by the TSE. Some values are implausible (see Known issues in `changelog.md`) |
 | `candidate_status` | character | TSE candidacy status (e.g. *deferido*, *indeferido*) |
 | `edu` | character | Highest level of education |
-| `gender` | integer | Gender code (2 = male, 4 = female) |
+| `gender` | integer | Gender code (2 = male, 4 = female; 0 for 208 local candidates in 2004, as in the raw TSE data) |
 | `race` | character | Self-reported race/colour (*branca*, *parda*, *preta*, …) |
 | `incumbent` | integer | 1 if candidate currently holds the same office |
 | `elected` | integer | 1 if candidate was elected |
