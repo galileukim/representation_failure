@@ -663,12 +663,12 @@ vote <- vote %>%
     position == "deputado federal"
   )
 
-# fix missing codigo ibge
+# fix missing codigo ibge: this seems to be boa esperanca do norte, MT
 vote <- vote |>
   mutate(
     cod_ibge_6 = if_else(
       cod_tse == 91065 & is.na(cod_ibge_6),
-      150550,
+      510183,
       cod_ibge_6
     )
   )

@@ -47,7 +47,7 @@ Cleaned candidate-level data for federal (*Deputado Federal*, *Senador*) and sta
 | `candidate_name` | character | Full candidate name |
 | `position` | character | Office sought (e.g. *deputado federal*) |
 | `election_year` | integer | Election year |
-| `coalition` | character | Name/list of parties in the candidate's coalition |
+| `coalition` | character | Name/list of parties in the candidate's coalition. In 2010, three parties appear both alone and in a coalition; see the note in section 7 |
 | `birthyear` | integer | Year of birth |
 | `candidate_status` | character | TSE candidacy status (e.g. *deferido*, *indeferido*) |
 | `edu` | character | Highest level of education |
@@ -123,6 +123,8 @@ Party-list (legend) votes aggregated by coalition and municipality. Available fo
 | `coalition` | character | Coalition composition |
 | `coalition_type` | character | Type of grouping (*partido* or *coligacao*) |
 | `vote_legend` | integer | Votes cast for the party/coalition list |
+
+**Parties listed both alone and in a coalition (2010).** In three states, a party has its own label while its partners' coalition label still names it: PSOL in AP (`pcb / pmn / prp / prtb / psdc / psol / ptb / ptc`), PTN in PA (`phs / pp / pr / psc / pt / pt do b / ptb / ptc / ptn`) and PHS in RR (`phs / pp / psb / psc / pt / ptb / ptc`). This is how the TSE vote tallies record them: the party's own rows are *partido isolado*, while the TSE candidate registry places all its candidates in the coalition. The tally version is consistent with the seat allocation. In RR it is the only version that reproduces the result: counting PHS's votes within the coalition would move a seat from the PRB/PRP coalition to PHS's partners. In AP and PA both versions give the same seats. The likely cause is that the party's participation in the coalition was annulled after registration, but the data cannot confirm this. The same labels appear in `coalition` in the candidate files (section 2).
 
 ---
 
