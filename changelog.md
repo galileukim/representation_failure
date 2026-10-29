@@ -88,7 +88,7 @@ The raw flag stays where the data has no earlier election to look back to: 2002,
 
 #### CFscores are attached to the right candidates
 
-The estimation function `awm()` matched scores to candidates by position, assuming that row *i* of the candidate table was the candidate in column *i* of the contribution matrix. The two were in different orders, so almost every candidate got the starting value and the final score of an unrelated candidate. Party averages still looked plausible, because each row's score largely reflected the party position it started with.
+The estimation function `awm()` matched scores to candidates by position, assuming that row *i* of the candidate table was the candidate in column *i* of the contribution matrix. The two were in different orders, so candidates got the starting value and the final score of an unrelated candidate. Party averages still looked plausible, because each row's score largely reflected the party position it started with.
 
 The candidate table is now put in the order of the matrix columns, both in `05` and `06` and inside `awm()`, which also stops with an error if any column has no matching candidate. This affects all CFscore outputs, including `cfscore_pooled_legacy.RData`. See [`docs/cfscore_alignment_fix.md`](docs/cfscore_alignment_fix.md) for the details and checks.
 
