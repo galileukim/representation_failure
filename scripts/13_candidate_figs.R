@@ -382,7 +382,7 @@ map_state %>%
 ggsave("figs/demo/map_br.png")
 
 # plot maps
-vars <- c("median_wage", "lit_rate", "rural", "sanitation")
+vars <- c("median_wage", "lit_rate", "rural_pop", "sanitation")
 map <- list()
 for(i in 1:length(vars)){
   map[[i]] <- plot_map(
@@ -615,7 +615,7 @@ herfin %>%
     h_index ~ log(median_wage) + log(pop) + lit_rate + rural + as.factor(region),
     data = .
   ) %>%
-  tidycoef(theme = theme_clean)
+  tidycoef(theme = theme_minimal())
 
 ggsave(
   here("figs/party/herfindahl_lm.pdf")
@@ -691,7 +691,7 @@ election_party_mun <- election %>%
   ) %>% 
   group_by(
     party,
-    add = T
+    .add = T
   ) %>% 
   summarise(
     party_share = sum(vote, na.rm = T)/mean(total_vote, na.rm = T) * 100
@@ -724,7 +724,7 @@ fit_party <- election_party_mun %>%
       data,
       ~ lm(
         party_share ~ as.factor(state) + as.factor(election_year) + 
-          lit_rate + median_wage + age + female + rural + high_school, 
+          lit_rate + median_wage + age + female + rural_pop + high_school, 
         data = .
       )
     ),
@@ -765,7 +765,7 @@ fit_party %>%
   scale_color_brewer(
     palette = "Set1"
   ) +
-  theme_clean
+  theme_minimal()
 
 ggsave(
   here("figs/party/party_share_fit.pdf")
@@ -806,7 +806,7 @@ party_ideology_candidate <- candidate %>%
   group_by(
     party,
     highlight,
-    add = T
+    .add = T
   ) %>% 
   summarise(
     ideology = mean(cfscore, na.rm = T),
@@ -1465,7 +1465,7 @@ candidate_elected <- candidate %>%
   ) %>% 
   group_by(
     elected,
-    add = T
+    .add = T
   ) %>% 
   summarise_all(
     mean, na.rm = T
@@ -1867,11 +1867,14 @@ ggsave(
 )
 
 # candidate table
-table_full <- candidate %>% 
+table_full <- candidate %>%
+  filter(
+    election_year %in% seq(2006, 2014, 4)
+  ) %>%
   count(
     state,
     election_year
-  ) %>% 
+  ) %>%
   spread(
     election_year, n
   )

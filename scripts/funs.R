@@ -16,7 +16,6 @@ theme_clean <- theme(
   panel.grid.minor = element_blank(),
   axis.line = element_line(colour = "grey60"),
   text = element_text(
-    family = "Roboto",
     color = "grey60",
     size = 10
   ),
