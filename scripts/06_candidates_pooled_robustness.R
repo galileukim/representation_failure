@@ -45,9 +45,7 @@ cands <- cm$candidate %>%
   )
 contributors <- cm$contribution
 
-# restrict to individual donors
-# note that only individual donors have 11 digits in their id
-contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
+# the matrix only has individual donors (see 04_contrib_matrix_pooled.R)
 MM <- ceiling(contrib_matrix / 1e15)
 contrib_matrix <- contrib_matrix[rowSums(MM) > 1, ]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]

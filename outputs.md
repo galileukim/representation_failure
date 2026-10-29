@@ -22,7 +22,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 |---|---|---|
 | `data/output/ideology/contrib_matrix_fed_state.RData` | `09` | Holds the object `cm`, a list of `candidate`, `contribution` and `contrib_matrix`. |
 | `data/output/ideology/contrib_matrix_local.RData` | — | The same structure for local candidates. Only the scripts in `scripts/deprecated/` read it. |
-| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions (`contrib_all_donors`) and distinct donors (`n_all_donors`) per candidate and election year, from all non-projected donors, companies included. These differ from `n_donors` and `total_contrib` in the CFscore files, which count only the individual donors behind each score, pooled across years. |
+| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions (`contrib_individual`) and distinct donors (`n_individual_donors`) per candidate and election year, from individual donors only (no companies), excluding projected contributions. These differ from `n_donors` and `total_contrib` in the CFscore files, which are pooled across years and count only donors who also gave to another candidate. |
 | `data/output/contribution/contribution_by_candidate_local.csv` | — | The same for local candidates. |
 | `data/output/ideology/legislative_ideology.csv` | `13` | Zucco and Lauderdale (2011) legislator ideal points for 2002 and 2006. |
 
@@ -42,7 +42,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/ideology/contrib_matrix_pooled.RData` | `05`, `06` | Holds the object `cm`, pooling federal, state and local candidates. |
+| `data/output/ideology/contrib_matrix_pooled.RData` | `05`, `06` | Holds the object `cm`, pooling federal, state and local candidates. Contributions are from individual donors only (11-digit CPF), excluding projected contributions. |
 
 ### `05_candidates_cfscore_pooled.R`
 

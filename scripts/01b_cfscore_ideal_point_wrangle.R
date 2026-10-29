@@ -132,15 +132,16 @@ foreach(i = seq(1, 2)) %do% {
     )
   )
 
-  # save contribution by candidate and election year, from all non-projected
-  # donors (companies included), unlike the cfscore donor counts
+  # save contribution by candidate and election year, from individual donors
+  # (11-digit cpf), excluding projected contributions
   contributors %>%
     filter(
-      is_projected != 1
+      is_projected != 1 &
+        nchar(cpf_cnpj_donor) == 11
     ) |>
     summarise(
-      contrib_all_donors = sum(value_receipt),
-      n_all_donors = n_distinct(cpf_cnpj_donor),
+      contrib_individual = sum(value_receipt),
+      n_individual_donors = n_distinct(cpf_cnpj_donor),
       .by = c("cpf_candidate", "election_year")
     ) |>
     fwrite(
