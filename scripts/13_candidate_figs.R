@@ -388,7 +388,6 @@ for(i in 1:length(vars)){
   map[[i]] <- plot_map(
     map_br,
     vars[i],
-    map_state = map_state,
     limits = NULL
   ) +
     ggtitle(
@@ -614,8 +613,8 @@ herfin %>%
   lm(
     h_index ~ log(median_wage) + log(pop) + lit_rate + rural + as.factor(region),
     data = .
-  ) %>%
-  tidycoef(theme = theme_clean)
+  ) %>% 
+  tidycoef
 
 ggsave(
   here("figs/party/herfindahl_lm.pdf")

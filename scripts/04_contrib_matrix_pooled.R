@@ -89,8 +89,7 @@ contributors <- contributors %>%
 # individual donors have only 11 digit cpf_cnpj_donor ids
 contribution <- contributors %>%
     filter(
-        is_projected != 1 &
-            nchar(cpf_cnpj_donor) == 11
+        is_projected != 1
     ) %>%
     arrange(
         cpf_cnpj_donor,

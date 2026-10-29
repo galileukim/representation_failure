@@ -64,7 +64,10 @@ cands <- cm$candidate %>%
   )
 contributors <- cm$contribution
 
-# the matrix only has individual donors (see 04_contrib_matrix_pooled.R)
+# restrict to individual donors
+# note that only individual donors have 11 digits in their id
+contrib_matrix <- contrib_matrix[str_count(rownames(contrib_matrix)) == 11, ]
+
 # one possible solution to the sparsity issue:
 # only retain donors that donate to multiple candidates
 # potentially use candidates that receive only one donor
@@ -74,14 +77,6 @@ contributors <- cm$contribution
 MM <- ceiling(contrib_matrix / 1e15)
 contrib_matrix <- contrib_matrix[rowSums(MM) > 1, ]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
-
-# number of distinct donors and total contributions behind each cfscore, i.e.
-# from the individual donors in the estimation matrix who gave to the candidate
-cand_donors <- tibble(
-  cpf_candidate = colnames(contrib_matrix),
-  n_donors = colSums(contrib_matrix > 0),
-  total_contrib = colSums(contrib_matrix)
-)
 
 # filter candidates present in restricted contrib. matrix
 # remove multiple terms for candidates
@@ -176,8 +171,7 @@ candidate_fed_state_cfscore <- candidate_fed_state_cpf %>%
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
     by = c("cpf_candidate")
-  ) %>%
-  left_join(cand_donors, by = "cpf_candidate")
+  )
 
 candidate_local_cpf <- candidate_local %>%
   distinct(cpf_candidate)
@@ -187,8 +181,7 @@ candidate_local_cfscore <- candidate_local_cpf %>%
     cfscore_pooled$cands %>%
       select(cpf_candidate, cfscore),
     by = c("cpf_candidate")
-  ) %>%
-  left_join(cand_donors, by = "cpf_candidate")
+  )
 
 list(
   x = list(candidate_fed_state_cfscore, candidate_local_cfscore),

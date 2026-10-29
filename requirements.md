@@ -10,7 +10,7 @@ The first section covers everything that belongs under `data/input/`, which is t
 
 | File | Read by | Notes |
 |---|---|---|
-| `candidate.csv.gz` | `01a_electoral_wrangle.R` | TSE candidate registry, all years. The script filters it to 2002–2014. |
+| `candidate.csv.gz` | `01a_electoral_wrangle.R`, `07_create_state_level_ideology.R` | TSE candidate registry, all years. The scripts filter it to 2002–2014. |
 | `filiado.csv.gz` | `01a_electoral_wrangle.R` | TSE party membership registry. |
 | `election.csv.gz` | `01a_electoral_wrangle.R`, `13_candidates_diagnostics.R` | Candidate vote totals by municipality. Matched exactly by `^election.csv.gz$`. |
 | `*vote_count*` | `01a_electoral_wrangle.R`, `13_candidates_diagnostics.R` | Aggregate vote counts by municipality. The name is not hard-coded: the script reads whichever file contains `vote_count`, so exactly one file may match. |

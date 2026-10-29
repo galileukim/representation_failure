@@ -1,16 +1,11 @@
-# input: cleaned candidate level data for all years (01a) and pooled cfscores
+# input: candidate level data for all years
 # output: candidate level data for 2006-2014, only including state-level candidates
 # plus ideology score
 library(data.table)
 library(tidyverse)
 library(here)
 
-# the cleaned data already has corrected cpfs, outcomes and incumbency,
-# coarsened occupation and education, and age computed from the birth year
-candidate <- fread(
-    here("data/output/candidate/cfscore_estimation/candidate_federal_state.csv"),
-    colClasses = list(character = c("cpf_candidate", "elec_title"))
-)
+candidate <- fread(here("data/input/tse/candidate.csv.gz"))
 
 cfscore <- fread(
     here("data/output/ideology/candidate_ideology_pooled_fed_state.csv"),
@@ -26,6 +21,31 @@ candidate_state_level <- candidate %>%
             !str_detect(position, fed_level_positions)
     )
 
+candidate_state_level <- candidate_state_level %>%
+  mutate(
+    occupation = case_when(
+      occupation == "empresario" | occupation == "comerciante" ~ "business",
+      str_detect(occupation, "servidor publico") ~ "government",
+      str_detect(occupation, "vereador|prefeito|deputado|senador|governador|membros do poder|presidente") ~ "politician",
+      str_detect(occupation, "economista|engenheiro|^tecnico") ~ "technician",
+      str_detect(occupation, "advogado|admin") ~ "white-collar",
+      str_detect(occupation, "professor") ~ "teacher",
+      T ~ "other"
+    )
+  )
+
+# coarsen education
+candidate_state_level <- candidate_state_level %>%
+  mutate(
+    edu = case_when(
+      between(edu, 1, 3) ~ "lower school",
+      between(edu, 4, 5) ~ "middle school",
+      between(edu, 6, 7) ~ "high school",
+      edu >= 8 ~ "higher education",
+      T ~ NA_character_
+    )
+  )
+
 # join with ideology scores
 candidate_state_level <- candidate_state_level %>%
     left_join(
@@ -38,8 +58,13 @@ candidate_state_level <- candidate_state_level %>%
         election_year,
         candidate_name,
         party,
-        age,
+        age = ifelse(
+            age == -1 | age >= 110,
+            election_year - as.numeric(birthyear),
+            age
+        ),
         edu,
+        edu_desc,
         gender,
         incumbent,
         mun_birth_name,
