@@ -104,16 +104,6 @@ foreach(i = seq(1, 2)) %do% {
     ) %>%
     ungroup()
 
-  candidate_contribution_by_year <- contributors %>%
-    filter(
-      is_projected != 1
-    ) |>
-    summarise(
-      total_contrib = sum(value_receipt),
-      total_contributors = n_distinct(cpf_cnpj_donor),
-      .by = c("cpf_candidate", "election_year")
-    )
-
   contributor_ids <- unique(contribution$cpf_cnpj_donor)
   candidate_ids <- unique(contribution$cpf_candidate)
   # create contribution matrix
@@ -142,13 +132,22 @@ foreach(i = seq(1, 2)) %do% {
     )
   )
 
-  # save contribution by candidate
-  write_csv(
-    candidate_contribution_by_year,
-    file = paste0(
-      here("data/output/contribution/contribution_by_candidate_"), c("fed_state", "local")[i], ".csv"
+  # save contribution by candidate and election year, from all non-projected
+  # donors (companies included), unlike the cfscore donor counts
+  contributors %>%
+    filter(
+      is_projected != 1
+    ) |>
+    summarise(
+      contrib_all_donors = sum(value_receipt),
+      n_all_donors = n_distinct(cpf_cnpj_donor),
+      .by = c("cpf_candidate", "election_year")
+    ) |>
+    fwrite(
+      file = paste0(
+        here("data/output/contribution/contribution_by_candidate_"), c("fed_state", "local")[i], ".csv"
+      )
     )
-  )
 }
 
 # ideal point -------------------------------------------------------------

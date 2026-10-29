@@ -78,11 +78,12 @@ MM <- ceiling(contrib_matrix / 1e15)
 contrib_matrix <- contrib_matrix[rowSums(MM) > 1, ]
 contrib_matrix <- contrib_matrix[, colSums(contrib_matrix) > 0]
 
-# number of distinct donors behind each cfscore, i.e. the individual donors
-# in the estimation matrix who gave to the candidate
+# number of distinct donors and total contributions behind each cfscore, i.e.
+# from the individual donors in the estimation matrix who gave to the candidate
 cand_donors <- tibble(
   cpf_candidate = colnames(contrib_matrix),
-  n_donors = colSums(contrib_matrix > 0)
+  n_donors = colSums(contrib_matrix > 0),
+  total_contrib = colSums(contrib_matrix)
 )
 
 # filter candidates present in restricted contrib. matrix

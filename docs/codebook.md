@@ -84,6 +84,7 @@ Pooled CFscore estimates for federal and state legislative candidates.
 | `cpf_candidate` | integer64 | Candidate CPF — links to candidate files |
 | `cfscore` | numeric | Estimated ideal point (CFscore); higher = more right-wing |
 | `n_donors` | integer | Number of distinct donors behind the CFscore, pooled across years: individual donors (11-digit CPF) who gave to this candidate and to at least one other candidate, as in the estimation matrix. About half of the candidates have a single donor |
+| `total_contrib` | numeric | Total contributions (R$) behind the CFscore, pooled across years: the sum given to this candidate by the same donors counted in `n_donors` |
 
 ---
 

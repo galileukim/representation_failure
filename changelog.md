@@ -55,7 +55,7 @@ Left as they were, these repeats would count the same person several times in an
 4. a candidate who won;
 5. the last round.
 
-The candidate files go from 1,358,159 to 1,353,874 records. The party membership file (`candidate_party_membership.csv.gz`) is built from the deduplicated data, so its CPFs are unique by year too.
+The candidate files go from 1,358,159 to 1,353,877 records. The party membership file (`candidate_party_membership.csv.gz`) is built from the deduplicated data, so its CPFs are unique by year too.
 
 #### When two people share a CPF
 
@@ -101,7 +101,8 @@ The candidate table is now put in the order of the matrix columns, both in `05` 
 - **State-level ideology file:** `07_create_state_level_ideology.R` now builds `candidate_ideology_only_state.csv` from the cleaned candidate data rather than the raw TSE file. It therefore picks up the corrected CPFs, outcomes and incumbency and keeps one record per CPF and year, so the file drops from 45,731 to 45,423 rows. It also computes `age` from the birth year instead of trusting the raw age field, which was wrong in some cases: Maria Lizete Rendeiro da Conceição Baia (PA, 2010) was listed as 7 years old with a 1903 birth year. The `edu_desc` column is gone, because nothing downstream used it.
 - **Birth municipality code dropped:** `mun_birth_code` is removed from the candidate files. The TSE value is −1 or −3 ("not informed") in every year. `candidate_federal_state.csv` keeps `cod_ibge_6_birth`, the IBGE code matched from the birth municipality and state names.
 - **Party membership columns renamed:** in `candidate_party_membership.csv.gz`, `cod_ibge_6_party_membership` now holds the IBGE code of the municipality where membership was recorded, and `mun_name` holds its name. Previously `cod_ibge_6_party_membership` held the name.
-- **Donor counts for CFscores:** `candidate_ideology_pooled_{fed_state,local}.csv` now include `n_donors`, the number of distinct donors behind each CFscore. It counts the donors in the estimation matrix: individuals who gave to the candidate and to at least one other candidate, in any year. About half of the candidates (135,876 of 283,059) have a single donor, so their CFscore rests on one donor's giving. The per-year count in `contribution_by_candidate_{fed_state,local}.csv` (`total_contributors`) is unchanged; it counts all non-projected donors, companies included.
+- **Donor counts for CFscores:** `candidate_ideology_pooled_{fed_state,local}.csv` now include `n_donors` and `total_contrib`, the number of distinct donors and the total contributions behind each CFscore. Both cover the donors in the estimation matrix: individuals who gave to the candidate and to at least one other candidate, in any year. About half of the candidates (135,876 of 283,059) have a single donor, so their CFscore rests on one donor's giving.
+- **Contribution summary columns renamed:** in `contribution_by_candidate_{fed_state,local}.csv`, `total_contrib` and `total_contributors` are now `contrib_all_donors` and `n_all_donors`. They cover all non-projected donors in each election year, companies included, so the new names keep them from being confused with `total_contrib` and `n_donors` in the CFscore files.
 - **New `flag_participated` column:** `FALSE` for candidates whose registration was rejected, withdrawn or cancelled, or who died before the election. It is based on `candidate_status`, so it uses the corrected status.
 
 ### Known issues
@@ -111,4 +112,5 @@ The candidate table is now put in the order of the matrix columns, both in `05` 
 - **Implausible birth years and gender codes:** these come directly from the raw candidate data, and we leave them as they are. Some of these people have a plausible value in another year's record, but we don't recover it.
   - 158 candidacies have a birth year that puts their age outside 18–100: 150 in the local files (range 5–112) and 8 in `candidate_federal_state.csv`. Examples are Deodata Pereira Borges and José de Souza Pinto (BA, 2006), born in 1905 and 1904, and Nelson Luzia Oliveira (GO, 2006), born in 1999 in that year's record but in 1959 in his 2002 record.
   - Gender code 0 appears for 208 local candidates in 2004 and 177 federal and state candidates in 2002.
+- **No CPFs in the legislative ideology data:** `legislative_ideology.csv` (Zucco and Lauderdale 2011 roll-call ideal points) can only be linked to candidates by name, because the source data doesn't include CPFs.
 - **Winners missing from the vote tallies:** 56 candidates whom the candidate data lists as elected have no record in the election data, so they keep the candidate data's values. 27 are 2004 city council members in Rio de Janeiro state, where the vote tallies seem to be missing entire municipalities. The rest are mayors and city council members in 2004, 2008 and 2012.

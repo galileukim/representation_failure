@@ -22,7 +22,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 |---|---|---|
 | `data/output/ideology/contrib_matrix_fed_state.RData` | `09` | Holds the object `cm`, a list of `candidate`, `contribution` and `contrib_matrix`. |
 | `data/output/ideology/contrib_matrix_local.RData` | — | The same structure for local candidates. Only the scripts in `scripts/deprecated/` read it. |
-| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions (`total_contrib`) and distinct donors (`total_contributors`) per candidate and election year, excluding projected contributions. Donors include companies. |
+| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions (`contrib_all_donors`) and distinct donors (`n_all_donors`) per candidate and election year, from all non-projected donors, companies included. These differ from `n_donors` and `total_contrib` in the CFscore files, which count only the individual donors behind each score, pooled across years. |
 | `data/output/contribution/contribution_by_candidate_local.csv` | — | The same for local candidates. |
 | `data/output/ideology/legislative_ideology.csv` | `13` | Zucco and Lauderdale (2011) legislator ideal points for 2002 and 2006. |
 
@@ -48,7 +48,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/ideology/candidate_ideology_pooled_fed_state.csv` | `07`, `10`, `13` | Pooled CFscores for federal and state candidates, with `n_donors`, the number of distinct donors behind each score. |
+| `data/output/ideology/candidate_ideology_pooled_fed_state.csv` | `07`, `10`, `13` | Pooled CFscores for federal and state candidates, with `n_donors` and `total_contrib`, the number of distinct donors and the total contributions behind each score. |
 | `data/output/ideology/candidate_ideology_pooled_local.csv` | `13` | Pooled CFscores for local candidates. |
 | `data/output/ideology/cfscore_pooled.RData` | — | Holds the object `cfscore_pooled`, the full `awm()` result. |
 
