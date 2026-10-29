@@ -26,9 +26,9 @@ When the two disagree about what happened on election day, we now trust the elec
 
 In 2006 and 2010, the raw TSE data put every party that ran alone in a state into a single made-up coalition. In São Paulo in 2006, for example, 16 unrelated parties appear as one federal deputy list. Seats are allocated by list, so this distorts any analysis of electoral competition.
 
-Coalition labels now come from the TSE party-level tallies (`party.csv.gz`), where each party belongs to exactly one list per office and state. As a check, allocating seats with the official D'Hondt formula and the new labels reproduces all 513 federal deputy seats in 2002, 2010 and 2014, and 512 of 513 in 2006 (see Known issues). The fix covers all statewide offices, in both the candidate files and `election_{year}.csv`.
+Coalition labels now come from the TSE party-level tallies (`party.csv.gz`), where each party belongs to exactly one list per office and electoral unit: the state for federal and state offices, and the municipality for mayor and city council. As a check, allocating seats with the official D'Hondt formula and the new labels reproduces all 513 federal deputy seats in 2002, 2010 and 2014, and 512 of 513 in 2006 (see Known issues). Municipal labels now agree with the party-level tallies for every candidate the tallies cover; before, between 0.1% and 16% disagreed, depending on the year and office (e.g. 7% of 2004 mayor labels and 16% of 2008 city council labels). The fix applies to the candidate files and to `election_{year}.csv`.
 
-Parties missing from the tallies keep the candidate data's label. Where that label is blank, a party registered as running alone (*partido isolado*) is labeled with its own name. A party in a named coalition gets the list of parties whose candidates registered under that name in the same state, or municipality for local offices. For example, the six parties of *Unidos por Goiás* (GO, 2014), whose registration was denied, are now labeled `pen / phs / pmn / psl / ptc / pv`. This fills the blank labels of Federal District district deputies in 2002–2010 and of most local candidates in 2004 and 2008. About 21,700 local candidates in 2008 and a few dozen others stay blank, because the TSE records neither a coalition type nor a coalition name for them. A coalition rebuilt this way lists only the parties that fielded candidates under that name.
+Parties missing from the tallies keep the candidate data's label, except that a party registered as running alone (*partido isolado*) gets its own name. Where the label is blank, a party in a named coalition gets the list of parties whose candidates registered under that name in the same state, or municipality for local offices. For example, the six parties of *Unidos por Goiás* (GO, 2014), whose registration was denied, are now labeled `pen / phs / pmn / psl / ptc / pv`. This fills the blank labels of Federal District district deputies in 2002–2010. A coalition rebuilt this way lists only the parties that fielded candidates under that name. About 2,100 local candidates in 2008 and a few dozen others stay blank, because the TSE records neither a coalition type nor a coalition name for them.
 
 #### Election results come from the election data
 
@@ -36,7 +36,7 @@ The candidate data sometimes records a candidate's status from before the electi
 
 For every candidate who also appears in the election data, `outcome`, `candidate_status` and `elected` now come from the election data. Candidates who never reached the ballot (registration rejected or withdrawn) don't appear there, and neither do running mates or Senate substitutes. All of these keep the candidate data's values.
 
-Matching the two sources is harder than it sounds, because a candidate who withdraws passes their ballot number to a substitute. The script therefore matches on both the ballot number and the person (CPF, electoral title or name). It also keeps supplementary elections separate from regular ones (see the next section).
+Matching the two sources is harder than it sounds, because a candidate who withdraws passes their ballot number to a substitute. The script therefore matches on both the ballot number and the person: by CPF, or else by exact name. It also keeps supplementary elections separate from regular ones (see the next section).
 
 #### One record per candidate and election year
 
@@ -59,9 +59,9 @@ The candidate files go from 1,358,159 to 1,353,874 records. The party membership
 
 #### When two people share a CPF
 
-In about 400 cases, the same CPF belongs to clearly different people in the same year: their electoral titles differ, and so do their birth years or first names. For example, in 2004 Elza Alves Pereira and Maria Marina Silva, from different municipalities, share a CPF. These are data-entry errors in the TSE files, and nothing in the data says for sure whose CPF it is.
+In about 400 cases, the same CPF belongs to clearly different people in the same year: their electoral titles differ, and so do their birth years or names. For example, in 2004 Elza Alves Pereira and Maria Marina Silva, from different municipalities, share a CPF. These are data-entry errors in the TSE files, and nothing in the data says for sure whose CPF it is.
 
-If one of the people uses that CPF in other election years, we give it to them and set it to missing for the others. Failing that, if the same year's vote tallies pair the CPF with one of them (by electoral title), it goes to that person. For example, Zairton Cavalcante Santos (CE, 2006) shares his CPF with a governor candidate who withdrew, but only he appears in the tallies. If neither rule applies, we set the CPF to missing for everyone rather than guess. CPFs set to missing in the candidate data are set to missing in `election_{year}.csv` too, so every CPF in the vote tallies has a candidate record. These candidates stay in the data; they just can't be linked to other years or datasets by CPF.
+The CPF goes to the person it is paired with (by electoral title) in the most election years, counting both the candidate data and the vote tallies, and is set to missing for the others. For example, Zairton Cavalcante Santos (CE, 2006) shares his CPF with a governor candidate who withdrew, but only he also appears with it in the tallies. In case of a tie, we set the CPF to missing for everyone rather than guess. CPFs set to missing in the candidate data are set to missing in `election_{year}.csv` too, so every CPF in the vote tallies has a candidate record. These candidates stay in the data; they just can't be linked to other years or datasets by CPF.
 
 #### Birth year and gender across elections
 
@@ -83,7 +83,7 @@ The raw flag stays where the data has no earlier election to look back to: 2002,
 
 - **From the candidate's other years.** Some candidates have no CPF in the candidate data. We look for the same person in other years, matching on electoral title and exact name, since an electoral title alone is occasionally shared. This recovers 22 of the 208 federal deputy candidates without a CPF in 2002.
 - **Broken CPFs.** 137 truncated CPFs (2004) and 23 all-zero CPFs are now treated as missing, so the same step can recover them.
-- **CPFs missing from the vote tallies** are filled in from the candidate data, using the ballot number and first name. This replaces `02_fix_defective_candidates.R`, which patched three candidates by hand and had to be rerun after every run of `01a`. That script has been removed.
+- **CPFs missing from the vote tallies** are filled in from the candidate data by ballot number, among the candidates who actually ran (a withdrawn candidate shares the ballot number with their substitute). Names aren't used, since they are sometimes spelled differently in the two sources (e.g. João Marcelo Santos Sousa/Souza, 2014). This replaces `02_fix_defective_candidates.R`, which patched three candidates by hand and had to be rerun after every run of `01a`. That script has been removed.
 - **Leading zeros.** CPFs and electoral titles are now read as text, so leading zeros are no longer lost.
 
 #### CFscores are attached to the right candidates
@@ -94,7 +94,8 @@ The candidate table is now put in the order of the matrix columns, both in `05` 
 
 #### Smaller fixes
 
-- **Names:** stray quotation marks are removed. For example, `""""carlos fernando d""""aguiar silva palacio""""` becomes `carlos fernando d'aguiar silva palacio`.
+- **Names:** stray quotation marks are removed, in both the candidate data and the vote tallies. For example, `""""carlos fernando d""""aguiar silva palacio""""` becomes `carlos fernando d'aguiar silva palacio`. Every match on names uses the exact name.
+- **Electoral titles:** placeholder titles (`#ni#`, `-1`) are now blank.
 - **Municipality codes:** votes cast in Boa Esperança do Norte (MT, TSE code 91065) now get IBGE code 510183 instead of being dropped, in the candidate votes, legend votes and vote counts alike.
 - **One hand-coded outcome:** Marcus Savius Teixeira Sousa (federal deputy, 2002) withdrew and his ballot number went to a substitute. He is missing from the vote tallies, but the candidate data lists him as elected, so we recode him by hand as withdrawn and not elected.
 - **State-level ideology file:** `07_create_state_level_ideology.R` now builds `candidate_ideology_only_state.csv` from the cleaned candidate data rather than the raw TSE file. It therefore picks up the corrected CPFs, outcomes and incumbency and keeps one record per CPF and year, so the file drops from 45,731 to 45,423 rows. It also computes `age` from the birth year instead of trusting the raw age field, which was wrong in some cases: Maria Lizete Rendeiro da Conceição Baia (PA, 2010) was listed as 7 years old with a 1903 birth year. The `edu_desc` column is gone, because nothing downstream used it.

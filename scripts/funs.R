@@ -29,7 +29,7 @@ theme_clean <- theme(
 )
 
 # tidy and ggcoef
-tidycoef <- function(fit){
+tidycoef <- function(fit, theme){
   tidy(fit) %>%
     filter(
       !str_detect(term, "Intercept|as.factor|Observation.Residual")
@@ -46,7 +46,7 @@ tidycoef <- function(fit){
       errorbar_color = "steelblue3"
     ) +
     xlab("") +
-    theme_clean
+    theme
 }
 
 # add mandate year vertical lines
@@ -69,7 +69,7 @@ summarise_mun <- function(data, var){
 }
 
 # plot map
-plot_map <- function(data, var, palette = "RdYlBu", limits = c(-100, 100)){
+plot_map <- function(data, var, map_state, palette = "RdYlBu", limits = c(-100, 100)){
   ggplot() +
     geom_sf(
       data = data,
@@ -173,47 +173,70 @@ fit_logit <- function(
   return(repo)
 }
 
-fix_coalition <- function(data) {
+# electoral data cleaning -------------------------------------------------
+# set malformed cpfs (not 11 digits, or all zeros) and placeholder electoral
+# titles to missing
+clean_ids <- function(data) {
+  data |>
+    mutate(
+      cpf_candidate = if_else(
+        nchar(cpf_candidate) == 11 & cpf_candidate != strrep("0", 11),
+        cpf_candidate,
+        NA
+      ),
+      elec_title = if_else(elec_title %in% c("", "#ni#", "-1"), NA, elec_title)
+    )
+}
+
+# remove stray quotes from names
+# e.g. """"carlos fernando d""""aguiar silva palacio"""" (2010)
+clean_name <- function(name) {
+  name |>
+    str_remove_all('^"+|"+$') |>
+    str_replace_all('"+', "'")
+}
+
+# tse code 91065 (boa esperanca do norte, mt) has no ibge code in 2002
+fix_ibge <- function(data) {
+  data |>
+    mutate(
+      cod_ibge_6 = if_else(cod_tse %in% 91065, 510183L, cod_ibge_6)
+    )
+}
+
+# supplementary elections (e.g. for governor of amazonas in 2017) are recorded
+# under the election year of the regular election they replace
+is_regular_election <- function(election_type) {
+  is.na(election_type) |
+    election_type == "" |
+    str_detect(election_type, "^eleic(oes|ao)( gerais| municipal)? [0-9]{4}$")
+}
+
+# electoral unit: municipal offices are contested by municipality, the
+# presidency nationally, and the remaining offices by state
+add_unit <- function(data) {
+  data |>
+    mutate(
+      unit = case_when(
+        position %in% c("prefeito", "vice-prefeito", "vereador") ~
+          str_remove(as.character(cod_tse), "^0+"),
+        position == "presidente" ~ "br",
+        T ~ state
+      )
+    )
+}
+
+# coalition labels: the label in the party-level election data
+# (`coalition_lookup`) when the party is there. otherwise, a party running alone
+# takes its own name, other parties keep the raw label, and a blank label is
+# rebuilt from the parties registered under the same coalition name in the
+# electoral unit (e.g. unidos por goias, go 2014). running mates and senate
+# substitutes take the label of the ticket's office
+fix_coalition <- function(data, coalition_lookup) {
   data <- data |>
+    add_unit() |>
     mutate(
       office = str_remove(position, "^vice-|^.*suplente ")
-    ) |>
-    left_join(
-      coalition_lookup,
-      by = c("election_year", "state", "office", "party")
-    )
-
-  # parties absent from the tallies (e.g. without votes) keep the raw label,
-  # minus the parties that the tallies place in a coalition without them
-  coalition_fallback <- data |>
-    filter(is.na(coalition_fix) & !is.na(coalition)) |>
-    distinct(election_year, state, office, party, coalition) |>
-    mutate(member = str_split(coalition, " / ")) |>
-    unnest(member) |>
-    left_join(
-      coalition_lookup |> rename(member = party, coalition_member = coalition_fix),
-      by = c("election_year", "state", "office", "member")
-    ) |>
-    filter(
-      is.na(coalition_member) |
-      str_detect(
-        paste0(" / ", coalition_member, " / "), fixed(paste0(" / ", party, " / "))
-      )
-    ) |>
-    summarise(
-      coalition_fallback = paste(member, collapse = " / "),
-      .by = c(election_year, state, office, party, coalition)
-    )
-
-  # some raw labels are blank (e.g. unidos por goias, go 2014, whose registration
-  # was denied). a party running alone takes its own name, and a party in a
-  # named coalition takes the parties registered under that name in its
-  # electoral unit
-  data <- data |>
-    mutate(
-      unit = if_else(
-        position %in% c("prefeito", "vereador"), as.character(cod_tse), state
-      )
     )
 
   coalition_named <- data |>
@@ -225,21 +248,42 @@ fix_coalition <- function(data) {
 
   data |>
     left_join(
-      coalition_fallback,
-      by = c("election_year", "state", "office", "party", "coalition")
+      coalition_lookup,
+      by = c("election_year", "unit", "office", "party")
     ) |>
     left_join(
       coalition_named,
       by = c("election_year", "unit", "office", "coalition_name")
     ) |>
     mutate(
-      coalition_fix = coalesce(coalition_fix, na_if(coalition_fallback, "")),
       coalition = case_when(
         !is.na(coalition_fix) ~ coalition_fix,
         coalition_type == "partido isolado" ~ party,
-        !is.na(coalition_named) ~ coalition_named,
-        T ~ coalition
+        !is.na(coalition) & coalition != "" ~ coalition,
+        T ~ coalition_named
       )
     ) |>
-    select(-office, -unit, -coalition_fix, -coalition_fallback, -coalition_named)
+    select(-unit, -office, -coalition_fix, -coalition_named)
+}
+
+# match candidacies to the election data on the columns in `by`, keeping only
+# keys that the election data pair with a single outcome and status
+match_election <- function(candidate, election, by) {
+  election <- election |>
+    filter(if_all(all_of(by), \(x) !is.na(x))) |>
+    distinct(across(all_of(by)), outcome_election, status_election) |>
+    filter(n() == 1, .by = all_of(by))
+
+  candidate |>
+    inner_join(election, by = by) |>
+    select(row_id, outcome_election, status_election)
+}
+
+# write one file per election year, with the year in place of %s in `path`
+write_by_year <- function(data, path) {
+  for (year in unique(data$election_year)) {
+    data |>
+      filter(election_year == year) |>
+      data.table::fwrite(sprintf(path, year))
+  }
 }
