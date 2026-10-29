@@ -28,7 +28,7 @@ representation_failure/
 │       │   ├── fed_state/           # Federal deputy candidates by year
 │       │   └── local/               # Municipal-level candidates by year
 │       ├── election/                # Cleaned election, vote count, and coalition files
-│       ├── contribution/            # Total contributions by candidate
+│       ├── contribution/            # Contributions by candidate and election year
 │       ├── ideology/                # Contribution matrices, cfscore estimates, legislative ideology
 │       ├── municipal/               # Processed IBGE municipal dataset
 │       ├── complaints/              # Fala.BR complaints by municipality and year

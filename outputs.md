@@ -8,13 +8,13 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/candidate/cfscore_estimation/candidate_federal_state.csv` | `01b`, `04`, `05`, `09` | Candidates for every position in 2002, 2006, 2010 and 2014. This is the only candidate file that carries `cod_ibge_6_birth`. Missing 2002 CPFs are recovered where possible, and federal deputies' `elected`/`outcome` are reconciled with the vote tallies. Coalition labels for statewide offices come from the party-level tallies (see `party.csv.gz` in `requirements.md`). District deputies in DF have no coalition label for parties in a coalition in 2002–2010, because neither TSE source records one. |
-| `data/output/candidate/fed_state/candidate_{2002,2006,2010,2014}.csv` | `08`, `10`, `11`, `12`, `13` | Federal deputies only. Coalition labels reproduce the seat allocation of every chamber except one seat in ES 2006, where two lists finished 73 votes apart. 186 of the 4,900 candidates in 2002 have no CPF in the raw TSE data; 183 of them received no votes. |
+| `data/output/candidate/cfscore_estimation/candidate_federal_state.csv` | `01b`, `04`, `05`, `07`, `09` | Candidates for every position in 2002, 2006, 2010 and 2014. This is the only candidate file that carries `cod_ibge_6_birth`. Missing 2002 CPFs are recovered where possible, and federal deputies' `elected`/`outcome` are reconciled with the vote tallies. Coalition labels come from the party-level tallies, by state or municipality (see `party.csv.gz` in `requirements.md`). Parties absent from the tallies keep the raw label, except that a party running alone gets its own name and a blank label is rebuilt from the parties registered under the same coalition name; this rebuilds the labels of DF district deputies in 2006–2010, which can't be checked against the seat allocation. |
+| `data/output/candidate/fed_state/candidate_{2002,2006,2010,2014}.csv` | `08`, `10`, `11`, `12`, `13` | Federal deputies only. Coalition labels reproduce the seat allocation of every chamber except one seat in ES 2006, where two lists finished 73 votes apart. In 2010, PSOL (AP), PTN (PA) and PHS (RR) run alone in the tallies, while their partners' coalition labels still name them; this follows the TSE tallies, not a labeling error (see the note in [`docs/codebook.md`](docs/codebook.md), section 7). 186 of the 4,900 candidates in 2002 have no CPF in the raw TSE data; 183 of them received no votes. |
 | `data/output/candidate/local/candidate_{2004,2008,2012}.csv` | `01b`, `04`, `05`, `13` | All local candidates, one file per municipal election year. |
 | `data/output/candidate/candidate_party_membership.csv.gz` | — | The latest party membership record for each candidate and election year. |
 | `data/output/election/election_{2002,2006,2010,2014}.csv` | `10`, `13` | Federal deputies' votes by municipality. Five losing candidates have no CPF: three in 2002 and two in 2014 (absent from the candidate registry). |
 | `data/output/election/vote_count_{year}.csv` | — | Federal deputy vote counts by municipality, one file per year in the input. |
-| `data/output/election/coalition_vote_{year}.csv` | — | Federal deputy legend votes by coalition and municipality, one file per year in the input. |
+| `data/output/election/coalition_vote_{year}.csv` | — | Federal deputy legend votes by coalition and municipality, one file per year in the input. In 2010, three parties have their own row and are also named in a partner coalition's label (see the note in [`docs/codebook.md`](docs/codebook.md), section 7). |
 
 ### `01b_cfscore_ideal_point_wrangle.R`
 
@@ -22,7 +22,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 |---|---|---|
 | `data/output/ideology/contrib_matrix_fed_state.RData` | `09` | Holds the object `cm`, a list of `candidate`, `contribution` and `contrib_matrix`. |
 | `data/output/ideology/contrib_matrix_local.RData` | — | The same structure for local candidates. Only the scripts in `scripts/deprecated/` read it. |
-| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions per candidate and election year, excluding projected contributions. |
+| `data/output/contribution/contribution_by_candidate_fed_state.csv` | — | Total contributions (`contrib_individual`) and distinct donors (`n_individual_donors`) per candidate and election year, from individual donors only (no companies), excluding projected contributions. These differ from `n_donors` and `total_contrib` in the CFscore files, which are pooled across years and count only donors who also gave to another candidate. |
 | `data/output/contribution/contribution_by_candidate_local.csv` | — | The same for local candidates. |
 | `data/output/ideology/legislative_ideology.csv` | `13` | Zucco and Lauderdale (2011) legislator ideal points for 2002 and 2006. |
 
@@ -42,13 +42,13 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/ideology/contrib_matrix_pooled.RData` | `05`, `06` | Holds the object `cm`, pooling federal, state and local candidates. |
+| `data/output/ideology/contrib_matrix_pooled.RData` | `05`, `06` | Holds the object `cm`, pooling federal, state and local candidates. Contributions are from individual donors only (11-digit CPF), excluding projected contributions. |
 
 ### `05_candidates_cfscore_pooled.R`
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/ideology/candidate_ideology_pooled_fed_state.csv` | `07`, `10`, `13` | Pooled CFscores for federal and state candidates. |
+| `data/output/ideology/candidate_ideology_pooled_fed_state.csv` | `07`, `10`, `13` | Pooled CFscores for federal and state candidates, with `n_donors` and `total_contrib`, the number of distinct donors and the total contributions behind each score. |
 | `data/output/ideology/candidate_ideology_pooled_local.csv` | `13` | Pooled CFscores for local candidates. |
 | `data/output/ideology/cfscore_pooled.RData` | — | Holds the object `cfscore_pooled`, the full `awm()` result. |
 
@@ -64,7 +64,7 @@ This file lists every file that the numbered scripts in `scripts/` write, groupe
 
 | File | Used by | Notes |
 |---|---|---|
-| `data/output/ideology/candidate_ideology_only_state.csv` | — | Candidates for state offices (governor, state deputy, …) in 2006, 2010 and 2014, with their CFscores. |
+| `data/output/ideology/candidate_ideology_only_state.csv` | — | Candidates for state offices (governor, state deputy, …) in 2006, 2010 and 2014, with their CFscores. Built from the cleaned `candidate_federal_state.csv`, so it has one record per CPF and year, and `age` is computed from the birth year. |
 
 ### `08_generate_valence_corruption.R`
 

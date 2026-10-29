@@ -47,16 +47,15 @@ Cleaned candidate-level data for federal (*Deputado Federal*, *Senador*) and sta
 | `candidate_name` | character | Full candidate name |
 | `position` | character | Office sought (e.g. *deputado federal*) |
 | `election_year` | integer | Election year |
-| `coalition` | character | Name/list of parties in the candidate's coalition |
-| `birthyear` | integer | Year of birth |
+| `coalition` | character | Name/list of parties in the candidate's coalition. In 2010, three parties appear both alone and in a coalition; see the note in section 7 |
+| `birthyear` | integer | Year of birth, as recorded by the TSE for this candidacy. Some values are implausible (see Known issues in `changelog.md`) |
 | `candidate_status` | character | TSE candidacy status (e.g. *deferido*, *indeferido*) |
 | `edu` | character | Highest level of education |
-| `gender` | integer | Gender code (2 = male, 4 = female) |
+| `gender` | integer | Gender code (2 = male, 4 = female), as recorded by the TSE for this candidacy. Code 0, from the raw data, appears for 177 candidates in 2002 and 208 local candidates in 2004 |
 | `race` | character | Self-reported race/colour (*branca*, *parda*, *preta*, …) |
 | `incumbent` | integer | 1 if candidate currently holds the same office |
 | `elected` | integer | 1 if candidate was elected |
-| `mun_birth_code` | integer | IBGE code of birth municipality |
-| `mun_birth_name` | character | Name of birth municipality |
+| `mun_birth_name` | character | Name of birth municipality. The TSE gives no usable birth municipality code (it is −1 or −3, "not informed", in every year); `candidate_federal_state.csv` carries `cod_ibge_6_birth`, the IBGE code matched from this name and `state_birth_name` (unmatched for 4–11% of candidates, depending on the year) |
 | `state_birth_name` | character | State of birth |
 | `outcome` | character | Election outcome label (e.g. *eleito*, *suplente*, *não eleito*) |
 | `party` | character | Party abbreviation |
@@ -65,7 +64,8 @@ Cleaned candidate-level data for federal (*Deputado Federal*, *Senador*) and sta
 | `position_previous` | character | Most recent previously held office (if any) |
 | `occupation` | character | Declared occupation |
 | `occupation_code` | integer | TSE occupation code |
-| `age` | integer | Age at time of election |
+| `age` | integer | Age at time of election, computed from `birthyear` |
+| `flag_ambiguous` | logical | `TRUE` for every record of a CPF whose records may belong to different people: the names differ across election years, and so do the birth years (by more than 2 years) or the genders |
 
 ---
 
@@ -83,6 +83,8 @@ Pooled CFscore estimates for federal and state legislative candidates.
 |---|---|---|
 | `cpf_candidate` | integer64 | Candidate CPF — links to candidate files |
 | `cfscore` | numeric | Estimated ideal point (CFscore); higher = more right-wing |
+| `n_donors` | integer | Number of distinct donors behind the CFscore, pooled across years: individual donors (11-digit CPF) who gave to this candidate and to at least one other candidate, as in the estimation matrix. About half of the candidates have a single donor |
+| `total_contrib` | numeric | Total contributions (R$) behind the CFscore, pooled across years: the sum given to this candidate by the same donors counted in `n_donors` |
 
 ---
 
@@ -105,7 +107,7 @@ Candidate-level vote totals by municipality, for federal/state elections. Availa
 | `cpf_candidate` | integer64 | Candidate CPF |
 | `candidate_name` | character | Candidate name |
 | `coalition` | character | Coalition composition |
-| `age` | integer | Age of candidate at election |
+| `age` | integer | Age of candidate at election, computed from the birth year in the candidate data |
 | `candidate_status` | character | TSE candidacy status |
 | `outcome` | character | Election outcome |
 | `vote` | integer | Number of nominal votes received in this municipality |
@@ -123,6 +125,8 @@ Party-list (legend) votes aggregated by coalition and municipality. Available fo
 | `coalition` | character | Coalition composition |
 | `coalition_type` | character | Type of grouping (*partido* or *coligacao*) |
 | `vote_legend` | integer | Votes cast for the party/coalition list |
+
+**Parties listed both alone and in a coalition (2010).** In three states, a party has its own label while its partners' coalition label still names it: PSOL in AP (`pcb / pmn / prp / prtb / psdc / psol / ptb / ptc`), PTN in PA (`phs / pp / pr / psc / pt / pt do b / ptb / ptc / ptn`) and PHS in RR (`phs / pp / psb / psc / pt / ptb / ptc`). This is how the TSE vote tallies record them: the party's own rows are *partido isolado*, while the TSE candidate registry places all its candidates in the coalition. The tally version is consistent with the seat allocation. In RR it is the only version that reproduces the result: counting PHS's votes within the coalition would move a seat from the PRB/PRP coalition to PHS's partners. In AP and PA both versions give the same seats. The likely cause is that the party's participation in the coalition was annulled after registration, but the data cannot confirm this. The same labels appear in `coalition` in the candidate files (section 2).
 
 ---
 
@@ -159,9 +163,9 @@ TSE party membership registry linked to candidates at election time. Compressed 
 | `cpf_candidate` | integer64 | Candidate CPF |
 | `elec_title` | integer | Electoral registration number |
 | `election_year` | integer | Election year the candidate ran |
-| `cod_ibge_6` | integer | IBGE municipality where membership was recorded |
+| `cod_ibge_6_party_membership` | integer | IBGE code of the municipality where membership was recorded |
 | `state` | character | State abbreviation |
-| `cod_ibge_6_party_membership` | character | Municipality name of party registration |
+| `mun_name` | character | Name of the municipality where membership was recorded |
 | `electoral_zone` | integer | Electoral zone number |
 | `electoral_section` | integer | Electoral section number |
 | `member_name` | character | Name on the membership record |
